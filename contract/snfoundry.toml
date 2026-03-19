@@ -1,0 +1,27 @@
+[sncast.default]
+url = "http://127.0.0.1:5050/rpc"
+account = "devnet"
+accounts-file = "~/.starknet_accounts/starknet_open_zeppelin_accounts.json"
+wait-params = { timeout = 300, retry-interval = 5 }
+
+[sncast.devnet]
+url = "http://127.0.0.1:5050/rpc"
+account = "devnet"
+accounts-file = "~/.starknet_accounts/starknet_open_zeppelin_accounts.json"
+wait-params = { timeout = 300, retry-interval = 5 }
+
+[sncast.sepolia]
+network = "sepolia"
+account = "agentis_sepolia"
+accounts-file = "~/.starknet_accounts/starknet_open_zeppelin_accounts.json"
+wait-params = { timeout = 900, retry-interval = 10 }
+block-explorer = "Voyager"
+show-explorer-links = true
+
+[sncast.mainnet]
+network = "mainnet"
+account = "agentis_mainnet"
+accounts-file = "~/.starknet_accounts/starknet_open_zeppelin_accounts.json"
+wait-params = { timeout = 900, retry-interval = 10 }
+block-explorer = "Voyager"
+show-explorer-links = true
