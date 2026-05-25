@@ -183,7 +183,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_marketplace::AgentMarketplace::AgentListed",
+    "name": "agentis_starknet::agent_marketplace::AgentMarketplace::AgentListed",
     "kind": "struct",
     "members": [
       {
@@ -210,7 +210,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_marketplace::AgentMarketplace::AgentSold",
+    "name": "agentis_starknet::agent_marketplace::AgentMarketplace::AgentSold",
     "kind": "struct",
     "members": [
       {
@@ -242,7 +242,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_marketplace::AgentMarketplace::ListingCancelled",
+    "name": "agentis_starknet::agent_marketplace::AgentMarketplace::ListingCancelled",
     "kind": "struct",
     "members": [
       {
@@ -264,7 +264,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_marketplace::AgentMarketplace::PriceUpdated",
+    "name": "agentis_starknet::agent_marketplace::AgentMarketplace::PriceUpdated",
     "kind": "struct",
     "members": [
       {
@@ -291,7 +291,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_marketplace::AgentMarketplace::MarketplaceFeeUpdated",
+    "name": "agentis_starknet::agent_marketplace::AgentMarketplace::MarketplaceFeeUpdated",
     "kind": "struct",
     "members": [
       {
@@ -303,32 +303,32 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_marketplace::AgentMarketplace::Event",
+    "name": "agentis_starknet::agent_marketplace::AgentMarketplace::Event",
     "kind": "enum",
     "variants": [
       {
         "name": "AgentListed",
-        "type": "agentis::agent_marketplace::AgentMarketplace::AgentListed",
+        "type": "agentis_starknet::agent_marketplace::AgentMarketplace::AgentListed",
         "kind": "nested"
       },
       {
         "name": "AgentSold",
-        "type": "agentis::agent_marketplace::AgentMarketplace::AgentSold",
+        "type": "agentis_starknet::agent_marketplace::AgentMarketplace::AgentSold",
         "kind": "nested"
       },
       {
         "name": "ListingCancelled",
-        "type": "agentis::agent_marketplace::AgentMarketplace::ListingCancelled",
+        "type": "agentis_starknet::agent_marketplace::AgentMarketplace::ListingCancelled",
         "kind": "nested"
       },
       {
         "name": "PriceUpdated",
-        "type": "agentis::agent_marketplace::AgentMarketplace::PriceUpdated",
+        "type": "agentis_starknet::agent_marketplace::AgentMarketplace::PriceUpdated",
         "kind": "nested"
       },
       {
         "name": "MarketplaceFeeUpdated",
-        "type": "agentis::agent_marketplace::AgentMarketplace::MarketplaceFeeUpdated",
+        "type": "agentis_starknet::agent_marketplace::AgentMarketplace::MarketplaceFeeUpdated",
         "kind": "nested"
       }
     ]

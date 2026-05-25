@@ -242,7 +242,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::RevenueReceived",
+    "name": "agentis_starknet::revenue_share::RevenueShare::RevenueReceived",
     "kind": "struct",
     "members": [
       {
@@ -274,7 +274,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::EarningsClaimed",
+    "name": "agentis_starknet::revenue_share::RevenueShare::EarningsClaimed",
     "kind": "struct",
     "members": [
       {
@@ -296,7 +296,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::PlatformEarningsWithdrawn",
+    "name": "agentis_starknet::revenue_share::RevenueShare::PlatformEarningsWithdrawn",
     "kind": "struct",
     "members": [
       {
@@ -313,7 +313,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::RevenueSplitUpdated",
+    "name": "agentis_starknet::revenue_share::RevenueShare::RevenueSplitUpdated",
     "kind": "struct",
     "members": [
       {
@@ -330,7 +330,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::AgentWalletUpdated",
+    "name": "agentis_starknet::revenue_share::RevenueShare::AgentWalletUpdated",
     "kind": "struct",
     "members": [
       {
@@ -347,7 +347,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::AgentNFTUpdated",
+    "name": "agentis_starknet::revenue_share::RevenueShare::AgentNFTUpdated",
     "kind": "struct",
     "members": [
       {
@@ -359,7 +359,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::AuthorizedReporterUpdated",
+    "name": "agentis_starknet::revenue_share::RevenueShare::AuthorizedReporterUpdated",
     "kind": "struct",
     "members": [
       {
@@ -376,42 +376,42 @@
   },
   {
     "type": "event",
-    "name": "agentis::revenue_share::RevenueShare::Event",
+    "name": "agentis_starknet::revenue_share::RevenueShare::Event",
     "kind": "enum",
     "variants": [
       {
         "name": "RevenueReceived",
-        "type": "agentis::revenue_share::RevenueShare::RevenueReceived",
+        "type": "agentis_starknet::revenue_share::RevenueShare::RevenueReceived",
         "kind": "nested"
       },
       {
         "name": "EarningsClaimed",
-        "type": "agentis::revenue_share::RevenueShare::EarningsClaimed",
+        "type": "agentis_starknet::revenue_share::RevenueShare::EarningsClaimed",
         "kind": "nested"
       },
       {
         "name": "PlatformEarningsWithdrawn",
-        "type": "agentis::revenue_share::RevenueShare::PlatformEarningsWithdrawn",
+        "type": "agentis_starknet::revenue_share::RevenueShare::PlatformEarningsWithdrawn",
         "kind": "nested"
       },
       {
         "name": "RevenueSplitUpdated",
-        "type": "agentis::revenue_share::RevenueShare::RevenueSplitUpdated",
+        "type": "agentis_starknet::revenue_share::RevenueShare::RevenueSplitUpdated",
         "kind": "nested"
       },
       {
         "name": "AgentWalletUpdated",
-        "type": "agentis::revenue_share::RevenueShare::AgentWalletUpdated",
+        "type": "agentis_starknet::revenue_share::RevenueShare::AgentWalletUpdated",
         "kind": "nested"
       },
       {
         "name": "AgentNFTUpdated",
-        "type": "agentis::revenue_share::RevenueShare::AgentNFTUpdated",
+        "type": "agentis_starknet::revenue_share::RevenueShare::AgentNFTUpdated",
         "kind": "nested"
       },
       {
         "name": "AuthorizedReporterUpdated",
-        "type": "agentis::revenue_share::RevenueShare::AuthorizedReporterUpdated",
+        "type": "agentis_starknet::revenue_share::RevenueShare::AuthorizedReporterUpdated",
         "kind": "nested"
       }
     ]

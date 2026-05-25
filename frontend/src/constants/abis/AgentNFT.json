@@ -378,7 +378,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_nft::AgentNFT::AgentMinted",
+    "name": "agentis_starknet::agent_nft::AgentNFT::AgentMinted",
     "kind": "struct",
     "members": [
       {
@@ -395,7 +395,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_nft::AgentNFT::AgentLevelUp",
+    "name": "agentis_starknet::agent_nft::AgentNFT::AgentLevelUp",
     "kind": "struct",
     "members": [
       {
@@ -412,7 +412,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_nft::AgentNFT::ChatRecorded",
+    "name": "agentis_starknet::agent_nft::AgentNFT::ChatRecorded",
     "kind": "struct",
     "members": [
       {
@@ -429,7 +429,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_nft::AgentNFT::MintingFeeUpdated",
+    "name": "agentis_starknet::agent_nft::AgentNFT::MintingFeeUpdated",
     "kind": "struct",
     "members": [
       {
@@ -441,7 +441,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_nft::AgentNFT::AgentVisibilityChanged",
+    "name": "agentis_starknet::agent_nft::AgentNFT::AgentVisibilityChanged",
     "kind": "struct",
     "members": [
       {
@@ -458,7 +458,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_nft::AgentNFT::Transfer",
+    "name": "agentis_starknet::agent_nft::AgentNFT::Transfer",
     "kind": "struct",
     "members": [
       {
@@ -480,37 +480,37 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_nft::AgentNFT::Event",
+    "name": "agentis_starknet::agent_nft::AgentNFT::Event",
     "kind": "enum",
     "variants": [
       {
         "name": "AgentMinted",
-        "type": "agentis::agent_nft::AgentNFT::AgentMinted",
+        "type": "agentis_starknet::agent_nft::AgentNFT::AgentMinted",
         "kind": "nested"
       },
       {
         "name": "AgentLevelUp",
-        "type": "agentis::agent_nft::AgentNFT::AgentLevelUp",
+        "type": "agentis_starknet::agent_nft::AgentNFT::AgentLevelUp",
         "kind": "nested"
       },
       {
         "name": "ChatRecorded",
-        "type": "agentis::agent_nft::AgentNFT::ChatRecorded",
+        "type": "agentis_starknet::agent_nft::AgentNFT::ChatRecorded",
         "kind": "nested"
       },
       {
         "name": "MintingFeeUpdated",
-        "type": "agentis::agent_nft::AgentNFT::MintingFeeUpdated",
+        "type": "agentis_starknet::agent_nft::AgentNFT::MintingFeeUpdated",
         "kind": "nested"
       },
       {
         "name": "AgentVisibilityChanged",
-        "type": "agentis::agent_nft::AgentNFT::AgentVisibilityChanged",
+        "type": "agentis_starknet::agent_nft::AgentNFT::AgentVisibilityChanged",
         "kind": "nested"
       },
       {
         "name": "Transfer",
-        "type": "agentis::agent_nft::AgentNFT::Transfer",
+        "type": "agentis_starknet::agent_nft::AgentNFT::Transfer",
         "kind": "nested"
       }
     ]

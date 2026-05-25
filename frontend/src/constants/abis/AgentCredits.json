@@ -436,7 +436,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::CreditsPurchased",
+    "name": "agentis_starknet::agent_credits::AgentCredits::CreditsPurchased",
     "kind": "struct",
     "members": [
       {
@@ -458,7 +458,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::CreditsSpent",
+    "name": "agentis_starknet::agent_credits::AgentCredits::CreditsSpent",
     "kind": "struct",
     "members": [
       {
@@ -480,7 +480,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::PlanPurchased",
+    "name": "agentis_starknet::agent_credits::AgentCredits::PlanPurchased",
     "kind": "struct",
     "members": [
       {
@@ -507,7 +507,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::FreeTierClaimed",
+    "name": "agentis_starknet::agent_credits::AgentCredits::FreeTierClaimed",
     "kind": "struct",
     "members": [
       {
@@ -524,7 +524,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::PlanCreated",
+    "name": "agentis_starknet::agent_credits::AgentCredits::PlanCreated",
     "kind": "struct",
     "members": [
       {
@@ -551,7 +551,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::PlanStatusUpdated",
+    "name": "agentis_starknet::agent_credits::AgentCredits::PlanStatusUpdated",
     "kind": "struct",
     "members": [
       {
@@ -568,7 +568,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::CreditPriceUpdated",
+    "name": "agentis_starknet::agent_credits::AgentCredits::CreditPriceUpdated",
     "kind": "struct",
     "members": [
       {
@@ -580,7 +580,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::FreeTierCreditsUpdated",
+    "name": "agentis_starknet::agent_credits::AgentCredits::FreeTierCreditsUpdated",
     "kind": "struct",
     "members": [
       {
@@ -592,7 +592,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::AuthorizedSpenderUpdated",
+    "name": "agentis_starknet::agent_credits::AgentCredits::AuthorizedSpenderUpdated",
     "kind": "struct",
     "members": [
       {
@@ -609,7 +609,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::SessionPurchased",
+    "name": "agentis_starknet::agent_credits::AgentCredits::SessionPurchased",
     "kind": "struct",
     "members": [
       {
@@ -641,7 +641,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::SessionCreditUsed",
+    "name": "agentis_starknet::agent_credits::AgentCredits::SessionCreditUsed",
     "kind": "struct",
     "members": [
       {
@@ -663,7 +663,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::Transfer",
+    "name": "agentis_starknet::agent_credits::AgentCredits::Transfer",
     "kind": "struct",
     "members": [
       {
@@ -685,7 +685,7 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::Approval",
+    "name": "agentis_starknet::agent_credits::AgentCredits::Approval",
     "kind": "struct",
     "members": [
       {
@@ -707,72 +707,72 @@
   },
   {
     "type": "event",
-    "name": "agentis::agent_credits::AgentCredits::Event",
+    "name": "agentis_starknet::agent_credits::AgentCredits::Event",
     "kind": "enum",
     "variants": [
       {
         "name": "CreditsPurchased",
-        "type": "agentis::agent_credits::AgentCredits::CreditsPurchased",
+        "type": "agentis_starknet::agent_credits::AgentCredits::CreditsPurchased",
         "kind": "nested"
       },
       {
         "name": "CreditsSpent",
-        "type": "agentis::agent_credits::AgentCredits::CreditsSpent",
+        "type": "agentis_starknet::agent_credits::AgentCredits::CreditsSpent",
         "kind": "nested"
       },
       {
         "name": "PlanPurchased",
-        "type": "agentis::agent_credits::AgentCredits::PlanPurchased",
+        "type": "agentis_starknet::agent_credits::AgentCredits::PlanPurchased",
         "kind": "nested"
       },
       {
         "name": "FreeTierClaimed",
-        "type": "agentis::agent_credits::AgentCredits::FreeTierClaimed",
+        "type": "agentis_starknet::agent_credits::AgentCredits::FreeTierClaimed",
         "kind": "nested"
       },
       {
         "name": "PlanCreated",
-        "type": "agentis::agent_credits::AgentCredits::PlanCreated",
+        "type": "agentis_starknet::agent_credits::AgentCredits::PlanCreated",
         "kind": "nested"
       },
       {
         "name": "PlanStatusUpdated",
-        "type": "agentis::agent_credits::AgentCredits::PlanStatusUpdated",
+        "type": "agentis_starknet::agent_credits::AgentCredits::PlanStatusUpdated",
         "kind": "nested"
       },
       {
         "name": "CreditPriceUpdated",
-        "type": "agentis::agent_credits::AgentCredits::CreditPriceUpdated",
+        "type": "agentis_starknet::agent_credits::AgentCredits::CreditPriceUpdated",
         "kind": "nested"
       },
       {
         "name": "FreeTierCreditsUpdated",
-        "type": "agentis::agent_credits::AgentCredits::FreeTierCreditsUpdated",
+        "type": "agentis_starknet::agent_credits::AgentCredits::FreeTierCreditsUpdated",
         "kind": "nested"
       },
       {
         "name": "AuthorizedSpenderUpdated",
-        "type": "agentis::agent_credits::AgentCredits::AuthorizedSpenderUpdated",
+        "type": "agentis_starknet::agent_credits::AgentCredits::AuthorizedSpenderUpdated",
         "kind": "nested"
       },
       {
         "name": "SessionPurchased",
-        "type": "agentis::agent_credits::AgentCredits::SessionPurchased",
+        "type": "agentis_starknet::agent_credits::AgentCredits::SessionPurchased",
         "kind": "nested"
       },
       {
         "name": "SessionCreditUsed",
-        "type": "agentis::agent_credits::AgentCredits::SessionCreditUsed",
+        "type": "agentis_starknet::agent_credits::AgentCredits::SessionCreditUsed",
         "kind": "nested"
       },
       {
         "name": "Transfer",
-        "type": "agentis::agent_credits::AgentCredits::Transfer",
+        "type": "agentis_starknet::agent_credits::AgentCredits::Transfer",
         "kind": "nested"
       },
       {
         "name": "Approval",
-        "type": "agentis::agent_credits::AgentCredits::Approval",
+        "type": "agentis_starknet::agent_credits::AgentCredits::Approval",
         "kind": "nested"
       }
     ]

@@ -4,10 +4,10 @@ export const CONTRACTS = {
   explorerUrl: 'https://sepolia.voyager.online',
 
   addresses: {
-    AgentNFT: '0x04b5333d96dd95f0d8f8d9727cb23420575239e4448c9cc30a89f31b1bd2612f',
-    AgentMarketplace: '0x057cff38e58af4db96ec4d2afe421da1b75c48ecde419ed26869846f775fa848',
-    RevenueShare: '0x06307038ef05caa67dd65352d2aa9b1fa3ac5b2f81ea8541ba77c503a331e423',
-    AgentCredits: '0x044d35290e39f2353fcfe4645ffb42b3af4e1fd7b190930505c302cbf04eeef9',
+    AgentNFT: '0x021da685fadac9146fa0753ea29b023e2c75d7903612656bb1a164a146c02ae6',
+    AgentMarketplace: '0x0497f402ea0a1ca75db9e3766f21a07ab43c26cae792bca62d56ecfa961be016',
+    RevenueShare: '0x06a8ecb9e0a14e9bdbfb514a2c40acbdf99700573b039c5aed0eb856c93e1ab2',
+    AgentCredits: '0x070acc051f8df0a1a33455764985b885128e469ec7a1cab9def9cec7a7832df6',
     STRK: '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
   },
 
