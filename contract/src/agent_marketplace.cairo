@@ -34,6 +34,9 @@ pub mod AgentMarketplace {
         total_volume: u128,
         creator_volume: Map<ContractAddress, u128>,
         creator_sales: Map<ContractAddress, u64>,
+        listing_count: u64,
+        listing_nft_contract: Map<u64, ContractAddress>,
+        listing_token_id: Map<u64, u64>,
     }
 
     #[event]
@@ -93,6 +96,7 @@ pub mod AgentMarketplace {
         self.total_listings.write(0);
         self.total_sales.write(0);
         self.total_volume.write(0);
+        self.listing_count.write(0);
     }
 
     #[external(v0)]
@@ -121,6 +125,11 @@ pub mod AgentMarketplace {
         self.listing_active.write(key, true);
         self.listing_listed_at.write(key, get_block_timestamp());
         self.total_listings.write(self.total_listings.read() + 1);
+
+        let idx = self.listing_count.read();
+        self.listing_nft_contract.write(idx, nft_contract);
+        self.listing_token_id.write(idx, token_id);
+        self.listing_count.write(idx + 1);
 
         self.emit(AgentListed { nft_contract, token_id, seller: caller, price });
     }
@@ -242,5 +251,99 @@ pub mod AgentMarketplace {
     #[external(v0)]
     fn get_creator_stats(self: @ContractState, creator: ContractAddress) -> (u128, u64) {
         (self.creator_volume.read(creator), self.creator_sales.read(creator))
+    }
+
+    #[external(v0)]
+    fn get_all_active_listings(
+        self: @ContractState,
+    ) -> Array<(ContractAddress, u64, ContractAddress, u128)> {
+        let mut result: Array<(ContractAddress, u64, ContractAddress, u128)> = ArrayTrait::new();
+        let count = self.listing_count.read();
+        let mut i: u64 = 0;
+        while i < count {
+            let nft_contract = self.listing_nft_contract.read(i);
+            let token_id = self.listing_token_id.read(i);
+            let key = (nft_contract, token_id);
+            if self.listing_active.read(key) {
+                let seller = self.listing_seller.read(key);
+                let price = self.listing_price.read(key);
+                result.append((nft_contract, token_id, seller, price));
+            }
+            i += 1;
+        };
+        result
+    }
+
+    #[external(v0)]
+    fn get_top_creators(self: @ContractState, limit: u64) -> Array<(ContractAddress, u64, u128)> {
+        // Collect unique creators from listing history
+        let mut creators: Array<ContractAddress> = ArrayTrait::new();
+        let count = self.listing_count.read();
+        let mut i: u64 = 0;
+        while i < count {
+            let nft_contract = self.listing_nft_contract.read(i);
+            let token_id = self.listing_token_id.read(i);
+            let seller = self.listing_seller.read((nft_contract, token_id));
+            let mut found = false;
+            let mut k: u32 = 0;
+            while k < creators.len() {
+                if *creators.at(k) == seller {
+                    found = true;
+                }
+                k += 1;
+            };
+            if !found {
+                creators.append(seller);
+            }
+            i += 1;
+        };
+
+        // Selection sort by volume
+        let len = creators.len();
+        let cap = if limit < len.into() {
+            limit
+        } else {
+            len.into()
+        };
+
+        let mut result: Array<(ContractAddress, u64, u128)> = ArrayTrait::new();
+        let mut used: Array<u32> = ArrayTrait::new();
+        let mut picked: u64 = 0;
+
+        while picked < cap {
+            let mut best_idx: u32 = 0;
+            let mut best_vol: u128 = 0;
+            let mut found = false;
+            let mut j: u32 = 0;
+            while j < len {
+                let mut is_used = false;
+                let mut k: u32 = 0;
+                while k < used.len() {
+                    if *used.at(k) == j {
+                        is_used = true;
+                    }
+                    k += 1;
+                };
+                if !is_used {
+                    let creator = *creators.at(j);
+                    let vol = self.creator_volume.read(creator);
+                    if !found || vol > best_vol {
+                        best_idx = j;
+                        best_vol = vol;
+                        found = true;
+                    }
+                }
+                j += 1;
+            };
+            if found {
+                let creator = *creators.at(best_idx);
+                let sales = self.creator_sales.read(creator);
+                let volume = self.creator_volume.read(creator);
+                result.append((creator, sales, volume));
+                used.append(best_idx);
+            }
+            picked += 1;
+        };
+        result
     }
 }

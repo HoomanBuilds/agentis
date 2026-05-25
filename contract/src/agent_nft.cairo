@@ -324,4 +324,89 @@ pub mod AgentNFT {
     fn contract_address(self: @ContractState) -> ContractAddress {
         get_contract_address()
     }
+
+    #[external(v0)]
+    fn get_next_token_id(self: @ContractState) -> u64 {
+        self.next_token_id.read()
+    }
+
+    #[external(v0)]
+    fn token_uri(self: @ContractState, token_id: u64) -> ByteArray {
+        let owner = self.token_owner.read(token_id);
+        assert(owner != zero_address(), 'TOKEN_NOT_FOUND');
+        self.token_uri.read(token_id)
+    }
+
+    #[external(v0)]
+    fn tokens_of_owner(self: @ContractState, owner: ContractAddress) -> Array<u64> {
+        let mut result: Array<u64> = ArrayTrait::new();
+        let next_id = self.next_token_id.read();
+        let mut i: u64 = 1;
+        while i < next_id {
+            if self.token_owner.read(i) == owner {
+                result.append(i);
+            }
+            i += 1;
+        };
+        result
+    }
+
+    #[external(v0)]
+    fn get_top_agents_by_chats(self: @ContractState, limit: u64) -> Array<(u64, ByteArray, u64)> {
+        let mut all: Array<(u64, u64)> = ArrayTrait::new();
+        let next_id = self.next_token_id.read();
+        let mut i: u64 = 1;
+        while i < next_id {
+            if self.token_owner.read(i) != zero_address() {
+                all.append((i, self.token_chat_count.read(i)));
+            }
+            i += 1;
+        };
+
+        // Simple selection sort for top N
+        let len = all.len();
+        let cap = if limit < len.into() {
+            limit
+        } else {
+            len.into()
+        };
+
+        let mut result: Array<(u64, ByteArray, u64)> = ArrayTrait::new();
+        let mut used: Array<u32> = ArrayTrait::new();
+        let mut picked: u64 = 0;
+
+        while picked < cap {
+            let mut best_idx: u32 = 0;
+            let mut best_chats: u64 = 0;
+            let mut found = false;
+            let mut j: u32 = 0;
+            while j < len {
+                let mut is_used = false;
+                let mut k: u32 = 0;
+                while k < used.len() {
+                    if *used.at(k) == j {
+                        is_used = true;
+                    }
+                    k += 1;
+                };
+                if !is_used {
+                    let (_, chats) = *all.at(j);
+                    if !found || chats > best_chats {
+                        best_idx = j;
+                        best_chats = chats;
+                        found = true;
+                    }
+                }
+                j += 1;
+            };
+            if found {
+                let (token_id, chat_count) = *all.at(best_idx);
+                let name = self.token_name.read(token_id);
+                result.append((token_id, name, chat_count));
+                used.append(best_idx);
+            }
+            picked += 1;
+        };
+        result
+    }
 }
