@@ -49,9 +49,9 @@ export async function GET() {
     const enriched = await Promise.all(
       listings.map(async (listing: any) => {
         try {
-          const tokenId = Number(listing.token_id || listing[0]);
-          const price = String(listing.price || listing[1] || '0');
+          const tokenId = Number(listing.token_id || listing[1] || 0);
           const seller = String(listing.seller || listing[2] || '');
+          const price = String(listing.price || listing[3] || '0');
 
           let name = `Agent #${tokenId}`;
           let imageUrl: string | undefined;
@@ -59,7 +59,7 @@ export async function GET() {
           let attributes: any[] = [];
 
           try {
-            const tokenUri = await nft.call('token_uri', [tokenId, 0]);
+            const tokenUri = await nft.call('token_uri', [tokenId]);
             const ipfsData = await fetchAgentMetadataFromIPFS(String(tokenUri));
             if (ipfsData) {
               name = ipfsData.name || name;
@@ -72,7 +72,7 @@ export async function GET() {
           return {
             tokenId,
             price,
-            priceFormatted: formatSTRK(price),
+            priceFormatted: formatSTRK(BigInt(price)),
             seller,
             name,
             description,
@@ -115,11 +115,11 @@ export async function POST(request: NextRequest) {
     const marketplace = getContract('AgentMarketplace');
     const nft = getContract('AgentNFT');
 
-    const listing = await marketplace.call('get_listing', [CONTRACTS.addresses.AgentNFT, tokenId]);
+    const listing: any = await marketplace.call('get_listing', [CONTRACTS.addresses.AgentNFT, tokenId]);
 
     const price = String(listing.price || listing[1] || '0');
-    const seller = String(listing.seller || listing[2] || '');
-    const isActive = Boolean(listing.is_active ?? listing[3] ?? false);
+    const seller = String(listing.seller || listing[0] || '');
+    const isActive = Boolean(listing.is_active ?? listing[2] ?? false);
 
     let name = `Agent #${tokenId}`;
     let imageUrl: string | undefined;
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     let attributes: any[] = [];
 
     try {
-      const tokenUri = await nft.call('token_uri', [tokenId, 0]);
+      const tokenUri = await nft.call('token_uri', [tokenId]);
       const ipfsData = await fetchAgentMetadataFromIPFS(String(tokenUri));
       if (ipfsData) {
         name = ipfsData.name || name;
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
       listing: {
         tokenId: Number(tokenId),
         price,
-        priceFormatted: formatSTRK(price),
+        priceFormatted: formatSTRK(BigInt(price)),
         seller,
         isActive,
         name,

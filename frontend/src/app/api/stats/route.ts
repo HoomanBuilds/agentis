@@ -22,8 +22,7 @@ export async function GET() {
 
     let totalListings = 0, totalSales = 0, totalVolume = '0';
     if (statsResult.status === 'fulfilled') {
-      const r = statsResult.value;
-      // Result may be a struct or array depending on ABI
+      const r: any = statsResult.value;
       if (typeof r === 'object' && r !== null) {
         totalListings = Number(r.total_listings || r[0] || 0);
         totalSales = Number(r.total_sales || r[1] || 0);

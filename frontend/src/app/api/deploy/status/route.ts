@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const provider = getProvider();
     const receipt = await provider.getTransactionReceipt(hash);
 
-    const status = receipt.execution_status;
+    const status = 'execution_status' in receipt ? (receipt as any).execution_status : undefined;
     const success = status === 'SUCCEEDED';
     const failed = status === 'REVERTED';
     const pending = !success && !failed;
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       execution_status: status,
       explorerUrl: getTxExplorerUrl(hash),
       ...(failed && 'revert_reason' in receipt
-        ? { revert_reason: (receipt as Record<string, unknown>).revert_reason }
+        ? { revert_reason: (receipt as unknown as Record<string, unknown>).revert_reason }
         : {}),
     });
   } catch (error: unknown) {

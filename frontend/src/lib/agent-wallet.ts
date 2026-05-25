@@ -8,6 +8,7 @@ import { RpcProvider, Contract } from 'starknet';
 import { CONTRACTS } from '@/constants/contracts';
 import RevenueShareAbi from '@/constants/abis/RevenueShare.json';
 import { formatSTRK } from './starknet-client';
+import { executeBackendCall } from './backend-wallet';
 
 function getProvider(): RpcProvider {
   return new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl });
@@ -63,4 +64,27 @@ export async function getAgentWalletInfo(tokenId: number): Promise<{
   const address = await getAgentWalletAddress(tokenId);
   const balance = await getAgentBalance(tokenId);
   return { address, balance };
+}
+
+/** Alias for getAgentWalletAddress */
+export const getAgentWalletPublicKey = getAgentWalletAddress;
+
+/**
+ * Purchase credits on behalf of an agent using the backend wallet.
+ * Used for auto-pay when agent owner chats with their own agent.
+ */
+export async function agentPurchaseCredits(
+  agentId: number,
+  amount: number
+): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
+  try {
+    const result = await executeBackendCall(
+      CONTRACTS.addresses.AgentCredits,
+      'purchase_credits',
+      [amount]
+    );
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to purchase credits' };
+  }
 }

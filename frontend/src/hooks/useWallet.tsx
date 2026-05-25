@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
-import { connect as starknetConnect, disconnect as starknetDisconnect } from 'get-starknet-core';
+import { getStarknet } from '@starknet-io/get-starknet-core';
 import { AccountInterface, RpcProvider, Contract } from 'starknet';
 import { CONTRACTS, TOKEN_DECIMALS } from '@/constants/contracts';
 import { formatSTRK } from '@/lib/starknet-client';
@@ -47,12 +47,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const tryReconnect = async () => {
       try {
-        const starknet = await starknetConnect({ modalMode: 'neverAsk' });
-        if (starknet && starknet.isConnected && starknet.account) {
-          const addr = starknet.selectedAddress || starknet.account.address;
+        const sn = getStarknet();
+        const lastWallet: any = await sn.getLastConnectedWallet();
+        if (lastWallet && lastWallet.isConnected && lastWallet.account) {
+          const addr = lastWallet.selectedAddress || lastWallet.account.address;
           if (addr) {
             setActiveKey(addr);
-            setAccount(starknet.account as unknown as AccountInterface);
+            setAccount(lastWallet.account as unknown as AccountInterface);
             await fetchBalance(addr);
           }
         }
@@ -68,20 +69,21 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const starknet = await starknetConnect({ modalMode: 'alwaysAsk', modalTheme: 'dark' });
+      const sn = getStarknet();
+      const availableWallets = await sn.getAvailableWallets();
 
-      if (!starknet) {
+      if (!availableWallets.length) {
         setError('No Starknet wallet found. Please install ArgentX or Braavos.');
         return false;
       }
 
-      await starknet.enable({ starknetVersion: 'v5' } as any);
+      const wallet: any = await sn.enable(availableWallets[0], { starknetVersion: 'v5' } as any);
 
-      if (starknet.isConnected && starknet.account) {
-        const addr = starknet.selectedAddress || starknet.account.address;
+      if (wallet && wallet.isConnected && wallet.account) {
+        const addr = wallet.selectedAddress || wallet.account.address;
         if (addr) {
           setActiveKey(addr);
-          setAccount(starknet.account as unknown as AccountInterface);
+          setAccount(wallet.account as unknown as AccountInterface);
           await fetchBalance(addr);
           return true;
         }
@@ -100,7 +102,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const disconnect = useCallback(async () => {
     try {
-      await starknetDisconnect({ clearLastWallet: true });
+      const sn = getStarknet();
+      await sn.disconnect();
     } catch (err) {
       console.error('Disconnect error:', err);
     }

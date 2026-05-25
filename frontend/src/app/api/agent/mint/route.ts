@@ -31,15 +31,22 @@ export async function POST(request: NextRequest) {
     console.log('Next token ID:', tokenId);
 
     // Mint via backend account
-    const txHash = await executeBackendCall(
+    const mintResult = await executeBackendCall(
       CONTRACTS.addresses.AgentNFT,
       'mint_agent',
       [name.trim(), tokenUri, personalityHash]
     );
-    console.log('Mint tx submitted:', txHash);
+
+    if (!mintResult.success || !mintResult.transactionHash) {
+      return NextResponse.json(
+        { error: mintResult.error || 'Mint transaction failed' },
+        { status: 500 }
+      );
+    }
+    console.log('Mint tx submitted:', mintResult.transactionHash);
 
     // Wait for confirmation
-    await waitForTx(txHash);
+    await waitForTx(mintResult.transactionHash);
     console.log('Mint confirmed, transferring to user...');
 
     // Transfer NFT to recipient
@@ -48,9 +55,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      transactionHash: txHash,
+      transactionHash: mintResult.transactionHash,
       tokenId,
-      explorerUrl: getTxExplorerUrl(txHash),
+      explorerUrl: getTxExplorerUrl(mintResult.transactionHash),
     });
   } catch (error) {
     console.error('Backend mint error:', error);

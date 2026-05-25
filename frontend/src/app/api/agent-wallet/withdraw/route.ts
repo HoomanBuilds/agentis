@@ -14,9 +14,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing ownerAddress' }, { status: 400 });
     }
 
-    // Verify ownership (u256 represented as [low, high])
     const nft = getContract('AgentNFT');
-    const owner = await nft.call('owner_of', [tokenId, 0]);
+    const owner = await nft.call('owner_of', [tokenId]);
 
     if (String(owner).toLowerCase() !== ownerAddress.toLowerCase()) {
       return NextResponse.json(
@@ -26,18 +25,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Withdraw earnings via backend account
-    const txHash = await executeBackendCall(
+    const result = await executeBackendCall(
       CONTRACTS.addresses.RevenueShare,
       'withdraw_agent_earnings',
       [tokenId, ownerAddress]
     );
 
-    await waitForTx(txHash);
+    if (!result.success || !result.transactionHash) {
+      return NextResponse.json(
+        { error: result.error || 'Withdrawal transaction failed' },
+        { status: 500 }
+      );
+    }
+
+    await waitForTx(result.transactionHash);
 
     return NextResponse.json({
       success: true,
-      transactionHash: txHash,
-      explorerUrl: getTxExplorerUrl(txHash),
+      transactionHash: result.transactionHash,
+      explorerUrl: getTxExplorerUrl(result.transactionHash),
       message: `STRK withdrawal initiated for agent ${tokenId}`,
     });
   } catch (error: any) {

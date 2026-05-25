@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getContract } from '@/lib/starknet-client';
+import { getContract, formatSTRK } from '@/lib/starknet-client';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
       success: true,
       creators: creators.map((creator: any, index: number) => ({
         rank: index + 1,
-        address: String(creator.address || creator[0] || ''),
-        agentCount: Number(creator.agent_count || creator[1] || 0),
-        totalRevenue: String(creator.total_revenue || creator[2] || '0'),
+        address: String(creator[0] || ''),
+        agentCount: Number(creator[1] || 0),
+        totalRevenue: String(creator[2] || '0'),
       })),
     });
   } catch (error: any) {

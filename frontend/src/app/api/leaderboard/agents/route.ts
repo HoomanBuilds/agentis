@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
       success: true,
       agents: agents.map((agent: any, index: number) => ({
         rank: index + 1,
-        tokenId: Number(agent.token_id || agent[0] || 0),
-        name: String(agent.name || agent[1] || ''),
-        chatCount: Number(agent.chat_count || agent[2] || 0),
+        tokenId: Number(agent[0] || 0),
+        name: String(agent[1] || ''),
+        chatCount: Number(agent[2] || 0),
       })),
     });
   } catch (error: any) {

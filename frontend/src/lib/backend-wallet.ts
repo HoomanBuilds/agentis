@@ -52,7 +52,7 @@ export function getBackendAddress(): string {
 export async function executeBackendCall(
   contractAddress: string,
   entrypoint: string,
-  calldata: unknown[]
+  calldata: any[]
 ): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
   try {
     const account = getBackendAccount();
@@ -78,7 +78,7 @@ export async function executeBackendCall(
  * Execute a multicall (multiple contract calls in one tx) using the backend account
  */
 export async function executeBackendMulticall(
-  calls: Array<{ contractAddress: string; entrypoint: string; calldata: unknown[] }>
+  calls: Array<{ contractAddress: string; entrypoint: string; calldata: any[] }>
 ): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
   try {
     const account = getBackendAccount();
@@ -231,6 +231,6 @@ export async function transferNFTToUser(
   return executeBackendCall(
     CONTRACTS.addresses.AgentNFT,
     'transfer_from',
-    [fromAddress, toAddress, tokenId, 0] // u256 is (low, high)
+    [fromAddress, toAddress, tokenId]
   );
 }
