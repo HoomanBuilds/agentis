@@ -336,9 +336,9 @@ export default function ChatPage() {
       <Layout>
         <div className="flex items-center justify-center h-[60vh]">
           <div className="text-center">
-            <Bot className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">Connect Your Wallet</h2>
-            <p className="text-gray-400">Please connect your wallet to chat with AI agents</p>
+            <Bot className="w-16 h-16 text-muted-foreground/60 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-foreground mb-2">Connect Your Wallet</h2>
+            <p className="text-muted-foreground">Please connect your wallet to chat with AI agents</p>
           </div>
         </div>
       </Layout>
@@ -354,14 +354,14 @@ export default function ChatPage() {
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 flex items-center justify-center">
               <Lock className="w-10 h-10 text-red-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-3">Private Agent</h2>
-            <p className="text-gray-400 mb-6">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Private Agent</h2>
+            <p className="text-muted-foreground mb-6">
               This agent is private and can only be accessed by its owner. 
               Contact the owner to request access or browse public agents.
             </p>
             <Link
               href="/marketplace"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 rounded-xl font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary/20 text-primary hover:bg-primary/30 rounded-xl font-medium transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               Browse Public Agents
@@ -373,8 +373,8 @@ export default function ChatPage() {
   }
 
   return (
-    <Layout>
-      <div className="flex h-[calc(100vh-80px)]">
+    <Layout hideFooter>
+      <div className="flex h-[calc(100vh-88px)]">
         {/* Left: Agent Icon Bar */}
         <AgentIconBar
           agents={myAgents}
@@ -402,7 +402,7 @@ export default function ChatPage() {
         )}
 
         {/* Right: Chat Area */}
-        <div className="flex-1 flex flex-col bg-black/10 relative">
+        <div className="flex-1 flex flex-col bg-background relative">
           {/* Session History Slider */}
           <ChatHistorySlider
             isOpen={isSliderOpen}
@@ -417,18 +417,18 @@ export default function ChatPage() {
           {selectedAgent ? (
             <>
               {/* Chat Header with hamburger and credits */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setIsSliderOpen(true)}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-muted rounded-lg transition-colors"
                     title="Chat History"
                   >
-                    <Menu className="w-5 h-5 text-gray-400" />
+                    <Menu className="w-5 h-5 text-muted-foreground" />
                   </button>
                   <div>
-                    <h2 className="font-semibold text-white">{selectedAgent.name}</h2>
-                    <p className="text-xs text-gray-400">
+                    <h2 className="font-semibold text-foreground">{selectedAgent.name}</h2>
+                    <p className="text-xs text-muted-foreground">
                       {isOwner ? 'Your Agent' : 'Session Chat'}
                     </p>
                   </div>
@@ -442,7 +442,7 @@ export default function ChatPage() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 flex flex-col overflow-hidden">
                 <ChatMessages
                   messages={messages}
                   agentName={selectedAgent.name}
@@ -464,9 +464,9 @@ export default function ChatPage() {
           ) : (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <Bot className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-white mb-2">Select an Agent</h2>
-                <p className="text-gray-400">Choose an agent from the left to start chatting</p>
+                <Bot className="w-16 h-16 text-muted-foreground/60 mx-auto mb-4" />
+                <h2 className="text-xl font-semibold text-foreground mb-2">Select an Agent</h2>
+                <p className="text-muted-foreground">Choose an agent from the left to start chatting</p>
               </div>
             </div>
           )}

@@ -12,7 +12,7 @@ import { useAgentMarketplace } from '@/hooks/useAgentMarketplace';
 import { useAgentFullData, useAgentVisibility, useOwnedAgents } from '@/hooks/queries/useAgentQueries';
 import { useListing } from '@/hooks/queries/useMarketplaceQueries';
 import { useWallet } from '@/hooks/useWallet';
-import { 
+import {
   Bot, ArrowLeft, MessageCircle, User, Calendar, Tag, ShoppingCart, Loader2, Globe, Lock, Wallet, Copy
 } from 'lucide-react';
 
@@ -255,12 +255,12 @@ export default function AgentDetailsPage() {
     return (
       <Layout>
         <div className="min-h-[80vh] flex flex-col items-center justify-center px-4">
-          <Bot className="w-16 h-16 text-gray-500 mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Agent Not Found</h2>
-          <p className="text-gray-400 mb-6">{error || 'This agent does not exist.'}</p>
+          <Bot className="w-16 h-16 text-muted-foreground/60 mb-4" />
+          <h2 className="text-xl font-semibold text-foreground mb-2">Agent Not Found</h2>
+          <p className="text-muted-foreground mb-6">{error || 'This agent does not exist.'}</p>
           <Link 
             href="/profile"
-            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors"
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-colors"
           >
             Back to Profile
           </Link>
@@ -273,29 +273,23 @@ export default function AgentDetailsPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen relative overflow-hidden py-8">
-        {/* Background Effects */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[150px]" />
-          <div className="absolute top-1/2 -left-40 w-[400px] h-[400px] bg-lime-500/10 rounded-full blur-[120px]" />
-        </div>
-
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="py-16 sm:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Back Button */}
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors group"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors group"
           >
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             <span>Back</span>
           </button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            {/* Left Column - Image & Actions (2 cols) */}
-            <AnimatedSection animation="fadeInLeft" className="lg:col-span-2 space-y-6">
+          <div className="grid lg:grid-cols-[360px_1fr] gap-8">
+            {/* Left Column - Image & Actions */}
+            <AnimatedSection animation="fadeInLeft" className="space-y-6">
               {/* Image Card */}
-              <div className="bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-emerald-500/20">
-                <div className="w-full aspect-square bg-gradient-to-br from-emerald-500/20 to-lime-500/20 rounded-xl mb-4 flex items-center justify-center border border-emerald-500/30 overflow-hidden relative">
+              <div className="bg-card border border-border rounded-2xl p-6 h-fit">
+                <div className="w-full aspect-square bg-secondary rounded-xl mb-4 flex items-center justify-center border border-primary/30 overflow-hidden relative">
                   {imageUrl ? (
                     <img 
                       src={imageUrl} 
@@ -303,12 +297,12 @@ export default function AgentDetailsPage() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <Bot className="w-24 h-24 text-emerald-300/50" />
+                    <Bot className="w-24 h-24 text-primary/50" />
                   )}
                   
                   {/* Listed Badge */}
                   {isListed && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-emerald-500 text-white text-sm font-medium rounded-full flex items-center gap-1 shadow-lg">
+                    <div className="absolute top-4 right-4 px-3 py-1 bg-primary text-primary-foreground text-sm font-medium rounded-full flex items-center gap-1 shadow-lg">
                       <Tag className="w-4 h-4" />
                       For Sale
                     </div>
@@ -317,17 +311,17 @@ export default function AgentDetailsPage() {
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="bg-white/5 p-3 rounded-lg text-center border border-emerald-500/10">
-                    <div className="text-xs text-emerald-200/60 mb-1">Level</div>
-                    <div className="text-lg font-bold text-emerald-300">{metadata.level.toString()}</div>
+                  <div className="bg-card p-3 rounded-lg text-center border border-primary/10">
+                    <div className="text-xs text-muted-foreground mb-1">Level</div>
+                    <div className="text-lg font-bold text-primary">{metadata.level.toString()}</div>
                   </div>
-                  <div className="bg-white/5 p-3 rounded-lg text-center border border-emerald-500/10">
-                    <div className="text-xs text-emerald-200/60 mb-1">Chats</div>
-                    <div className="text-lg font-bold text-emerald-300">{metadata.chat_count.toString()}</div>
+                  <div className="bg-card p-3 rounded-lg text-center border border-primary/10">
+                    <div className="text-xs text-muted-foreground mb-1">Chats</div>
+                    <div className="text-lg font-bold text-primary">{metadata.chat_count.toString()}</div>
                   </div>
-                  <div className="bg-white/5 p-3 rounded-lg text-center border border-emerald-500/10">
-                    <div className="text-xs text-emerald-200/60 mb-1">ID</div>
-                    <div className="text-lg font-bold text-emerald-300">#{tokenId}</div>
+                  <div className="bg-card p-3 rounded-lg text-center border border-primary/10">
+                    <div className="text-xs text-muted-foreground mb-1">ID</div>
+                    <div className="text-lg font-bold text-primary">#{tokenId}</div>
                   </div>
                 </div>
               </div>
@@ -335,7 +329,7 @@ export default function AgentDetailsPage() {
               {/* Chat Button - Primary Action */}
               <button
                 onClick={() => router.push(`/agent/${tokenId}/chat`)}
-                className="w-full py-4 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-400 hover:to-lime-400 text-black font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-emerald-500/25 transform hover:scale-[1.02]"
+                className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-all duration-300 shadow-[0_0_20px_oklch(0.92_0.16_125_/_0.3)]"
               >
                 <MessageCircle className="w-5 h-5" />
                 Chat with Agent
@@ -343,15 +337,15 @@ export default function AgentDetailsPage() {
 
               {/* Marketplace Actions */}
               {isListed ? (
-                <div className="bg-white/5 backdrop-blur-xl p-6 rounded-xl border border-emerald-500/30">
+                <div className="bg-card p-6 rounded-xl border border-primary/30">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <div className="text-sm text-emerald-200/60 mb-1">Current Price</div>
-                      <div className="text-2xl font-bold text-emerald-300">
+                      <div className="text-sm text-muted-foreground mb-1">Current Price</div>
+                      <div className="text-2xl font-bold text-primary">
                         {listing ? formatPrice(BigInt(listing.price)) : '0'} STRK
                       </div>
                     </div>
-                    <div className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-sm rounded-full border border-emerald-500/20">
+                    <div className="px-3 py-1 bg-primary/20 text-primary text-sm rounded-full border border-border">
                       Listed
                     </div>
                   </div>
@@ -360,20 +354,20 @@ export default function AgentDetailsPage() {
                     <button 
                       onClick={handleCancelListing}
                       disabled={isCancelling || marketplaceLoading}
-                      className="w-full py-4 bg-red-500/10 border border-red-500/20 text-red-400 font-bold rounded-xl hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-destructive/10 border border-destructive/20 text-destructive font-bold rounded-xl hover:bg-destructive/20 transition-all flex items-center justify-center gap-2"
                     >
                       {isCancelling ? <Loader2 className="w-5 h-5 animate-spin" /> : "Cancel Listing"}
                     </button>
                   ) : activeKey ? (
                     <button 
                       onClick={() => setShowBuyModal(true)}
-                      className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-5 h-5" />
                       Buy Now
                     </button>
                   ) : (
-                    <div className="text-center text-sm text-gray-400 py-2">
+                    <div className="text-center text-sm text-muted-foreground py-2">
                       Connect wallet to buy
                     </div>
                   )}
@@ -381,7 +375,7 @@ export default function AgentDetailsPage() {
               ) : isOwner ? (
                 <button 
                   onClick={() => setShowListModal(true)}
-                  className="w-full py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-card border border-border text-foreground font-bold rounded-xl hover:bg-secondary transition-all flex items-center justify-center gap-2"
                 >
                   <Tag className="w-5 h-5" />
                   List for Sale
@@ -389,35 +383,35 @@ export default function AgentDetailsPage() {
               ) : null}
             </AnimatedSection>
 
-            {/* Right Column - Info & Details (3 cols) */}
-            <AnimatedSection animation="fadeInRight" delay={0.1} className="lg:col-span-3 space-y-6">
+            {/* Right Column - Info & Details */}
+            <AnimatedSection animation="fadeInRight" delay={0.1} className="space-y-6">
               {/* Header */}
               <div>
-                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 break-words">
+                <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2 break-words">
                   {ipfsData?.name || metadata.name}
                 </h1>
-                <p className="text-emerald-200/70 text-lg">AI Agent NFT</p>
+                <p className="text-muted-foreground text-lg">AI Agent NFT</p>
               </div>
 
               {/* Agent Wallet */}
-              <div className="bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-emerald-500/20">
+              <div className="bg-card p-6 rounded-2xl border border-border">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-emerald-200 flex items-center gap-2">
-                    <Wallet className="w-5 h-5 text-emerald-400" />
+                  <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-primary" />
                     Agent Wallet
                   </h3>
                   {agentWalletBalance && (
                     <div className="text-sm">
-                      <span className="text-emerald-200/60">Balance: </span>
-                      <span className="text-emerald-300 font-bold">{agentWalletBalance} STRK</span>
+                      <span className="text-muted-foreground">Balance: </span>
+                      <span className="text-primary font-bold">{agentWalletBalance} STRK</span>
                     </div>
                   )}
                 </div>
                 
                 {agentWalletAddress ? (
                   <div className="space-y-4">
-                    <div className="p-3 bg-black/40 rounded-lg border border-emerald-500/20 flex items-center justify-between group">
-                      <code className="text-sm text-emerald-400/80 font-mono truncate mr-4 flex-1 min-w-0">
+                    <div className="p-3 bg-background/70 rounded-lg border border-border flex items-center justify-between group">
+                      <code className="text-sm text-primary/80 font-mono truncate mr-4 flex-1 min-w-0">
                         {agentWalletAddress}
                       </code>
                       <button
@@ -426,13 +420,13 @@ export default function AgentDetailsPage() {
                           setCopyToast(true);
                           setTimeout(() => setCopyToast(false), 2000);
                         }}
-                        className="p-1.5 hover:bg-emerald-500/20 rounded-md text-emerald-500/60 hover:text-emerald-400 transition-colors"
+                        className="p-1.5 hover:bg-primary/20 rounded-md text-primary/60 hover:text-primary transition-colors"
                         title="Copy Address"
                       >
                         <Copy className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-xs text-emerald-200/40">
+                    <p className="text-xs text-muted-foreground/40">
                       This wallet receives revenue from chats and holds funds for auto-payments.
                     </p>
 
@@ -441,7 +435,7 @@ export default function AgentDetailsPage() {
                       <button
                         onClick={handleWithdraw}
                         disabled={isWithdrawing}
-                        className="w-full py-3 bg-gradient-to-r from-emerald-500/20 to-lime-500/20 hover:from-emerald-500/30 hover:to-lime-500/30 border border-emerald-500/30 text-emerald-300 font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isWithdrawing ? (
                           <>
@@ -458,30 +452,30 @@ export default function AgentDetailsPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-400 italic">
+                  <div className="text-sm text-muted-foreground italic">
                     Wallet address not available
                   </div>
                 )}
               </div>
 
               {/* Details Panel */}
-              <div className="bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-emerald-500/20">
-                <h2 className="text-xl font-bold text-emerald-200 mb-4">Details</h2>
+              <div className="bg-card p-6 rounded-2xl border border-border">
+                <h2 className="text-xl font-bold text-foreground mb-4">Details</h2>
                 <div className="space-y-4">
                   {/* Visibility Toggle */}
                   {isOwner && (
-                    <div className="flex items-center justify-between p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20 mb-4">
+                    <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg border border-border mb-4">
                       <div className="flex items-center gap-2">
                         {isPublic ? (
-                          <Globe className="w-5 h-5 text-emerald-400" />
+                          <Globe className="w-5 h-5 text-primary" />
                         ) : (
                           <Lock className="w-5 h-5 text-amber-400" />
                         )}
                         <div>
-                          <div className="text-sm font-medium text-emerald-200">
+                          <div className="text-sm font-medium text-foreground">
                             {isPublic ? "Public Chat" : "Private Chat"}
                           </div>
-                          <div className="text-xs text-emerald-200/60">
+                          <div className="text-xs text-muted-foreground">
                             {isTogglingVisibility ? "Updating..." : isPublic ? "Anyone can chat" : "Only you can chat"}
                           </div>
                         </div>
@@ -491,7 +485,7 @@ export default function AgentDetailsPage() {
                         onClick={handleToggleVisibility}
                         disabled={isTogglingVisibility || nftLoading}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                          isPublic ? "bg-emerald-500" : "bg-gray-600"
+                          isPublic ? "bg-primary" : "bg-muted"
                         } ${isTogglingVisibility ? "opacity-50" : ""}`}
                       >
                         <span className={`${isPublic ? "translate-x-6" : "translate-x-1"} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`} />
@@ -500,40 +494,40 @@ export default function AgentDetailsPage() {
                   )}
 
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                      <User className="w-5 h-5 text-emerald-400" />
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <User className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs text-emerald-200/60 mb-0.5">Creator</div>
-                      <div className="text-emerald-200 font-mono text-sm truncate flex items-center">
+                      <div className="text-xs text-muted-foreground mb-0.5">Creator</div>
+                      <div className="text-foreground font-mono text-sm truncate flex items-center">
                         {formatCreator(metadata.creator)}
                         {metadata.creator === activeKey && (
-                          <span className="ml-2 px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-xs rounded">You</span>
+                          <span className="ml-2 px-2 py-0.5 bg-primary/20 text-primary text-xs rounded">You</span>
                         )}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                      <Calendar className="w-5 h-5 text-emerald-400" />
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Calendar className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-xs text-emerald-200/60 mb-0.5">Created</div>
-                      <div className="text-emerald-200 text-sm">{formatDate(metadata.created_at)}</div>
+                      <div className="text-xs text-muted-foreground mb-0.5">Created</div>
+                      <div className="text-foreground text-sm">{formatDate(metadata.created_at)}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Description & Traits */}
-              <div className="bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-emerald-500/20">
-                <h2 className="text-xl font-bold text-emerald-200 mb-4">Personality</h2>
+              <div className="bg-card p-6 rounded-2xl border border-border">
+                <h2 className="text-xl font-bold text-foreground mb-4">Personality</h2>
                 
                 {ipfsData?.description && (
                   <div className="mb-6">
-                    <div className="text-xs text-emerald-200/60 mb-2">Backstory</div>
-                    <div className="text-sm text-emerald-100/80 bg-black/20 p-4 rounded-xl border border-emerald-500/10 leading-relaxed">
+                    <div className="text-xs text-muted-foreground mb-2">Backstory</div>
+                    <div className="text-sm text-foreground/80 bg-background/50 p-4 rounded-xl border border-primary/10 leading-relaxed">
                       {ipfsData.description}
                     </div>
                   </div>
@@ -541,13 +535,13 @@ export default function AgentDetailsPage() {
 
                 {ipfsData?.traits && ipfsData.traits.length > 0 && (
                   <div>
-                    <div className="text-xs text-emerald-200/60 mb-2">Traits</div>
+                    <div className="text-xs text-muted-foreground mb-2">Traits</div>
                     <div className="flex flex-wrap gap-2">
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {ipfsData.traits.map((trait: any, index: number) => (
                         <span 
                           key={index}
-                          className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm rounded-full capitalize"
+                          className="px-3 py-1 bg-primary/10 border border-border text-primary text-sm rounded-full capitalize"
                         >
                           {typeof trait === 'string' ? trait : trait.value}
                         </span>
@@ -556,9 +550,9 @@ export default function AgentDetailsPage() {
                   </div>
                 )}
                 
-                <div className="mt-6 pt-4 border-t border-emerald-500/10">
-                  <div className="text-xs text-emerald-200/60 mb-2">Personality Hash</div>
-                  <div className="text-xs text-emerald-200/50 font-mono break-all bg-black/20 p-2 rounded-lg">
+                <div className="mt-6 pt-4 border-t border-primary/10">
+                  <div className="text-xs text-muted-foreground mb-2">Personality Hash</div>
+                  <div className="text-xs text-muted-foreground/60 font-mono break-all bg-background/50 p-2 rounded-lg">
                     {metadata.personality_hash}
                   </div>
                 </div>
@@ -600,7 +594,7 @@ export default function AgentDetailsPage() {
 
       {/* Copy Toast Notification */}
       {copyToast && (
-        <div className="fixed bottom-4 right-4 z-50 bg-gradient-to-r from-emerald-500 to-lime-500 text-black font-medium px-4 py-2 rounded-xl shadow-lg animate-pulse">
+        <div className="fixed bottom-4 right-4 z-50 bg-primary text-primary-foreground font-medium px-4 py-2 rounded-xl shadow-lg animate-pulse">
           ✓ Address copied!
         </div>
       )}
