@@ -13,7 +13,7 @@ const navLinks = [
   { href: '/agents', label: 'Agents' },
 ];
 
-export default function Header() {
+export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
