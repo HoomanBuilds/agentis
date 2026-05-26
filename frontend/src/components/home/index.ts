@@ -1,5 +1,8 @@
 export { HeroSection } from './HeroSection';
-export { TopCreators } from './TopCreators';
-export { TopAgents } from './TopAgents';
-export { AgentGrid } from './AgentGrid';
-export { CTASection } from './CTASection';
+export { DemoCards } from './DemoCards';
+export { HowItWorks } from './HowItWorks';
+export { AgentMarquee } from './AgentMarquee';
+export { StatsSection } from './StatsSection';
+export { PricingSection } from './PricingSection';
+export { FAQSection } from './FAQSection';
+export { FinalCTA } from './FinalCTA';
