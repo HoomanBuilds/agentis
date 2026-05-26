@@ -22,7 +22,7 @@
   --accent: oklch(0.92 0.16 125);
   --accent-foreground: oklch(0.08 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
   /* Border matches #262626 */
   --border: oklch(0.2 0 0);
   --input: oklch(0.14 0 0);
@@ -44,9 +44,8 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
-  --font-serif: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --font-sans: var(--font-geist-sans), "Geist", "Geist Fallback";
+  --font-mono: var(--font-geist-mono), "Geist Mono", "Geist Mono Fallback";
   /* Updated to PT Mono font for logo */
   --font-logo: var(--font-pt-mono), "PT Mono", monospace;
   --color-background: var(--background);
