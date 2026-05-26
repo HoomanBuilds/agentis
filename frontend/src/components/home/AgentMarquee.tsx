@@ -59,7 +59,7 @@ export function AgentMarquee() {
     : Array.from({ length: 16 }, (_, i) => ({
         id: i + 1,
         name: `Agent #${i + 1}`,
-        level: Math.floor(Math.random() * 20) + 1,
+        level: (i % 20) + 1,
       }))
 
   const row1 = displayAgents
