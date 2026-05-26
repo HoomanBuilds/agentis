@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useWallet } from './useWallet';
 import { Contract, CallData, uint256 } from 'starknet';
 import { CONTRACTS, DEFAULT_MINTING_FEE } from '@/constants/contracts';
-import { getTxExplorerUrl, formatSTRK } from '@/lib/starknet-client';
+import { getTxExplorerUrl, getProvider } from '@/lib/starknet-client';
 import AgentNFTAbi from '@/constants/abis/AgentNFT.json';
 
 export interface TransactionResult {
@@ -52,73 +52,38 @@ export function useAgentNFT() {
     setError(null);
 
     try {
-      // Step 1: Approve STRK spend for minting fee
-      const MINTING_FEE = BigInt('120000000000000000000'); // 120 STRK
-      console.log('Step 1: Approving STRK spend for minting fee...');
+      // Use contract.populate() so starknet.js handles ByteArray encoding automatically
+      const nftContract = new Contract(AgentNFTAbi, CONTRACTS.addresses.AgentNFT, getProvider());
+      const mintCall = nftContract.populate('mint_agent', [name, tokenUri, personalityHash]);
 
-      const approveResult = await account.execute({
-        contractAddress: CONTRACTS.addresses.STRK,
-        entrypoint: 'approve',
-        calldata: CallData.compile([
-          CONTRACTS.OWNER_ADDRESS,
-          uint256.bnToUint256(MINTING_FEE),
-        ]),
-      });
+      // Multicall: approve AgentNFT to spend minting fee, then mint in one tx
+      const result = await account.execute([
+        {
+          contractAddress: CONTRACTS.addresses.STRK,
+          entrypoint: 'approve',
+          calldata: CallData.compile([
+            CONTRACTS.addresses.AgentNFT,
+            uint256.bnToUint256(DEFAULT_MINTING_FEE),
+          ]),
+        },
+        mintCall,
+      ]);
 
-      console.log('Approval submitted:', approveResult.transaction_hash);
-
-      // Step 2: Wait for approval confirmation
-      console.log('Step 2: Waiting for approval...');
-      const paymentConfirmed = await waitForTxSuccess(approveResult.transaction_hash);
-      if (!paymentConfirmed) {
-        throw new Error('STRK approval failed or timed out');
+      const txHash = result.transaction_hash;
+      const confirmed = await waitForTxSuccess(txHash);
+      if (!confirmed) {
+        throw new Error('Minting transaction failed or timed out');
       }
 
-      // Step 3: Transfer STRK to owner
-      console.log('Step 3: Transferring STRK...');
-      const transferResult = await account.execute({
-        contractAddress: CONTRACTS.addresses.STRK,
-        entrypoint: 'transfer',
-        calldata: CallData.compile([
-          CONTRACTS.OWNER_ADDRESS,
-          uint256.bnToUint256(MINTING_FEE),
-        ]),
-      });
+      setTimeout(() => refreshBalance(), 3000);
 
-      const transferConfirmed = await waitForTxSuccess(transferResult.transaction_hash);
-      if (!transferConfirmed) {
-        throw new Error('STRK transfer failed or timed out');
-      }
-
-      // Step 4: Call mint API with payment proof
-      console.log('Step 4: Minting agent via backend API...');
-      const response = await fetch('/api/agent/mint', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          tokenUri,
-          personalityHash,
-          recipientAddress: activeKey,
-          paymentTxHash: transferResult.transaction_hash,
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Failed to mint agent');
-      }
-
-      console.log('Mint + transfer complete! Token ID:', data.tokenId);
-      setTimeout(() => refreshBalance(), 5000);
-
-      const result: TransactionResult = {
-        transactionHash: data.transactionHash || data.deployHash,
+      const txResult: TransactionResult = {
+        transactionHash: txHash,
         success: true,
-        explorerUrl: data.explorerUrl,
+        explorerUrl: getTxExplorerUrl(txHash),
       };
-      setLastResult(result);
-      return result;
+      setLastResult(txResult);
+      return txResult;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
