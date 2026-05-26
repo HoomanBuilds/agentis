@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Coins, Wallet, Loader2 } from 'lucide-react';
+import { CONTRACTS } from '@/constants/contracts';
 
 interface FloatingCreditsProps {
   agentId: number;
@@ -65,7 +66,7 @@ export default function FloatingCredits({
               entryPoint: 'get_session_credits',
               args: {
                 user: userPublicKey,
-                nft_contract: 'AgentNFT',
+                nft_contract: CONTRACTS.addresses.AgentNFT,
                 agent_id: agentId.toString(),
               },
             }),

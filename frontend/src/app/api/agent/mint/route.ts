@@ -25,10 +25,11 @@ export async function POST(request: NextRequest) {
     console.log('Token URI:', tokenUri.substring(0, 50) + '...');
     console.log('Recipient:', recipientAddress);
 
-    // Get next token ID
+    // Predict next token ID from current supply (tokens are 1-indexed)
     const nft = getContract('AgentNFT');
-    const tokenId = Number(await nft.call('get_next_token_id', []));
-    console.log('Next token ID:', tokenId);
+    const currentSupply = Number(await nft.call('get_total_supply', []));
+    const tokenId = currentSupply + 1;
+    console.log('Expected token ID:', tokenId);
 
     // Mint via backend account
     const mintResult = await executeBackendCall(

@@ -3,9 +3,6 @@ import { getContract, formatSTRK } from '@/lib/starknet-client';
 import { resolveIPFS } from '@/lib/pinata';
 import { CONTRACTS } from '@/constants/contracts';
 
-/**
- * Fetch agent metadata from IPFS
- */
 async function fetchAgentMetadataFromIPFS(tokenUri: string): Promise<{
   name: string;
   imageUrl?: string;
@@ -18,9 +15,7 @@ async function fetchAgentMetadataFromIPFS(tokenUri: string): Promise<{
       headers: { 'Accept': 'application/json' },
       next: { revalidate: 3600 },
     });
-
     if (!response.ok) return null;
-
     const metadata = await response.json();
     return {
       name: metadata.name || 'Unknown Agent',
@@ -28,75 +23,86 @@ async function fetchAgentMetadataFromIPFS(tokenUri: string): Promise<{
       description: metadata.description || '',
       attributes: metadata.attributes || [],
     };
-  } catch (error) {
-    console.error('Error fetching IPFS metadata:', error);
+  } catch {
     return null;
+  }
+}
+
+async function enrichWithIPFS(tokenId: number): Promise<{ name: string; imageUrl?: string; description: string; attributes: any[] }> {
+  const defaultMeta = { name: `Agent #${tokenId}`, imageUrl: undefined, description: '', attributes: [] };
+  try {
+    const nft = getContract('AgentNFT');
+    // get_agent_metadata returns anonymous tuple: (name, token_uri, personality_hash, created_at, creator, chat_count, level, is_public)
+    const meta = await nft.call('get_agent_metadata', [tokenId]);
+    const r = Array.isArray(meta) ? meta : Object.values(meta as object);
+    const tokenUri = String(r[1] ?? '');
+    if (!tokenUri) return defaultMeta;
+    const ipfsData = await fetchAgentMetadataFromIPFS(tokenUri);
+    if (!ipfsData) return defaultMeta;
+    return {
+      name: ipfsData.name || defaultMeta.name,
+      imageUrl: ipfsData.imageUrl,
+      description: ipfsData.description || '',
+      attributes: ipfsData.attributes || [],
+    };
+  } catch {
+    return defaultMeta;
   }
 }
 
 /**
  * GET /api/marketplace-listing
- * Get all active marketplace listings
+ * Enumerate active listings by iterating all minted tokens (get_all_active_listings doesn't exist in ABI)
  */
 export async function GET() {
   try {
-    const marketplace = getContract('AgentMarketplace');
     const nft = getContract('AgentNFT');
+    const marketplace = getContract('AgentMarketplace');
 
-    const activeListings = await marketplace.call('get_all_active_listings', []);
-    const listings = Array.isArray(activeListings) ? activeListings : [];
+    const totalSupplyRaw = await nft.call('get_total_supply', []);
+    const totalSupply = Number(totalSupplyRaw ?? 0);
 
-    const enriched = await Promise.all(
-      listings.map(async (listing: any) => {
-        try {
-          const tokenId = Number(listing.token_id || listing[1] || 0);
-          const seller = String(listing.seller || listing[2] || '');
-          const price = String(listing.price || listing[3] || '0');
+    if (totalSupply === 0) {
+      return NextResponse.json({ success: true, listings: [], count: 0 });
+    }
 
-          let name = `Agent #${tokenId}`;
-          let imageUrl: string | undefined;
-          let description = '';
-          let attributes: any[] = [];
+    const results = await Promise.allSettled(
+      Array.from({ length: totalSupply }, (_, i) => i + 1).map(async (tokenId) => {
+        const listing: any = await marketplace.call('get_listing', [CONTRACTS.addresses.AgentNFT, tokenId]);
+        const r = Array.isArray(listing) ? listing : Object.values(listing as object);
+        // tuple: (seller: ContractAddress, price: u128, is_active: bool, listed_at: u64)
+        const isActive = Boolean(r[2]);
+        if (!isActive) return null;
 
-          try {
-            const tokenUri = await nft.call('token_uri', [tokenId]);
-            const ipfsData = await fetchAgentMetadataFromIPFS(String(tokenUri));
-            if (ipfsData) {
-              name = ipfsData.name || name;
-              imageUrl = ipfsData.imageUrl;
-              description = ipfsData.description || '';
-              attributes = ipfsData.attributes || [];
-            }
-          } catch {}
+        const seller = String(r[0] ?? '');
+        const price = String(r[1] ?? '0');
+        const listedAt = Number(r[3] ?? 0);
 
-          return {
-            tokenId,
-            price,
-            priceFormatted: formatSTRK(BigInt(price)),
-            seller,
-            name,
-            description,
-            image: imageUrl || '',
-            attributes,
-            active: true,
-          };
-        } catch {
-          return null;
-        }
+        const ipfs = await enrichWithIPFS(tokenId);
+
+        return {
+          tokenId,
+          price,
+          priceFormatted: formatSTRK(BigInt(price)),
+          seller,
+          listedAt,
+          name: ipfs.name,
+          description: ipfs.description,
+          image: ipfs.imageUrl || '',
+          attributes: ipfs.attributes,
+          active: true,
+        };
       })
     );
 
-    return NextResponse.json({
-      success: true,
-      listings: enriched.filter(Boolean),
-      count: enriched.filter(Boolean).length,
-    });
+    const listings = results
+      .filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled' && r.value !== null)
+      .map(r => r.value);
+
+    return NextResponse.json({ success: true, listings, count: listings.length });
   } catch (error: any) {
     console.error('Error fetching marketplace listings:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to fetch marketplace listings' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
@@ -113,29 +119,16 @@ export async function POST(request: NextRequest) {
     }
 
     const marketplace = getContract('AgentMarketplace');
-    const nft = getContract('AgentNFT');
 
     const listing: any = await marketplace.call('get_listing', [CONTRACTS.addresses.AgentNFT, tokenId]);
+    const r = Array.isArray(listing) ? listing : Object.values(listing as object);
+    // tuple: (seller: ContractAddress, price: u128, is_active: bool, listed_at: u64)
+    const seller = String(r[0] ?? '');
+    const price = String(r[1] ?? '0');
+    const isActive = Boolean(r[2]);
+    const listedAt = Number(r[3] ?? 0);
 
-    const price = String(listing.price || listing[1] || '0');
-    const seller = String(listing.seller || listing[0] || '');
-    const isActive = Boolean(listing.is_active ?? listing[2] ?? false);
-
-    let name = `Agent #${tokenId}`;
-    let imageUrl: string | undefined;
-    let description = '';
-    let attributes: any[] = [];
-
-    try {
-      const tokenUri = await nft.call('token_uri', [tokenId]);
-      const ipfsData = await fetchAgentMetadataFromIPFS(String(tokenUri));
-      if (ipfsData) {
-        name = ipfsData.name || name;
-        imageUrl = ipfsData.imageUrl;
-        description = ipfsData.description || '';
-        attributes = ipfsData.attributes || [];
-      }
-    } catch {}
+    const ipfs = await enrichWithIPFS(Number(tokenId));
 
     return NextResponse.json({
       success: true,
@@ -144,18 +137,17 @@ export async function POST(request: NextRequest) {
         price,
         priceFormatted: formatSTRK(BigInt(price)),
         seller,
+        listedAt,
         isActive,
-        name,
-        description,
-        image: imageUrl || '',
-        attributes,
+        active: isActive,
+        name: ipfs.name,
+        description: ipfs.description,
+        image: ipfs.imageUrl || '',
+        attributes: ipfs.attributes,
       },
     });
   } catch (error: any) {
     console.error('Error fetching listing:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to fetch listing' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
