@@ -1,90 +1,150 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, Home, Plus, Store, User } from 'lucide-react';
-import { ConnectWalletButton } from '@/components';
+import { Menu, X, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 
-const navigation = [
-  { name: 'Home', href: '/', icon: Home },
-  { name: 'Agents', href: '/agents', icon: Bot },
-  { name: 'Create', href: '/create', icon: Plus },
-  { name: 'Marketplace', href: '/marketplace', icon: Store },
-  { name: 'My Agents', href: '/profile', icon: User },
+const navLinks = [
+  { href: '/marketplace', label: 'Marketplace' },
+  { href: '/create', label: 'Create' },
+  { href: '/agents', label: 'Agents' },
 ];
 
 export default function Header() {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   return (
-    <header className="glass-panel sticky top-0 z-50">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <img 
-              src="/logo.png" 
-              alt="Agentis Logo" 
-              className="h-10 w-auto"
-              style={{ filter: 'invert(1) sepia(1) saturate(5) hue-rotate(85deg) brightness(1.2)' }}
-            />
-            <span className="text-xl font-semibold text-gradient">
+    <header className="fixed top-0 left-0 right-0 z-50">
+      <nav className="mx-auto max-w-6xl px-2 sm:px-4 lg:px-8 py-4" aria-label="Main navigation">
+        <div className="flex h-14 items-center justify-between bg-background/60 backdrop-blur-xl border border-border/50 rounded-full px-4 sm:px-6">
+          <Link href="/" className="flex items-center gap-2" aria-label="Agentis home">
+            <Zap className="w-5 sm:w-6 h-5 sm:h-6 text-primary" aria-hidden="true" />
+            <span
+              className="font-[family-name:var(--font-pt-mono)] font-bold text-base sm:text-lg text-foreground"
+              style={{ letterSpacing: '-0.05em' }}
+            >
               Agentis
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
+          {/* Desktop Navigation - hidden below lg */}
+          <div className="hidden lg:flex items-center gap-8">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
               return (
                 <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm transition-colors ${
                     isActive
-                      ? 'text-emerald-300 bg-emerald-500/10 accent-ring'
-                      : 'text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/5'
+                      ? 'text-foreground font-medium'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.name}</span>
+                  {link.label}
                 </Link>
               );
             })}
-          </nav>
+          </div>
 
-          {/* Connect Wallet */}
-          <div className="flex items-center">
+          {/* Desktop Buttons - hidden below lg */}
+          <div className="hidden lg:flex items-center gap-3">
             <ConnectWalletButton />
           </div>
+
+          {/* Mobile Menu Button - visible below lg */}
+          <button
+            type="button"
+            className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5" aria-hidden="true" />
+            ) : (
+              <Menu className="w-5 h-5" aria-hidden="true" />
+            )}
+          </button>
         </div>
 
-        {/* Mobile Navigation */}
-        <div className="md:hidden border-t border-emerald-500/10 py-2">
-          <nav className="flex space-x-2 overflow-x-auto scrollbar-hide">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                    isActive
-                      ? 'text-emerald-300 bg-emerald-500/10'
-                      : 'text-gray-400 hover:text-emerald-300'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.name}</span>
+        {/* Mobile Menu - visible below lg */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              id="mobile-menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden fixed inset-0 top-0 left-0 w-dvw h-dvh bg-background z-40 flex flex-col"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile navigation menu"
+            >
+              <div className="flex items-center justify-between px-6 py-4 bg-background border-b border-border/50">
+                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                  <Zap className="w-5 h-5 text-primary" aria-hidden="true" />
+                  <span
+                    className="font-[family-name:var(--font-pt-mono)] font-bold text-base text-foreground"
+                    style={{ letterSpacing: '-0.05em' }}
+                  >
+                    Agentis
+                  </span>
                 </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
+                <button
+                  type="button"
+                  className="p-2 text-foreground hover:text-primary transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-label="Close menu"
+                >
+                  <X className="w-6 h-6" aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-6 pt-4 pb-4">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`block px-4 py-3 text-base rounded-lg transition-colors hover:bg-foreground/10 ${
+                        isActive
+                          ? 'text-foreground font-medium'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <div className="px-6 py-4 border-t border-border/50 bg-background flex flex-col gap-3">
+                <ConnectWalletButton />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
     </header>
   );
 }
