@@ -127,7 +127,7 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Agent Name */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-foreground/80 mb-2">
           Agent Name *
         </label>
         <input
@@ -135,10 +135,10 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g., Nova AI, TradeMaster, ArtBot"
-          className={`w-full px-4 py-3 bg-black/40 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+          className={`w-full px-4 py-3 bg-input border rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 transition-all ${
             errors.name
               ? 'border-red-500/50 focus:ring-red-500/30'
-              : 'border-white/10 focus:border-emerald-500/50 focus:ring-emerald-500/20'
+              : 'border-border focus:border-primary/50 focus:ring-primary/20'
           }`}
           disabled={isSubmitting}
         />
@@ -149,7 +149,7 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
 
       {/* Personality Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-foreground/80 mb-2">
           Personality Description *
         </label>
         <textarea
@@ -157,10 +157,10 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe your agent's personality, expertise, and how it should interact with users..."
           rows={4}
-          className={`w-full px-4 py-3 bg-black/40 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 resize-none transition-all ${
+          className={`w-full px-4 py-3 bg-input border rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 resize-none transition-all ${
             errors.description
               ? 'border-red-500/50 focus:ring-red-500/30'
-              : 'border-white/10 focus:border-emerald-500/50 focus:ring-emerald-500/20'
+              : 'border-border focus:border-primary/50 focus:ring-primary/20'
           }`}
           disabled={isSubmitting}
         />
@@ -170,7 +170,7 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
           ) : (
             <span />
           )}
-          <span className={`text-xs ${description.length < 20 ? 'text-gray-500' : 'text-emerald-400'}`}>
+          <span className={`text-xs ${description.length < 20 ? 'text-muted-foreground/60' : 'text-primary'}`}>
             {description.length}/500
           </span>
         </div>
@@ -178,7 +178,7 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
 
       {/* Personality Traits */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-3">
+        <label className="block text-sm font-medium text-foreground/80 mb-3">
           Personality Traits *
         </label>
         <div className="flex flex-wrap gap-2">
@@ -193,8 +193,8 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
                 disabled={isSubmitting}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${
                   isSelected
-                    ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                    : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300'
+                    ? 'bg-primary/20 border-primary/50 text-primary'
+                    : 'bg-card border-border text-muted-foreground hover:border-border hover:text-foreground/80'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -210,28 +210,28 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
 
       {/* Agent Image (Optional) */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Agent Image <span className="text-gray-500">(Optional)</span>
+        <label className="block text-sm font-medium text-foreground/80 mb-2">
+          Agent Image <span className="text-muted-foreground/60">(Optional)</span>
         </label>
         {imagePreview ? (
           <div className="relative w-32 h-32">
             <img
               src={imagePreview}
               alt="Agent preview"
-              className="w-32 h-32 object-cover rounded-xl border border-emerald-500/30"
+              className="w-32 h-32 object-cover rounded-xl border border-primary/30"
             />
             <button
               type="button"
               onClick={removeImage}
-              className="absolute -top-2 -right-2 p-1 bg-red-500/80 rounded-full text-white hover:bg-red-500 transition-colors"
+              className="absolute -top-2 -right-2 p-1 bg-red-500/80 rounded-full text-foreground hover:bg-red-500 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center w-32 h-32 bg-black/20 border-2 border-dashed border-white/10 rounded-xl cursor-pointer hover:border-emerald-500/30 hover:bg-black/30 transition-all">
-            <Upload className="w-6 h-6 text-gray-500 mb-1" />
-            <span className="text-xs text-gray-400">Upload</span>
+          <label className="flex flex-col items-center justify-center w-32 h-32 bg-card border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/30 hover:bg-secondary transition-all">
+            <Upload className="w-6 h-6 text-muted-foreground/60 mb-1" />
+            <span className="text-xs text-muted-foreground">Upload</span>
             <input
               type="file"
               accept="image/jpeg,image/png,image/gif,image/webp"
@@ -248,35 +248,35 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
 
       {/* Knowledge Base Upload (Optional) */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Knowledge Base <span className="text-gray-500">(Optional)</span>
+        <label className="block text-sm font-medium text-foreground/80 mb-2">
+          Knowledge Base <span className="text-muted-foreground/60">(Optional)</span>
         </label>
         {knowledgeBase ? (
-          <div className="flex items-center justify-between px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+          <div className="flex items-center justify-between px-4 py-3 bg-primary/10 border border-primary/30 rounded-xl">
             <div className="flex items-center gap-2">
-              <Upload className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm text-emerald-300 truncate max-w-[200px]">
+              <Upload className="w-4 h-4 text-primary" />
+              <span className="text-sm text-primary truncate max-w-[200px]">
                 {knowledgeBase.name}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-muted-foreground/60">
                 ({(knowledgeBase.size / 1024).toFixed(1)} KB)
               </span>
             </div>
             <button
               type="button"
               onClick={removeFile}
-              className="p-1 hover:bg-red-500/20 rounded-lg text-gray-400 hover:text-red-400 transition-colors"
+              className="p-1 hover:bg-red-500/20 rounded-lg text-muted-foreground hover:text-red-400 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center px-4 py-8 bg-black/20 border-2 border-dashed border-white/10 rounded-xl cursor-pointer hover:border-emerald-500/30 hover:bg-black/30 transition-all">
-            <Upload className="w-8 h-8 text-gray-500 mb-2" />
-            <span className="text-sm text-gray-400">
+          <label className="flex flex-col items-center justify-center px-4 py-8 bg-card border-2 border-dashed border-border rounded-xl cursor-pointer hover:border-primary/30 hover:bg-secondary transition-all">
+            <Upload className="w-8 h-8 text-muted-foreground/60 mb-2" />
+            <span className="text-sm text-muted-foreground">
               Drop a file or click to upload
             </span>
-            <span className="text-xs text-gray-500 mt-1">
+            <span className="text-xs text-muted-foreground/60 mt-1">
               TXT, PDF, MD up to 5MB
             </span>
             <input
@@ -297,7 +297,7 @@ export function CreateAgentForm({ onSubmit, onChange, isSubmitting }: CreateAgen
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full px-6 py-4 bg-gradient-to-r from-emerald-500 to-lime-500 text-black font-bold text-lg rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
+        className="w-full px-6 py-4 bg-primary text-primary-foreground font-bold text-lg rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/25 flex items-center justify-center gap-2"
       >
         <Bot className="w-5 h-5" />
         Create Agent NFT

@@ -35,19 +35,19 @@ export default function PaymentModal({
   const isSessionFlow = paymentInfo.type === 'session-credits';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md bg-[#0a0f0f] border border-emerald-500/30 rounded-2xl shadow-2xl shadow-emerald-500/10 overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-md bg-card border border-primary/30 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 border-b border-emerald-500/10 bg-emerald-500/5">
+        <div className="p-6 border-b border-primary/10 bg-primary/5">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-emerald-200 flex items-center gap-2">
-              <Coins className="w-5 h-5 text-emerald-400" />
+            <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Coins className="w-5 h-5 text-primary" />
               {isSessionFlow ? 'Session Required' : 'Insufficient Credits'}
             </h3>
             <button
               onClick={onClose}
               disabled={isProcessing}
-              className="p-1 rounded-lg hover:bg-emerald-500/10 text-emerald-400/60 hover:text-emerald-300 transition-colors"
+              className="p-1 rounded-lg hover:bg-primary/10 text-primary/60 hover:text-primary transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -56,7 +56,7 @@ export default function PaymentModal({
 
         {/* Body */}
         <div className="p-6 space-y-6">
-          <p className="text-gray-300">
+          <p className="text-foreground/80">
             {paymentInfo.description || 
               (isSessionFlow 
                 ? "You don't have session credits for this agent. Purchase a session pack to chat."
@@ -81,23 +81,23 @@ export default function PaymentModal({
               <button
                 onClick={onPayForMessage}
                 disabled={isProcessing}
-                className="group relative flex items-center justify-between p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative flex items-center justify-between p-4 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-300">
+                  <div className="p-2 rounded-lg bg-primary/20 text-primary">
                     <CreditCard className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <div className="font-bold text-emerald-200">Pay for Message</div>
-                    <div className="text-xs text-gray-400">One-time payment</div>
+                    <div className="font-bold text-foreground">Pay for Message</div>
+                    <div className="text-xs text-muted-foreground">One-time payment</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-emerald-300">
+                  <div className="font-bold text-primary">
                     {paymentInfo.cost || '0.1'} {paymentInfo.currency || 'STRK'}
                   </div>
                   {isProcessing && (
-                    <Loader2 className="w-4 h-4 animate-spin text-emerald-400 ml-auto mt-1" />
+                    <Loader2 className="w-4 h-4 animate-spin text-primary ml-auto mt-1" />
                   )}
                 </div>
               </button>
@@ -108,21 +108,21 @@ export default function PaymentModal({
               <button
                 onClick={onBuySessionPack}
                 disabled={isProcessing}
-                className="group relative flex items-center justify-between p-4 rounded-xl border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative flex items-center justify-between p-4 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-purple-500/20 text-purple-300">
+                  <div className="p-2 rounded-lg bg-primary/20 text-primary">
                     <Coins className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <div className="font-bold text-purple-200">Buy Session Pack</div>
-                    <div className="text-xs text-gray-400">50 messages for this agent</div>
+                    <div className="font-bold text-foreground">Buy Session Pack</div>
+                    <div className="text-xs text-muted-foreground">50 messages for this agent</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-purple-300">5 STRK</div>
+                  <div className="font-bold text-primary">5 STRK</div>
                   {isProcessing && (
-                    <Loader2 className="w-4 h-4 animate-spin text-purple-400 ml-auto mt-1" />
+                    <Loader2 className="w-4 h-4 animate-spin text-primary ml-auto mt-1" />
                   )}
                 </div>
               </button>
@@ -132,18 +132,18 @@ export default function PaymentModal({
             {isOwnerFlow && (
               <Link
                 href="/profile"
-                className="group flex items-center justify-between p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 transition-all active:scale-[0.98]"
+                className="group flex items-center justify-between p-4 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all active:scale-[0.98]"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-300">
+                  <div className="p-2 rounded-lg bg-primary/20 text-primary">
                     <Coins className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <div className="font-bold text-emerald-200">Buy Credits</div>
-                    <div className="text-xs text-gray-400">Save with credit packages</div>
+                    <div className="font-bold text-foreground">Buy Credits</div>
+                    <div className="text-xs text-muted-foreground">Save with credit packages</div>
                   </div>
                 </div>
-                <div className="text-emerald-400 text-sm font-bold group-hover:translate-x-1 transition-transform">
+                <div className="text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
                   Go to Profile →
                 </div>
               </Link>
@@ -151,7 +151,7 @@ export default function PaymentModal({
 
             {/* Revenue Share Info for Session Purchase */}
             {isSessionFlow && (
-              <div className="text-xs text-gray-500 text-center">
+              <div className="text-xs text-muted-foreground/60 text-center">
                 80% goes to the agent owner • 20% platform fee
               </div>
             )}

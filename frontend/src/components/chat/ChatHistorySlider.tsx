@@ -36,34 +36,34 @@ export default function ChatHistorySlider({
     <>
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/50 z-40 backdrop-blur-sm" 
+        className="absolute inset-0 bg-card z-40 backdrop-blur-sm" 
         onClick={onClose} 
       />
 
       {/* Slider */}
-      <div className="absolute left-0 top-0 h-full w-80 bg-[#0a1a1a]/95 border-r border-emerald-500/20 z-50 overflow-y-auto animate-slide-in-left">
+      <div className="absolute left-0 top-0 h-full w-80 bg-[#0a1a1a]/95 border-r border-primary/20 z-50 overflow-y-auto animate-slide-in-left">
         {/* Header */}
-        <div className="sticky top-0 bg-[#0a1a1a]/95 border-b border-emerald-500/20 p-4 flex items-center justify-between backdrop-blur-sm">
+        <div className="sticky top-0 bg-[#0a1a1a]/95 border-b border-primary/20 p-4 flex items-center justify-between backdrop-blur-sm">
           <div className="flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-emerald-300" />
-            <h3 className="font-bold text-emerald-200">Chat Sessions</h3>
+            <MessageSquare className="w-5 h-5 text-primary" />
+            <h3 className="font-bold text-foreground">Chat Sessions</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-emerald-500/10 rounded-lg transition-all"
+            className="p-2 hover:bg-primary/10 rounded-lg transition-all"
           >
-            <X className="w-5 h-5 text-gray-400 hover:text-white" />
+            <X className="w-5 h-5 text-muted-foreground hover:text-foreground" />
           </button>
         </div>
 
         {/* New Chat Button */}
-        <div className="p-3 border-b border-emerald-500/20">
+        <div className="p-3 border-b border-primary/20">
           <button
             onClick={() => {
               onNewChat();
               onClose();
             }}
-            className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25"
+            className="w-full px-4 py-3 bg-primary hover:opacity-90 text-foreground rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/25"
           >
             <Plus className="w-4 h-4" />
             New Chat
@@ -74,14 +74,14 @@ export default function ChatHistorySlider({
         <div className="p-3">
           {isLoading ? (
             <div className="text-center py-12">
-              <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-3" />
-              <p className="text-gray-400 text-sm">Loading sessions...</p>
+              <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">Loading sessions...</p>
             </div>
           ) : sessions.length === 0 ? (
             <div className="text-center py-12">
-              <MessageSquare className="w-12 h-12 text-emerald-300/30 mx-auto mb-3" />
-              <p className="text-gray-400 text-sm">No chat sessions yet</p>
-              <p className="text-gray-500 text-xs mt-1">
+              <MessageSquare className="w-12 h-12 text-primary/30 mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">No chat sessions yet</p>
+              <p className="text-muted-foreground/60 text-xs mt-1">
                 Start a new conversation
               </p>
             </div>
@@ -92,8 +92,8 @@ export default function ChatHistorySlider({
                   key={session.sessionId}
                   className={`group relative p-3 rounded-xl transition-all cursor-pointer ${
                     currentSessionId === session.sessionId
-                      ? 'bg-emerald-500/20 border-2 border-emerald-500/50'
-                      : 'bg-white/5 border border-white/10 hover:border-emerald-500/30 hover:bg-emerald-500/10'
+                      ? 'bg-primary/20 border-2 border-primary/50'
+                      : 'bg-card border border-border hover:border-primary/30 hover:bg-primary/10'
                   }`}
                   onClick={() => {
                     onSelectSession(session.sessionId);
@@ -103,14 +103,14 @@ export default function ChatHistorySlider({
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-semibold text-emerald-400">
+                        <span className="text-xs font-semibold text-primary">
                           {session.messageCount} messages
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground/60">
                           {new Date(session.timestamp).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-300 line-clamp-2">
+                      <p className="text-sm text-foreground/80 line-clamp-2">
                         {session.lastMessage || 'Empty session'}
                       </p>
                     </div>

@@ -14,11 +14,11 @@ export function MyNFTsSection({ agents, isLoading, className = '' }: MyNFTsSecti
   return (
     <AnimatedSection animation="fadeInUp" delay={0.2} className={className}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Bot className="w-5 h-5 text-emerald-400" />
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Bot className="w-5 h-5 text-primary" />
           My AI Agents
         </h2>
-        <span className="text-sm text-gray-400">
+        <span className="text-sm text-muted-foreground">
           {agents.length} {agents.length === 1 ? 'agent' : 'agents'}
         </span>
       </div>

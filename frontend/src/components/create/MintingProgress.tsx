@@ -59,16 +59,16 @@ export function MintingProgress({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/90 backdrop-blur-sm"
     >
       <div
         ref={modalRef}
-        className="w-full max-w-md bg-[#0a0f11] border border-emerald-500/20 rounded-2xl overflow-hidden shadow-2xl"
+        className="w-full max-w-md bg-[#0a0f11] border border-primary/20 rounded-2xl overflow-hidden shadow-2xl"
       >
         {/* Header */}
-        <div className="p-6 border-b border-white/10">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-white">
+            <h3 className="text-xl font-bold text-foreground">
               {step === 'success'
                 ? '🎉 Agent Created!'
                 : step === 'error'
@@ -78,7 +78,7 @@ export function MintingProgress({
             {(step === 'success' || step === 'error') && (
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+                className="p-2 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -102,43 +102,43 @@ export function MintingProgress({
                     key={s.id}
                     className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
                       isActive
-                        ? 'bg-emerald-500/10 border border-emerald-500/30'
+                        ? 'bg-primary/10 border border-primary/30'
                         : isComplete
-                        ? 'bg-emerald-500/5 border border-emerald-500/10'
-                        : 'bg-white/5 border border-white/5'
+                        ? 'bg-primary/5 border border-primary/10'
+                        : 'bg-card border border-border'
                     }`}
                   >
                     <div
                       className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                         isComplete
-                          ? 'bg-emerald-500'
+                          ? 'bg-primary'
                           : isActive
-                          ? 'bg-emerald-500/20'
-                          : 'bg-white/10'
+                          ? 'bg-primary/20'
+                          : 'bg-muted'
                       }`}
                     >
                       {isComplete ? (
-                        <Check className="w-5 h-5 text-black" />
+                        <Check className="w-5 h-5 text-primary-foreground" />
                       ) : isActive ? (
-                        <Icon className="w-5 h-5 text-emerald-400 animate-pulse" />
+                        <Icon className="w-5 h-5 text-primary animate-pulse" />
                       ) : (
-                        <Icon className="w-5 h-5 text-gray-500" />
+                        <Icon className="w-5 h-5 text-muted-foreground/60" />
                       )}
                     </div>
                     <div className="flex-1">
                       <p
                         className={`font-medium ${
                           isActive
-                            ? 'text-white'
+                            ? 'text-foreground'
                             : isComplete
-                            ? 'text-emerald-300'
-                            : 'text-gray-500'
+                            ? 'text-primary'
+                            : 'text-muted-foreground/60'
                         }`}
                       >
                         {s.label}
                       </p>
                       {isActive && (
-                        <p className="text-sm text-gray-400 mt-0.5">
+                        <p className="text-sm text-muted-foreground mt-0.5">
                           {step === 'signing'
                             ? 'Please confirm in your wallet...'
                             : 'Processing...'}
@@ -146,7 +146,7 @@ export function MintingProgress({
                       )}
                     </div>
                     {isActive && (
-                      <Loader2 className="w-5 h-5 text-emerald-400 animate-spin" />
+                      <Loader2 className="w-5 h-5 text-primary animate-spin" />
                     )}
                   </div>
                 );
@@ -157,15 +157,15 @@ export function MintingProgress({
           {/* Success State */}
           {step === 'success' && (
             <div className="text-center space-y-6">
-              <div className="w-20 h-20 mx-auto bg-emerald-500 rounded-full flex items-center justify-center">
-                <Check className="w-10 h-10 text-black" />
+              <div className="w-20 h-20 mx-auto bg-primary rounded-full flex items-center justify-center">
+                <Check className="w-10 h-10 text-primary-foreground" />
               </div>
               <div>
-                <p className="text-lg text-white mb-2">
+                <p className="text-lg text-foreground mb-2">
                   Your AI Agent NFT has been minted successfully!
                 </p>
                 {tokenId !== undefined && (
-                  <p className="text-emerald-400 font-semibold">
+                  <p className="text-primary font-semibold">
                     Token ID: #{tokenId}
                   </p>
                 )}
@@ -175,7 +175,7 @@ export function MintingProgress({
                   href={explorerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 rounded-xl text-white transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-muted hover:bg-secondary rounded-xl text-foreground transition-colors"
                 >
                   View on Explorer
                   <ExternalLink className="w-4 h-4" />
@@ -183,7 +183,7 @@ export function MintingProgress({
               )}
               <button
                 onClick={onClose}
-                className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 text-black font-semibold rounded-xl hover:opacity-90 transition-all"
+                className="w-full px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-all"
               >
                 Done
               </button>
@@ -197,24 +197,24 @@ export function MintingProgress({
                 <AlertCircle className="w-10 h-10 text-red-400" />
               </div>
               <div>
-                <p className="text-lg text-white mb-2">
+                <p className="text-lg text-foreground mb-2">
                   Something went wrong
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {errorMessage || 'Failed to create your agent. Please try again.'}
                 </p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/15 rounded-xl text-white transition-colors"
+                  className="flex-1 px-6 py-3 bg-muted hover:bg-secondary rounded-xl text-foreground transition-colors"
                 >
                   Cancel
                 </button>
                 {onRetry && (
                   <button
                     onClick={onRetry}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 text-black font-semibold rounded-xl hover:opacity-90 transition-all"
+                    className="flex-1 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-all"
                   >
                     Try Again
                   </button>

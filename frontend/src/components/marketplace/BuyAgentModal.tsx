@@ -61,19 +61,19 @@ export function BuyAgentModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose} />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={handleClose} />
       
       {/* Modal */}
-      <div className="relative bg-gray-900 border border-white/10 rounded-2xl w-full max-w-md mx-4 overflow-hidden">
+      <div className="relative bg-card border border-border rounded-2xl w-full max-w-md mx-4 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-emerald-400" />
-            <h2 className="text-lg font-semibold text-white">Buy Agent</h2>
+            <ShoppingCart className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">Buy Agent</h2>
           </div>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -83,9 +83,9 @@ export function BuyAgentModal({
         <div className="p-6">
           {success ? (
             <div className="text-center py-4">
-              <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">Purchase Submitted!</h3>
-              <p className="text-gray-400 mb-4">
+              <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">Purchase Submitted!</h3>
+              <p className="text-muted-foreground mb-4">
                 The agent will be transferred to you once the transaction is confirmed.
               </p>
               {explorerUrl && (
@@ -93,7 +93,7 @@ export function BuyAgentModal({
                   href={explorerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300"
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary"
                 >
                   View on Explorer
                   <ExternalLink className="w-4 h-4" />
@@ -101,7 +101,7 @@ export function BuyAgentModal({
               )}
               <button
                 onClick={handleClose}
-                className="mt-6 w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
+                className="mt-6 w-full py-3 bg-muted hover:bg-secondary text-foreground rounded-xl transition-colors"
               >
                 Close
               </button>
@@ -109,8 +109,8 @@ export function BuyAgentModal({
           ) : (
             <div>
               {/* Agent Preview */}
-              <div className="flex items-center gap-4 mb-6 p-4 bg-white/5 rounded-xl">
-                <div className="w-16 h-16 rounded-lg bg-emerald-500/20 flex items-center justify-center overflow-hidden">
+              <div className="flex items-center gap-4 mb-6 p-4 bg-card rounded-xl">
+                <div className="w-16 h-16 rounded-lg bg-primary/20 flex items-center justify-center overflow-hidden">
                   {imageUrl ? (
                     <img src={imageUrl} alt={agentName} className="w-full h-full object-cover" />
                   ) : (
@@ -118,16 +118,16 @@ export function BuyAgentModal({
                   )}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-white font-semibold">{agentName}</h3>
-                  <p className="text-gray-400 text-sm">Sold by {formatSeller(seller)}</p>
+                  <h3 className="text-foreground font-semibold">{agentName}</h3>
+                  <p className="text-muted-foreground text-sm">Sold by {formatSeller(seller)}</p>
                 </div>
               </div>
 
               {/* Price */}
-              <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+              <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-xl">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Total Price</span>
-                  <span className="text-2xl font-bold text-white">{priceInSTRK.toFixed(2)} STRK</span>
+                  <span className="text-muted-foreground">Total Price</span>
+                  <span className="text-2xl font-bold text-foreground">{priceInSTRK.toFixed(2)} STRK</span>
                 </div>
               </div>
 
@@ -147,7 +147,7 @@ export function BuyAgentModal({
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
+                  className="flex-1 py-3 bg-muted hover:bg-secondary text-foreground rounded-xl transition-colors"
                   disabled={isLoading}
                 >
                   Cancel
@@ -155,7 +155,7 @@ export function BuyAgentModal({
                 <button
                   onClick={handleBuy}
                   disabled={isLoading}
-                  className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-primary hover:opacity-90 text-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <>

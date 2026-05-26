@@ -99,19 +99,19 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose} />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={handleClose} />
       
       {/* Modal */}
-      <div className="relative bg-gray-900 border border-white/10 rounded-2xl w-full max-w-md mx-4 overflow-hidden">
+      <div className="relative bg-card border border-border rounded-2xl w-full max-w-md mx-4 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-2">
-            <Tag className="w-5 h-5 text-emerald-400" />
-            <h2 className="text-lg font-semibold text-white">List for Sale</h2>
+            <Tag className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">List for Sale</h2>
           </div>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -121,9 +121,9 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
         <div className="p-6">
           {step === 'success' ? (
             <div className="text-center py-4">
-              <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">Listing Submitted!</h3>
-              <p className="text-gray-400 mb-4">
+              <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">Listing Submitted!</h3>
+              <p className="text-muted-foreground mb-4">
                 Your agent will be listed once the transaction is confirmed.
               </p>
               {explorerUrl && (
@@ -131,7 +131,7 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
                   href={explorerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300"
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary"
                 >
                   View on Explorer
                   <ExternalLink className="w-4 h-4" />
@@ -139,18 +139,18 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
               )}
               <button
                 onClick={handleClose}
-                className="mt-6 w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
+                className="mt-6 w-full py-3 bg-muted hover:bg-secondary text-foreground rounded-xl transition-colors"
               >
                 Close
               </button>
             </div>
           ) : step === 'approving' || step === 'listing' ? (
             <div className="text-center py-8">
-              <Loader2 className="w-12 h-12 text-emerald-400 mx-auto mb-4 animate-spin" />
-              <h3 className="text-lg font-semibold text-white mb-2">
+              <Loader2 className="w-12 h-12 text-primary mx-auto mb-4 animate-spin" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 {step === 'approving' ? 'Step 1: Approving Marketplace' : 'Step 2: Creating Listing'}
               </h3>
-              <p className="text-gray-400">
+              <p className="text-muted-foreground">
                 {step === 'approving' 
                   ? 'Please confirm the approval transaction in your wallet...'
                   : 'Please confirm the listing transaction in your wallet...'}
@@ -158,9 +158,9 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
             </div>
           ) : step === 'approved' ? (
             <div className="text-center py-4">
-              <Shield className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">Approval Confirmed!</h3>
-              <p className="text-gray-400 mb-6">
+              <Shield className="w-12 h-12 text-primary mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Approval Confirmed!</h3>
+              <p className="text-muted-foreground mb-6">
                 The marketplace is now approved. Proceeding to list your agent...
               </p>
               
@@ -173,7 +173,7 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
               <button
                 onClick={handleRetryList}
                 disabled={isLoading}
-                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-primary hover:opacity-90 text-foreground font-semibold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -191,22 +191,22 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
           ) : (
             <form onSubmit={handleApproveAndList}>
               <div className="mb-6">
-                <p className="text-gray-400 mb-4">
-                  You are listing <span className="text-white font-medium">{agentName}</span> for sale.
+                <p className="text-muted-foreground mb-4">
+                  You are listing <span className="text-foreground font-medium">{agentName}</span> for sale.
                 </p>
                 
                 {/* Two-step notice */}
-                <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <p className="text-sm text-blue-200/80">
+                <div className="mb-4 p-3 bg-primary/10 border border-primary/20 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
                     This requires <strong>two transactions</strong>: (1) Approve marketplace to transfer NFT, (2) Create listing.
                   </p>
                 </div>
                 
-                <label className="block text-sm font-medium text-gray-400 mb-2">
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
                   Sale Price (STRK)
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/60" />
                   <input
                     type="number"
                     step="0.1"
@@ -214,10 +214,10 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     placeholder="100"
-                    className="w-full pl-10 pr-16 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+                    className="w-full pl-10 pr-16 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
                     required
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">STRK</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">STRK</span>
                 </div>
               </div>
 
@@ -229,7 +229,7 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
+                  className="flex-1 py-3 bg-muted hover:bg-secondary text-foreground rounded-xl transition-colors"
                   disabled={isLoading}
                 >
                   Cancel
@@ -237,7 +237,7 @@ export function ListAgentModal({ isOpen, onClose, tokenId, agentName, onSuccess 
                 <button
                   type="submit"
                   disabled={isLoading || !price}
-                  className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-primary hover:opacity-90 text-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <>

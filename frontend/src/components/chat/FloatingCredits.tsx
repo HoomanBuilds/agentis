@@ -99,9 +99,9 @@ export default function FloatingCredits({
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-xl">
-        <Loader2 className="w-4 h-4 text-emerald-400 animate-spin" />
-        <span className="text-sm text-gray-400">Loading...</span>
+      <div className="flex items-center gap-2 px-3 py-2 bg-card border border-border rounded-xl">
+        <Loader2 className="w-4 h-4 text-primary animate-spin" />
+        <span className="text-sm text-muted-foreground">Loading...</span>
       </div>
     );
   }
@@ -111,11 +111,11 @@ export default function FloatingCredits({
       <div className="flex items-center gap-2">
         {/* Owner Credits */}
         <div 
-          className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-emerald-500/30 rounded-xl"
+          className="flex items-center gap-2 px-3 py-2 bg-card border border-primary/30 rounded-xl"
           title="Your Credits Balance"
         >
-          <Coins className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-medium text-emerald-200">
+          <Coins className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-foreground">
             {userCredits ?? 0} credits
           </span>
         </div>
@@ -123,11 +123,11 @@ export default function FloatingCredits({
         {/* Agent Wallet Badge */}
         {userCredits === 0 && agentWalletActive && (
           <div 
-            className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-xl"
+            className="flex items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/30 rounded-xl"
             title="Agent paying from its own wallet"
           >
-            <Wallet className="w-4 h-4 text-blue-400" />
-            <span className="text-sm font-medium text-blue-200">
+            <Wallet className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-primary/80">
               Auto-Pay
             </span>
           </div>

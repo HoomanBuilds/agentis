@@ -21,9 +21,9 @@ export function LoadingSpinner({
 }: LoadingSpinnerProps) {
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
-      <Loader2 className={`${sizeClasses[size]} text-emerald-400 animate-spin`} />
+      <Loader2 className={`${sizeClasses[size]} text-primary animate-spin`} />
       {text && (
-        <p className="text-sm text-gray-400 animate-pulse">{text}</p>
+        <p className="text-sm text-muted-foreground animate-pulse">{text}</p>
       )}
     </div>
   );
@@ -31,14 +31,14 @@ export function LoadingSpinner({
 
 export function LoadingCard({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-white/5 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden animate-pulse ${className}`}>
-      <div className="aspect-square bg-emerald-500/10" />
+    <div className={`bg-card backdrop-blur-xl rounded-3xl border border-border overflow-hidden animate-pulse ${className}`}>
+      <div className="aspect-square bg-primary/10" />
       <div className="p-4 space-y-3">
-        <div className="h-5 bg-white/10 rounded w-3/4" />
-        <div className="h-3 bg-white/5 rounded w-1/2" />
-        <div className="pt-3 border-t border-white/5 flex justify-between">
-          <div className="h-4 bg-white/10 rounded w-1/4" />
-          <div className="h-4 bg-white/5 rounded w-1/4" />
+        <div className="h-5 bg-muted rounded w-3/4" />
+        <div className="h-3 bg-card rounded w-1/2" />
+        <div className="pt-3 border-t border-border flex justify-between">
+          <div className="h-4 bg-muted rounded w-1/4" />
+          <div className="h-4 bg-card rounded w-1/4" />
         </div>
       </div>
     </div>

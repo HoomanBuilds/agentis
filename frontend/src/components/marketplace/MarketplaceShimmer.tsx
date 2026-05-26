@@ -3,7 +3,7 @@ import { Shimmer } from '@/components/shared/Shimmer';
 export function MarketplaceShimmer() {
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 space-y-2">
           <div className="flex items-center gap-3">
@@ -29,7 +29,7 @@ export function MarketplaceShimmer() {
         {/* Listings Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+            <div key={i} className="bg-card border border-border rounded-2xl overflow-hidden">
               <Shimmer className="aspect-square w-full" />
               <div className="p-4 space-y-3">
                 <Shimmer className="h-6 w-3/4 rounded-lg" />

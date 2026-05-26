@@ -93,20 +93,20 @@ export function CreditsSection({ userKey, className = '' }: CreditsSectionProps)
 
   return (
     <AnimatedSection animation="fadeInUp" delay={0.3} className={className}>
-      <div className="glass-panel p-6 rounded-xl border border-emerald-500/20">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-6">
-          <Coins className="w-5 h-5 text-emerald-400" />
+      <div className="glass-panel p-6 rounded-xl border border-primary/20">
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-6">
+          <Coins className="w-5 h-5 text-primary" />
           Credits
         </h2>
 
         {/* Balance Display */}
-        <div className="mb-6 p-4 bg-black/40 rounded-xl border border-emerald-500/10">
-          <div className="text-sm text-gray-400 mb-1">Current Balance</div>
-          <div className="text-3xl font-bold text-gradient">
+        <div className="mb-6 p-4 bg-input rounded-xl border border-primary/10">
+          <div className="text-sm text-muted-foreground mb-1">Current Balance</div>
+          <div className="text-3xl font-bold text-gradient-lime">
             {isLoadingData ? '...' : creditBalance.toString()}
-            <span className="text-lg text-gray-400 ml-2">credits</span>
+            <span className="text-lg text-muted-foreground ml-2">credits</span>
           </div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-muted-foreground/60 mt-1">
             1 credit = {pricePerCredit.toFixed(2)} STRK
           </div>
         </div>
@@ -114,18 +114,18 @@ export function CreditsSection({ userKey, className = '' }: CreditsSectionProps)
         {/* Actions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* Free Tier Claim */}
-          <div className="p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/20">
+          <div className="p-4 bg-primary/5 rounded-xl border border-primary/20">
             <div className="flex items-center gap-2 mb-3">
-              <Gift className="w-5 h-5 text-emerald-400" />
-              <span className="font-semibold text-white">Free Credits</span>
+              <Gift className="w-5 h-5 text-primary" />
+              <span className="font-semibold text-foreground">Free Credits</span>
             </div>
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-muted-foreground mb-4">
               Claim {freeTierAmount.toString()} free credits to get started!
             </p>
             <button
               onClick={handleClaimFreeTier}
               disabled={isLoading || hasClaimed || isLoadingData}
-              className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 text-black font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full px-4 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -144,10 +144,10 @@ export function CreditsSection({ userKey, className = '' }: CreditsSectionProps)
           </div>
 
           {/* Purchase Credits */}
-          <div className="p-4 bg-lime-500/5 rounded-xl border border-lime-500/20">
+          <div className="p-4 bg-primary/5 rounded-xl border border-lime-500/20">
             <div className="flex items-center gap-2 mb-3">
-              <ShoppingCart className="w-5 h-5 text-lime-400" />
-              <span className="font-semibold text-white">Buy Credits</span>
+              <ShoppingCart className="w-5 h-5 text-primary" />
+              <span className="font-semibold text-foreground">Buy Credits</span>
             </div>
             <div className="mb-3">
               <input
@@ -155,17 +155,17 @@ export function CreditsSection({ userKey, className = '' }: CreditsSectionProps)
                 value={purchaseAmount}
                 onChange={(e) => setPurchaseAmount(e.target.value)}
                 min="1"
-                className="w-full px-4 py-2 bg-black/40 border border-white/10 rounded-lg text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
+                className="w-full px-4 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:border-primary/50 transition-colors"
                 placeholder="Amount"
               />
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-muted-foreground/60 mt-1">
                 Cost: ~{purchaseCost.toFixed(2)} STRK
               </div>
             </div>
             <button
               onClick={handlePurchase}
               disabled={isLoading || !purchaseAmount || parseInt(purchaseAmount) <= 0}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white font-semibold rounded-xl hover:bg-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full px-4 py-3 bg-card border border-border text-foreground font-semibold rounded-xl hover:bg-muted transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -183,9 +183,9 @@ export function CreditsSection({ userKey, className = '' }: CreditsSectionProps)
         {plans.length > 0 && (
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-4">
-              <Package className="w-5 h-5 text-purple-400" />
-              <span className="font-semibold text-white">Credit Plans</span>
-              <span className="text-xs text-gray-500">(Discounted bundles)</span>
+              <Package className="w-5 h-5 text-primary" />
+              <span className="font-semibold text-foreground">Credit Plans</span>
+              <span className="text-xs text-muted-foreground/60">(Discounted bundles)</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {plans.map((plan) => {
@@ -196,24 +196,24 @@ export function CreditsSection({ userKey, className = '' }: CreditsSectionProps)
                 return (
                   <div
                     key={plan.id.toString()}
-                    className="p-4 bg-purple-500/5 rounded-xl border border-purple-500/20 hover:border-purple-500/40 transition-colors"
+                    className="p-4 bg-primary/5 rounded-xl border border-primary/20 hover:border-primary/40 transition-colors"
                   >
-                    <div className="text-2xl font-bold text-white mb-1">
+                    <div className="text-2xl font-bold text-foreground mb-1">
                       {plan.credits.toString()}
-                      <span className="text-sm text-gray-400 ml-1">credits</span>
+                      <span className="text-sm text-muted-foreground ml-1">credits</span>
                     </div>
-                    <div className="text-lg font-semibold text-purple-400 mb-1">
+                    <div className="text-lg font-semibold text-primary mb-1">
                       {planPriceSTRK.toFixed(0)} STRK
                     </div>
                     {plan.discountPercent > 0 && (
-                      <div className="text-xs text-emerald-400 mb-3">
+                      <div className="text-xs text-primary mb-3">
                         Save {plan.discountPercent.toString()}% ({savings.toFixed(1)} STRK)
                       </div>
                     )}
                     <button
                       onClick={() => handlePurchasePlan(plan)}
                       disabled={isLoading}
-                      className="w-full px-3 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-300 font-medium rounded-lg hover:bg-purple-500/30 transition-all disabled:opacity-50 text-sm"
+                      className="w-full px-3 py-2 bg-primary/20 border border-primary/30 text-primary font-medium rounded-lg hover:bg-primary/30 transition-all disabled:opacity-50 text-sm"
                     >
                       {isLoading ? 'Processing...' : 'Buy Plan'}
                     </button>
@@ -226,13 +226,13 @@ export function CreditsSection({ userKey, className = '' }: CreditsSectionProps)
 
         {/* Transaction Result */}
         {lastResult?.success && lastResult.explorerUrl && (
-          <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-center justify-between">
-            <span className="text-sm text-emerald-400">Transaction submitted!</span>
+          <div className="mt-4 p-3 bg-primary/10 border border-primary/30 rounded-lg flex items-center justify-between">
+            <span className="text-sm text-primary">Transaction submitted!</span>
             <a
               href={lastResult.explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs text-emerald-300 hover:text-emerald-200"
+              className="flex items-center gap-1 text-xs text-primary hover:text-foreground"
             >
               View <ExternalLink className="w-3 h-3" />
             </a>

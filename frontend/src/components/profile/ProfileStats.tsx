@@ -21,19 +21,19 @@ export function ProfileStats({
       label: 'Agents Owned',
       value: agentCount.toString(),
       icon: Bot,
-      gradient: 'from-emerald-500 to-lime-500',
+      gradient: 'from-primary to-primary',
     },
     {
       label: 'Credits',
       value: creditBalance.toString(),
       icon: Coins,
-      gradient: 'from-lime-500 to-emerald-500',
+      gradient: 'from-primary to-primary',
     },
     {
       label: 'Total Chats',
       value: totalChats.toLocaleString(),
       icon: MessageCircle,
-      gradient: 'from-teal-500 to-emerald-500',
+      gradient: 'from-primary/80 to-primary',
     },
   ];
 
@@ -47,15 +47,15 @@ export function ProfileStats({
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="glass-panel p-6 rounded-xl border border-emerald-500/20 group hover:border-emerald-500/40 transition-all duration-300"
+          className="glass-panel p-6 rounded-xl border border-primary/20 group hover:border-primary/40 transition-all duration-300"
         >
           <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg group-hover:shadow-emerald-500/20 transition-shadow`}>
-              <stat.icon className="w-6 h-6 text-black" />
+            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg group-hover:shadow-primary/20 transition-shadow`}>
+              <stat.icon className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-white">{stat.value}</div>
-              <div className="text-sm text-gray-400">{stat.label}</div>
+              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-sm text-muted-foreground">{stat.label}</div>
             </div>
           </div>
         </div>

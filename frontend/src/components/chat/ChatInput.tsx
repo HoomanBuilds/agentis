@@ -38,7 +38,7 @@ export function ChatInput({
   };
 
   return (
-    <div className="border-t border-white/10 p-4 bg-black/20 backdrop-blur-sm">
+    <div className="border-t border-border p-4 bg-card backdrop-blur-sm">
       <div className="flex gap-3 items-end max-w-4xl mx-auto">
         <textarea
           ref={textareaRef}
@@ -48,12 +48,12 @@ export function ChatInput({
           placeholder={`Message ${agentName}...`}
           disabled={isSending || disabled}
           rows={1}
-          className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none min-h-[48px] max-h-[150px] overflow-y-auto"
+          className="flex-1 px-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none min-h-[48px] max-h-[150px] overflow-y-auto"
         />
         <button
           onClick={onSend}
           disabled={!value.trim() || isSending || disabled}
-          className="px-4 py-3 bg-gradient-to-r from-emerald-500 to-lime-500 hover:from-emerald-600 hover:to-lime-600 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center h-[48px] w-[48px]"
+          className="px-4 py-3 bg-primary hover:opacity-90 text-foreground rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center h-[48px] w-[48px]"
         >
           {isSending ? (
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -62,7 +62,7 @@ export function ChatInput({
           )}
         </button>
       </div>
-      <p className="text-xs text-gray-500 text-center mt-2">
+      <p className="text-xs text-muted-foreground/60 text-center mt-2">
         Press Enter to send, Shift+Enter for new line
       </p>
     </div>

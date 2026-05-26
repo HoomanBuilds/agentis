@@ -18,16 +18,16 @@ interface AgentIconBarProps {
 export function AgentIconBar({ agents, selectedId, onSelect, isLoading }: AgentIconBarProps) {
   if (isLoading) {
     return (
-      <div className="w-20 bg-black/30 border-r border-white/10 flex flex-col items-center py-4">
-        <div className="w-12 h-12 bg-white/5 rounded-xl animate-pulse" />
+      <div className="w-20 bg-secondary border-r border-border flex flex-col items-center py-4">
+        <div className="w-12 h-12 bg-card rounded-xl animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="w-20 bg-black/30 border-r border-white/10 flex flex-col items-center py-4 gap-3 overflow-y-auto">
+    <div className="w-20 bg-secondary border-r border-border flex flex-col items-center py-4 gap-3 overflow-y-auto">
       {/* Section Label */}
-      <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+      <div className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">
         Agents
       </div>
 
@@ -38,7 +38,7 @@ export function AgentIconBar({ agents, selectedId, onSelect, isLoading }: AgentI
           onClick={() => onSelect(agent.id)}
           className={`w-12 h-12 rounded-xl overflow-hidden transition-all ${
             selectedId === agent.id
-              ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-black/50'
+              ? 'ring-2 ring-primary ring-offset-2 ring-offset-black/50'
               : 'opacity-60 hover:opacity-100'
           }`}
           title={agent.name}
@@ -50,15 +50,15 @@ export function AgentIconBar({ agents, selectedId, onSelect, isLoading }: AgentI
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-emerald-500/20 flex items-center justify-center">
-              <Bot className="w-6 h-6 text-emerald-400" />
+            <div className="w-full h-full bg-primary/20 flex items-center justify-center">
+              <Bot className="w-6 h-6 text-primary" />
             </div>
           )}
         </button>
       ))}
 
       {agents.length === 0 && (
-        <div className="text-xs text-gray-500 text-center px-2">
+        <div className="text-xs text-muted-foreground/60 text-center px-2">
           No agents
         </div>
       )}

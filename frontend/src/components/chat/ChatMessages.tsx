@@ -15,10 +15,10 @@ export function ChatMessages({ messages, agentName, isThinking = false }: ChatMe
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <h3 className="text-xl font-bold text-white mb-2">
+          <h3 className="text-xl font-bold text-foreground mb-2">
             Start a conversation
           </h3>
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             Send a message to chat with {agentName}
           </p>
         </div>
@@ -36,8 +36,8 @@ export function ChatMessages({ messages, agentName, isThinking = false }: ChatMe
           <div
             className={`max-w-[80%] rounded-2xl px-4 py-3 ${
               message.role === 'user'
-                ? 'bg-gradient-to-br from-emerald-500/30 to-emerald-600/30 border border-emerald-500/30 text-white'
-                : 'bg-white/5 border border-white/10 text-gray-100'
+                ? 'bg-gradient-to-br from-primary/20 to-primary/30 border border-primary/30 text-foreground'
+                : 'bg-card border border-border text-foreground'
             }`}
           >
             <div className="prose prose-sm max-w-none prose-invert prose-p:leading-relaxed prose-pre:p-0">
@@ -48,9 +48,9 @@ export function ChatMessages({ messages, agentName, isThinking = false }: ChatMe
                   code: ({ inline, className, children, ...props }: any) => {
                     const match = /language-(\w+)/.exec(className || '');
                     return !inline && match ? (
-                      <div className="rounded-lg overflow-hidden my-2 bg-black/50 border border-emerald-500/20">
-                        <div className="flex items-center justify-between px-3 py-1 bg-emerald-900/20 border-b border-emerald-500/20">
-                          <span className="text-xs text-emerald-400 font-mono">
+                      <div className="rounded-lg overflow-hidden my-2 bg-card border border-primary/20">
+                        <div className="flex items-center justify-between px-3 py-1 bg-primary/10 border-b border-primary/20">
+                          <span className="text-xs text-primary font-mono">
                             {match[1]}
                           </span>
                         </div>
@@ -62,7 +62,7 @@ export function ChatMessages({ messages, agentName, isThinking = false }: ChatMe
                       </div>
                     ) : (
                       <code
-                        className="bg-black/30 px-1.5 py-0.5 rounded text-emerald-300 font-mono text-sm"
+                        className="bg-secondary px-1.5 py-0.5 rounded text-primary font-mono text-sm"
                         {...props}
                       >
                         {children}
@@ -87,7 +87,7 @@ export function ChatMessages({ messages, agentName, isThinking = false }: ChatMe
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-emerald-400 hover:underline"
+                      className="text-primary hover:underline"
                     >
                       {children}
                     </a>
@@ -106,11 +106,11 @@ export function ChatMessages({ messages, agentName, isThinking = false }: ChatMe
       
       {isThinking && (
         <div className="flex justify-start">
-          <div className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3">
+          <div className="bg-card border border-border rounded-2xl px-4 py-3">
             <div className="flex space-x-1 h-6 items-center">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" />
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
             </div>
           </div>
         </div>
