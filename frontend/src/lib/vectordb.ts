@@ -1,6 +1,4 @@
 import { ChromaClient } from "chromadb";
-import { openai } from "@ai-sdk/openai";
-import { embed } from "ai";
 
 type Collection = any;
 
@@ -12,13 +10,11 @@ let chromaClient: ChromaClient | null = null;
 
 export function getChromaClient(): ChromaClient {
   if (!chromaClient) {
-    // Get environment variables (no hardcoded URLs!)
     const chromaUrl = process.env.CHROMA_URL;
     const chromaApiKey = process.env.CHROMA_API_KEY;
     const chromaTenant = process.env.CHROMA_TENANT;
     const chromaDatabase = process.env.CHROMA_DATABASE;
 
-    // For Chroma Cloud - use CloudClient
     if (chromaApiKey && chromaTenant && chromaDatabase) {
       const { CloudClient } = require("chromadb");
       chromaClient = new CloudClient({
@@ -26,17 +22,10 @@ export function getChromaClient(): ChromaClient {
         tenant: chromaTenant,
         database: chromaDatabase,
       });
-    }
-    // For local ChromaDB server
-    else if (chromaUrl) {
-      chromaClient = new ChromaClient({
-        path: chromaUrl,
-      });
+    } else if (chromaUrl) {
+      chromaClient = new ChromaClient({ path: chromaUrl });
     } else {
-      // Default to localhost if not specified
-      chromaClient = new ChromaClient({
-        path: "http://localhost:8000",
-      });
+      chromaClient = new ChromaClient({ path: "http://localhost:8000" });
     }
   }
   if (!chromaClient) {
@@ -46,68 +35,20 @@ export function getChromaClient(): ChromaClient {
 }
 
 /**
- * Get or create a collection for agent memories
+ * Get or create a collection for agent memories.
+ * No embeddingFunction — ChromaDB Cloud handles embedding server-side.
  */
 export async function getAgentMemoryCollection(): Promise<Collection> {
   const client = getChromaClient();
-
-  try {
-    // @ts-ignore - We need to register this to silence warnings
-    const { registerEmbeddingFunction } = require("chromadb");
-
-    class DummyEmbeddingFunction {
-      public name: string = "dummy_embedding_function";
-
-      public async generate(texts: string[]): Promise<number[][]> {
-
-        return texts.map(() => []);
-      }
-
-      public getConfig() {
-        return { type: "known", name: this.name };
-      }
-
-      public static buildFromConfig() {
-        return new DummyEmbeddingFunction();
-      }
-    }
-
-    // Register it so Chroma knows about it
-    try {
-      registerEmbeddingFunction("dummy_embedding_function", DummyEmbeddingFunction);
-    } catch (e) {
-      // Ignore if already registered
-    }
-
-    return await client.getOrCreateCollection({
-      name: "agent_memories_v4",
-      metadata: { description: "Chat memories for AI agents" },
-      embeddingFunction: new DummyEmbeddingFunction(),
-    });
-  } catch (error) {
-    console.error("Error getting collection:", error);
-    throw error;
-  }
+  return await client.getOrCreateCollection({
+    name: "agent_memories_v5",
+    metadata: { description: "Chat memories for AI agents" },
+  });
 }
 
 /**
- * Generate embedding for text using OpenAI via Vercel AI SDK
- */
-export async function generateEmbedding(text: string): Promise<number[]> {
-  try {
-    const { embedding } = await embed({
-      model: openai.embedding("text-embedding-3-small"),
-      value: text,
-    });
-    return embedding;
-  } catch (error) {
-    console.error("Error generating embedding:", error);
-    throw error;
-  }
-}
-
-/**
- * Store a chat message in vector DB with session support
+ * Store a chat message in vector DB with session support.
+ * Pass documents only — ChromaDB generates embeddings server-side.
  */
 export async function storeMessage(
   agentId: number,
@@ -119,14 +60,12 @@ export async function storeMessage(
 ): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
     const collection = await getAgentMemoryCollection();
-    const embedding = await generateEmbedding(content);
-
     const id = `${agentId}_${userAddress}_${timestamp}_${role}`;
     const session = sessionId || "default";
 
     await collection.add({
       ids: [id],
-      embeddings: [embedding],
+      documents: [content],
       metadatas: [
         {
           agentId: agentId.toString(),
@@ -136,7 +75,6 @@ export async function storeMessage(
           sessionId: session,
         },
       ],
-      documents: [content],
     });
 
     return { success: true, id };
@@ -147,7 +85,8 @@ export async function storeMessage(
 }
 
 /**
- * Search for relevant memories using semantic search (within a session)
+ * Search for relevant memories using semantic search (within a session).
+ * Uses queryTexts — ChromaDB embeds the query server-side.
  */
 export async function searchMemories(
   agentId: number,
@@ -165,7 +104,6 @@ export async function searchMemories(
 > {
   try {
     const collection = await getAgentMemoryCollection();
-    const queryEmbedding = await generateEmbedding(query);
 
     const whereClause: any = {
       $and: [{ agentId: agentId.toString() }, { userAddress: userAddress }],
@@ -176,7 +114,7 @@ export async function searchMemories(
     }
 
     const results = await collection.query({
-      queryEmbeddings: [queryEmbedding],
+      queryTexts: [query],
       nResults: limit,
       where: whereClause,
     });
@@ -229,7 +167,6 @@ export async function getRecentMessages(
       whereClause.$and.push({ sessionId });
     }
 
-    // Get all messages for this agent/user/session
     const results = await collection.get({
       where: whereClause,
     });
@@ -238,7 +175,6 @@ export async function getRecentMessages(
       return [];
     }
 
-    // Sort by timestamp and take most recent
     const messages = results.documents
       .map((doc: any, idx: number) => ({
         content: doc || "",
@@ -304,7 +240,6 @@ export async function getChatSessions(
       const session = sessionMap.get(sessionId);
       session.messageCount++;
 
-      // Update if this message is more recent
       if (timestamp > session.timestamp) {
         session.lastMessage = doc || "";
         session.timestamp = timestamp;
@@ -409,7 +344,6 @@ export async function getChattedAgentIds(
       return [];
     }
 
-    // Extract unique agent IDs
     const agentIds = new Set<number>();
     results.metadatas.forEach((metadata: any) => {
       if (metadata?.agentId) {
@@ -425,52 +359,20 @@ export async function getChattedAgentIds(
 }
 
 /**
- * Get or create a collection for agent knowledge base
+ * Get or create a collection for agent knowledge base.
+ * No embeddingFunction — ChromaDB handles embedding server-side.
  */
 export async function getKnowledgeBaseCollection(): Promise<Collection> {
   const client = getChromaClient();
-
-  try {
-    // @ts-ignore - We need to register this to silence warnings
-    const { registerEmbeddingFunction } = require("chromadb");
-
-    class DummyEmbeddingFunction {
-      public name: string = "dummy_embedding_function";
-
-      public async generate(texts: string[]): Promise<number[][]> {
-        return texts.map(() => []);
-      }
-
-      public getConfig() {
-        return { type: "known", name: this.name };
-      }
-
-      public static buildFromConfig() {
-        return new DummyEmbeddingFunction();
-      }
-    }
-
-    try {
-      registerEmbeddingFunction(
-        "dummy_embedding_function",
-        DummyEmbeddingFunction
-      );
-    } catch (e) {
-    }
-
-    return await client.getOrCreateCollection({
-      name: "agent_knowledge_base",
-      metadata: { description: "Knowledge base documents for AI agents" },
-      embeddingFunction: new DummyEmbeddingFunction(),
-    });
-  } catch (error) {
-    console.error("Error getting knowledge base collection:", error);
-    throw error;
-  }
+  return await client.getOrCreateCollection({
+    name: "agent_knowledge_base",
+    metadata: { description: "Knowledge base documents for AI agents" },
+  });
 }
 
 /**
- * Add documents to the knowledge base
+ * Add documents to the knowledge base.
+ * Pass documents only — ChromaDB generates embeddings server-side.
  */
 export async function addToKnowledgeBase(
   knowledgeBaseId: string,
@@ -478,10 +380,6 @@ export async function addToKnowledgeBase(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const collection = await getKnowledgeBaseCollection();
-
-    const embeddings = await Promise.all(
-      documents.map((doc) => generateEmbedding(doc))
-    );
 
     const ids = documents.map(
       (_, idx) => `${knowledgeBaseId}_${Date.now()}_${idx}`
@@ -494,9 +392,8 @@ export async function addToKnowledgeBase(
 
     await collection.add({
       ids,
-      embeddings,
-      metadatas,
       documents,
+      metadatas,
     });
 
     return { success: true };
@@ -507,7 +404,8 @@ export async function addToKnowledgeBase(
 }
 
 /**
- * Search the knowledge base
+ * Search the knowledge base.
+ * Uses queryTexts — ChromaDB embeds the query server-side.
  */
 export async function searchKnowledgeBase(
   knowledgeBaseId: string,
@@ -516,10 +414,9 @@ export async function searchKnowledgeBase(
 ): Promise<string[]> {
   try {
     const collection = await getKnowledgeBaseCollection();
-    const queryEmbedding = await generateEmbedding(query);
 
     const results = await collection.query({
-      queryEmbeddings: [queryEmbedding],
+      queryTexts: [query],
       nResults: limit,
       where: { knowledgeBaseId },
     });
@@ -534,6 +431,7 @@ export async function searchKnowledgeBase(
     return [];
   }
 }
+
 /**
  * Get list of agent IDs that the user has interacted with
  */
@@ -543,10 +441,9 @@ export async function getInteractedAgentIds(
   try {
     const collection = await getAgentMemoryCollection();
 
-    // Fetch all memories for this user (metadata only)
     const results = await collection.get({
       where: { userAddress },
-      include: ["metadatas"] as any, 
+      include: ["metadatas"] as any,
     });
 
     if (!results.metadatas) {

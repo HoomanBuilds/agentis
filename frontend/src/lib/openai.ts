@@ -1,5 +1,10 @@
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
+
+const deepseek = createOpenAI({
+  baseURL: "https://api.deepseek.com",
+  apiKey: process.env.DEEPSEEK_API_KEY,
+});
 
 /**
  * Generate a simple hash from personality object
@@ -61,7 +66,7 @@ export async function streamAgentResponse(
   const systemPrompt = buildPersonalityPrompt(personality);
 
   const result = streamText({
-    model: openai("gpt-4o-mini"),
+    model: deepseek("deepseek-chat"),
     system: systemPrompt,
     messages: [
       ...chatHistory.map((msg) => ({
