@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Zap } from "lucide-react"
 
 const footerLinks = {
   Platform: [
@@ -23,6 +24,7 @@ export function Footer() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
           <div className="col-span-2 sm:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
+              <Zap className="w-5 h-5 text-primary" />
               <span
                 className="font-bold text-foreground"
                 style={{ fontFamily: "'PT Mono', monospace", letterSpacing: "-0.05em" }}
