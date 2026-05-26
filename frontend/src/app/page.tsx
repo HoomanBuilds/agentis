@@ -1,4 +1,5 @@
 import { HeroSection } from '@/components/home/HeroSection'
+import { TrustBar } from '@/components/home/TrustBar'
 import { DemoCards } from '@/components/home/DemoCards'
 import { HowItWorks } from '@/components/home/HowItWorks'
 import { AgentMarquee } from '@/components/home/AgentMarquee'
@@ -21,6 +22,7 @@ export default function Home() {
       </div>
       <Header />
       <HeroSection />
+      <TrustBar />
       <DemoCards />
       <HowItWorks />
       <AgentMarquee />

@@ -1,22 +1,69 @@
 "use client"
 
 import { motion, useReducedMotion } from "framer-motion"
+import { useEffect, useState } from "react"
+import { fetchAgentMetadata, fetchIPFSData } from "@/hooks/queries/useAgentQueries"
 
-const mockAgents = [
-  { id: 1, name: 'CryptoSage', level: 12, category: 'Finance', price: '50' },
-  { id: 2, name: 'NarratorX', level: 8, category: 'Storytelling', price: '25' },
-  { id: 3, name: 'CodeBuddy', level: 23, category: 'Dev', price: '75' },
-  { id: 4, name: 'PhiloBot', level: 5, category: 'Philosophy', price: '15' },
-  { id: 5, name: 'TradeMind', level: 17, category: 'Trading', price: '100' },
-  { id: 6, name: 'ArtMuse', level: 9, category: 'Creative', price: '30' },
-  { id: 7, name: 'LegalEagle', level: 14, category: 'Legal', price: '80' },
-  { id: 8, name: 'ScienceBot', level: 6, category: 'Science', price: '20' },
-]
+interface AgentCard {
+  id: number
+  name: string
+  image?: string
+  level: number
+  category?: string
+}
 
-const allAgents = [...mockAgents, ...mockAgents]
+const PINATA_GATEWAY = process.env.NEXT_PUBLIC_PINATA_GATEWAY || 'https://gateway.pinata.cloud'
+
+function resolveIpfs(uri: string): string {
+  if (!uri) return ''
+  const gateway = PINATA_GATEWAY.replace(/\/$/, '') + '/ipfs/'
+  return uri.replace('ipfs://', gateway)
+}
 
 export function AgentMarquee() {
   const shouldReduceMotion = useReducedMotion()
+  const [agents, setAgents] = useState<AgentCard[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadAgents() {
+      // Try to fetch up to 20 agents (token IDs 1..20) in parallel, collect those that exist
+      const ids = Array.from({ length: 20 }, (_, i) => BigInt(i + 1))
+      const results = await Promise.allSettled(ids.map(async (id) => {
+        const meta = await fetchAgentMetadata(id)
+        if (!meta) return null
+        let image: string | undefined
+        let category: string | undefined
+        if (meta.token_uri) {
+          const cid = meta.token_uri.replace('ipfs://', '')
+          const ipfs = await fetchIPFSData(cid)
+          if (ipfs?.image) image = resolveIpfs(ipfs.image)
+          category = ipfs?.attributes?.find((a: any) => a.trait_type === 'Category')?.value
+            || ipfs?.traits?.[0]
+        }
+        return { id: Number(id), name: meta.name || `Agent #${id}`, image, level: Number(meta.level), category } as AgentCard
+      }))
+      if (cancelled) return
+      const valid = results
+        .filter((r): r is PromiseFulfilledResult<AgentCard | null> => r.status === 'fulfilled' && r.value !== null)
+        .map(r => r.value!)
+      if (valid.length > 0) setAgents(valid)
+    }
+    loadAgents()
+    return () => { cancelled = true }
+  }, [])
+
+  // Duplicate for seamless loop — use mock placeholders until real data loads
+  const displayAgents: AgentCard[] = agents.length >= 4
+    ? [...agents, ...agents]
+    : Array.from({ length: 16 }, (_, i) => ({
+        id: i + 1,
+        name: `Agent #${i + 1}`,
+        level: Math.floor(Math.random() * 20) + 1,
+      }))
+
+  const row1 = displayAgents
+  const row2 = [...displayAgents].reverse()
 
   return (
     <section id="agents" className="relative py-12 sm:py-20 overflow-hidden">
@@ -55,8 +102,8 @@ export function AgentMarquee() {
         <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
-        {/* First row - scrolls left */}
-        <div className="mb-4">
+        {/* Row 1 — scrolls left */}
+        <div className="mb-3 sm:mb-4">
           <motion.div
             initial={shouldReduceMotion ? {} : { opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -64,27 +111,23 @@ export function AgentMarquee() {
             className="flex gap-3 sm:gap-4 animate-marquee"
             style={{ width: "fit-content" }}
           >
-            {allAgents.map((agent, i) => (
-              <AgentNFTCard key={`row1-${i}`} agent={agent} />
+            {row1.map((agent, i) => (
+              <AgentNFTCard key={`r1-${i}`} agent={agent} />
             ))}
           </motion.div>
         </div>
 
-        {/* Second row - scrolls right (reversed) */}
+        {/* Row 2 — scrolls right */}
         <div>
           <motion.div
             initial={shouldReduceMotion ? {} : { opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             className="flex gap-3 sm:gap-4 animate-marquee"
-            style={{
-              width: "fit-content",
-              animationDirection: "reverse",
-              animationDuration: "70s",
-            }}
+            style={{ width: "fit-content", animationDirection: "reverse", animationDuration: "70s" }}
           >
-            {[...allAgents].reverse().map((agent, i) => (
-              <AgentNFTCard key={`row2-${i}`} agent={agent} />
+            {row2.map((agent, i) => (
+              <AgentNFTCard key={`r2-${i}`} agent={agent} />
             ))}
           </motion.div>
         </div>
@@ -93,17 +136,32 @@ export function AgentMarquee() {
   )
 }
 
-function AgentNFTCard({ agent }: { agent: typeof mockAgents[0] }) {
+function AgentNFTCard({ agent }: { agent: AgentCard }) {
   return (
-    <div className="group relative flex-shrink-0 w-48 sm:w-56 p-4 bg-card border border-border rounded-xl transition-all duration-300 hover:border-primary/50 hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_oklch(0.92_0.16_125_/_0.2)]">
-      <div className="w-full aspect-square rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center mb-3">
-        <span className="text-3xl font-bold text-primary/60">{agent.name[0]}</span>
-      </div>
-      <div className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">{agent.category}</div>
-      <div className="text-sm font-semibold text-foreground mb-1">{agent.name}</div>
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">Lvl {agent.level}</span>
-        <span className="text-xs font-medium text-gradient-lime">{agent.price} STRK</span>
+    <div className="group relative flex-shrink-0 w-44 sm:w-52 aspect-square rounded-xl overflow-hidden cursor-pointer">
+      {/* Full-bleed image */}
+      {agent.image ? (
+        <img
+          src={agent.image}
+          alt={agent.name}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-background flex items-center justify-center">
+          <span className="text-4xl font-bold text-primary/40">{agent.name[0]}</span>
+        </div>
+      )}
+
+      {/* Hover overlay — gradient from bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+      {/* Text — only visible on hover */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        {agent.category && (
+          <p className="text-[10px] font-semibold text-primary uppercase tracking-wider mb-0.5">{agent.category}</p>
+        )}
+        <p className="text-sm font-bold text-white leading-tight">{agent.name}</p>
+        <p className="text-xs text-white/60 mt-0.5">Level {agent.level}</p>
       </div>
     </div>
   )
