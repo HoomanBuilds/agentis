@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     }
 
     const contract = getContract(contractName);
-    const result = await contract.call(entryPoint, argsArray);
+    const result = await contract.call(entryPoint, argsArray, { blockIdentifier: 'latest' });
 
     // Serialize BigInt values
     const serialized = JSON.parse(
@@ -96,6 +96,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, result: serialized });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
+    // TOKEN_NOT_FOUND = token doesn't exist; return null result instead of 500
+    if (message.includes('TOKEN_NOT_FOUND') || message.includes('token not found') || message.includes('ERC721: invalid token ID')) {
+      return NextResponse.json({ success: true, result: null });
+    }
     console.error('Contract call error:', message);
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }

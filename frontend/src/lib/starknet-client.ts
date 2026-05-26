@@ -14,7 +14,7 @@ let providerUrl: string | null = null;
 export function getProvider(): RpcProvider {
   if (!provider || providerUrl !== CONTRACTS.rpcUrl) {
     providerUrl = CONTRACTS.rpcUrl;
-    provider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl });
+    provider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl, blockIdentifier: 'latest' as any });
   }
   return provider;
 }
