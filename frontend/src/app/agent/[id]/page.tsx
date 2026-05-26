@@ -162,13 +162,12 @@ export default function AgentDetailsPage() {
   // Format creator address
   const formatCreator = (creator: string) => {
     if (!creator) return 'Unknown';
-    const hash = creator.replace('account-hash-', '');
-    return `${hash.slice(0, 8)}...${hash.slice(-6)}`;
+    return `${creator.slice(0, 8)}...${creator.slice(-6)}`;
   };
 
   // Format timestamp to date
   const formatDate = (timestamp: bigint) => {
-    const date = new Date(Number(timestamp));
+    const date = new Date(Number(timestamp) * 1000);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

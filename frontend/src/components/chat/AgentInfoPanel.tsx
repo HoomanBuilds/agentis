@@ -32,12 +32,11 @@ export function AgentInfoPanel({
   walletAddress,
 }: AgentInfoPanelProps) {
   const formatCreator = (addr: string) => {
-    const hash = addr.replace('account-hash-', '');
-    return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
   const formatDate = (timestamp: bigint) => {
-    const date = new Date(Number(timestamp));
+    const date = new Date(Number(timestamp) * 1000);
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -46,53 +45,53 @@ export function AgentInfoPanel({
   };
 
   return (
-    <div className="w-80 bg-black/20 border-r border-white/10 flex flex-col h-full">
+    <div className="w-80 bg-card border-r border-border flex flex-col h-full">
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
         {/* Agent Image */}
-        <div className="w-full aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-500/20 to-lime-500/10 border border-white/10">
+        <div className="w-full aspect-square rounded-2xl overflow-hidden bg-secondary border border-border">
           {image ? (
             <img src={image} alt={name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Bot className="w-20 h-20 text-emerald-400/30" />
+              <Bot className="w-20 h-20 text-primary/30" />
             </div>
           )}
         </div>
 
         {/* Name & ID */}
         <div>
-          <h2 className="text-xl font-bold text-white">{name}</h2>
-          <p className="text-sm text-gray-400">Token #{tokenId}</p>
+          <h2 className="text-xl font-bold text-foreground">{name}</h2>
+          <p className="text-sm text-muted-foreground">Token #{tokenId}</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-            <div className="text-xs text-gray-400 mb-1">Level</div>
-            <div className="text-xl font-bold text-emerald-400">{level}</div>
+          <div className="bg-card rounded-xl p-3 border border-border">
+            <div className="text-xs text-muted-foreground mb-1">Level</div>
+            <div className="text-xl font-bold text-primary">{level}</div>
           </div>
-          <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-            <div className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+          <div className="bg-card rounded-xl p-3 border border-border">
+            <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
               <MessageCircle className="w-3 h-3" />
               Chats
             </div>
-            <div className="text-xl font-bold text-emerald-400">{chatCount}</div>
+            <div className="text-xl font-bold text-primary">{chatCount}</div>
           </div>
         </div>
 
         {/* Description */}
         {description && (
-          <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-            <h4 className="text-sm font-semibold text-gray-300 mb-2">About</h4>
-            <p className="text-sm text-gray-400 leading-relaxed">{description}</p>
+          <div className="bg-card rounded-xl p-4 border border-border">
+            <h4 className="text-sm font-semibold text-foreground/80 mb-2">About</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
           </div>
         )}
 
         {/* Traits */}
         {traits && traits.length > 0 && (
-          <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-            <h4 className="text-sm font-semibold text-gray-300 mb-2 flex items-center gap-1">
+          <div className="bg-card rounded-xl p-4 border border-border">
+            <h4 className="text-sm font-semibold text-foreground/80 mb-2 flex items-center gap-1">
               <Sparkles className="w-3 h-3" />
               Personality
             </h4>
@@ -100,7 +99,7 @@ export function AgentInfoPanel({
               {traits.map((trait, i) => (
                 <span
                   key={i}
-                  className="px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs"
+                  className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs"
                 >
                   {trait}
                 </span>
@@ -110,46 +109,46 @@ export function AgentInfoPanel({
         )}
 
         {/* Details */}
-        <div className="bg-white/5 rounded-xl p-4 border border-white/5 space-y-3">
-          <h4 className="text-sm font-semibold text-gray-300">Details</h4>
+        <div className="bg-card rounded-xl p-4 border border-border space-y-3">
+          <h4 className="text-sm font-semibold text-foreground/80">Details</h4>
           
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-              <User className="w-4 h-4 text-emerald-400" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <User className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <div className="text-xs text-gray-500">Creator</div>
-              <div className="text-sm text-gray-300 font-mono">{formatCreator(creator)}</div>
+              <div className="text-xs text-muted-foreground/60">Creator</div>
+              <div className="text-sm text-foreground/80 font-mono">{formatCreator(creator)}</div>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-              <Calendar className="w-4 h-4 text-emerald-400" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Calendar className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <div className="text-xs text-gray-500">Created</div>
-              <div className="text-sm text-gray-300">{formatDate(createdAt)}</div>
+              <div className="text-xs text-muted-foreground/60">Created</div>
+              <div className="text-sm text-foreground/80">{formatDate(createdAt)}</div>
             </div>
           </div>
 
           {walletAddress && (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-emerald-400" />
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Wallet className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-xs text-gray-500">Agent Wallet</div>
+                <div className="text-xs text-muted-foreground/60">Agent Wallet</div>
                 <div className="flex items-center gap-2">
-                  <div className="text-sm text-gray-300 font-mono truncate" title={walletAddress}>
+                  <div className="text-sm text-foreground/80 font-mono truncate" title={walletAddress}>
                     {formatCreator(walletAddress)}
                   </div>
                   <button 
                     onClick={() => navigator.clipboard.writeText(walletAddress)}
-                    className="p-1 hover:bg-white/10 rounded transition-colors"
+                    className="p-1 hover:bg-muted rounded transition-colors"
                     title="Copy Address"
                   >
-                    <Copy className="w-3 h-3 text-gray-400 hover:text-white" />
+                    <Copy className="w-3 h-3 text-muted-foreground hover:text-foreground" />
                   </button>
                 </div>
               </div>
@@ -160,7 +159,7 @@ export function AgentInfoPanel({
 
       {/* Clear Session Button */}
       {onClearSession && (
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-border">
           <button
             onClick={onClearSession}
             disabled={isClearing}

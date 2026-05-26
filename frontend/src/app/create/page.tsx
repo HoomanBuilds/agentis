@@ -19,7 +19,7 @@ export default function CreatePage() {
   const [formData, setFormData] = useState<Partial<AgentFormData>>({});
   const [mintingStep, setMintingStep] = useState<MintingStep>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [mintedTokenId, setMintedTokenId] = useState<number | undefined>();
+  const [mintedTokenId, setMintedTokenId] = useState<number | undefined>(undefined);
 
   const handleFormChange = useCallback((data: Partial<AgentFormData>) => {
     setFormData(data);
@@ -63,7 +63,7 @@ export default function CreatePage() {
       if (result.success) {
         setMintingStep('submitting');
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        setMintedTokenId(parseInt(result.transactionHash.slice(0, 8), 16) % 10000);
+        setMintedTokenId(undefined);
         setMintingStep('success');
       } else {
         setErrorMessage(result.errorMessage || 'Minting failed');
