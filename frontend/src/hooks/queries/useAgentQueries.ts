@@ -31,15 +31,16 @@ export const fetchAgentMetadata = async (tokenId: bigint): Promise<AgentMetadata
   
   const data = await response.json();
   if (data.success && data.result) {
-    const parsed = data.result;
+    // ABI returns anonymous tuple: (name, token_uri, personality_hash, created_at, creator, chat_count, level, is_public)
+    const r = Array.isArray(data.result) ? data.result : Object.values(data.result);
     return {
-      name: String(parsed.name || ''),
-      token_uri: String(parsed.token_uri || ''),
-      personality_hash: String(parsed.personality_hash || ''),
-      created_at: BigInt(String(parsed.created_at || 0)),
-      creator: String(parsed.creator || ''),
-      chat_count: BigInt(String(parsed.chat_count || 0)),
-      level: BigInt(String(parsed.level || 0)),
+      name: String(r[0] ?? ''),
+      token_uri: String(r[1] ?? ''),
+      personality_hash: String(r[2] ?? ''),
+      created_at: BigInt(String(r[3] ?? 0)),
+      creator: String(r[4] ?? ''),
+      chat_count: BigInt(String(r[5] ?? 0)),
+      level: BigInt(String(r[6] ?? 0)),
     };
   }
   return null;
@@ -60,22 +61,27 @@ export const fetchIPFSData = async (cid: string): Promise<AgentIPFSData | null> 
 
 const fetchAgentsByOwner = async (ownerKey: string): Promise<bigint[]> => {
   if (!ownerKey) return [];
-  
-  const response = await fetch('/api/contract/call', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contract: 'AgentNFT',
-      entryPoint: 'tokens_of_owner',
-      args: { owner: ownerKey }
+  // AgentNFT has no tokens_of_owner enumeration — iterate and filter by owner_of
+  const statsRes = await fetch('/api/stats');
+  const statsData = await statsRes.json();
+  const totalSupply = Number(statsData.totalAgents || 0);
+  if (totalSupply === 0) return [];
+
+  const results = await Promise.all(
+    Array.from({ length: totalSupply }, (_, i) => i + 1).map(async (id) => {
+      const res = await fetch('/api/contract/call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contract: 'AgentNFT', entryPoint: 'owner_of', args: { token_id: String(id) } }),
+      });
+      const d = await res.json();
+      if (d.success && d.result && String(d.result).toLowerCase() === ownerKey.toLowerCase()) {
+        return BigInt(id);
+      }
+      return null;
     })
-  });
-  
-  const data = await response.json();
-  if (data.success && Array.isArray(data.result)) {
-    return data.result.map((id: string | number) => BigInt(id));
-  }
-  return [];
+  );
+  return results.filter((id): id is bigint => id !== null);
 };
 
 const fetchTotalSupply = async (): Promise<bigint> => {

@@ -84,7 +84,7 @@ export function useAgentCredits() {
         {
           contractAddress: CONTRACTS.addresses.AgentCredits,
           entrypoint: 'purchase_credits',
-          calldata: CallData.compile([uint256.bnToUint256(amount)]),
+          calldata: CallData.compile([amount.toString()]),
         },
       ]);
 
@@ -232,45 +232,71 @@ export function useAgentCredits() {
     }
   }, []);
 
-  /**
-   * Plans match contract init values but with 18-decimal STRK prices
-   */
   const getPlans = useCallback(async (): Promise<CreditPlan[]> => {
-    return [
-      {
-        id: BigInt(0),
-        credits: BigInt(100),
-        price: BigInt('9000000000000000000'),  // 9 STRK
-        discountPercent: BigInt(10),
-        active: true,
-      },
-      {
-        id: BigInt(1),
-        credits: BigInt(500),
-        price: BigInt('40000000000000000000'), // 40 STRK
-        discountPercent: BigInt(20),
-        active: true,
-      },
-      {
-        id: BigInt(2),
-        credits: BigInt(1000),
-        price: BigInt('70000000000000000000'), // 70 STRK
-        discountPercent: BigInt(30),
-        active: true,
-      },
-    ];
+    try {
+      const countRes = await fetch('/api/contract/call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contract: 'AgentCredits', entryPoint: 'get_plan_count', args: [] }),
+      });
+      const countData = await countRes.json();
+      const planCount = Number(countData.result ?? 0);
+      if (planCount === 0) return [];
+
+      const plans = await Promise.all(
+        Array.from({ length: planCount }, (_, i) => i).map(async (id) => {
+          const res = await fetch('/api/contract/call', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contract: 'AgentCredits', entryPoint: 'get_plan', args: { plan_id: String(id) } }),
+          });
+          const d = await res.json();
+          if (!d.success || !d.result) return null;
+          // tuple: (credits: u128, price: u128, discount_bps: u16, active: bool)
+          const r = Array.isArray(d.result) ? d.result : Object.values(d.result);
+          return {
+            id: BigInt(id),
+            credits: BigInt(String(r[0] ?? 0)),
+            price: BigInt(String(r[1] ?? 0)),
+            discountPercent: BigInt(Math.round(Number(r[2] ?? 0) / 100)),
+            active: Boolean(r[3]),
+          } as CreditPlan;
+        })
+      );
+      return plans.filter((p): p is CreditPlan => p !== null);
+    } catch {
+      return [];
+    }
   }, []);
 
   const getPlan = useCallback(async (planId: bigint): Promise<CreditPlan | null> => {
-    const allPlans = await getPlans();
-    return allPlans.find(p => p.id === planId) || null;
+    const all = await getPlans();
+    return all.find(p => p.id === planId) ?? null;
   }, [getPlans]);
 
   const getCreditPrice = useCallback(async (): Promise<bigint> => {
-    return CREDIT_PRICE; // 0.1 STRK
+    try {
+      const res = await fetch('/api/contract/call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contract: 'AgentCredits', entryPoint: 'get_credit_price', args: [] }),
+      });
+      const data = await res.json();
+      if (data.success && data.result) return BigInt(String(data.result));
+    } catch {}
+    return CREDIT_PRICE;
   }, []);
 
   const getFreeTierAmount = useCallback(async (): Promise<bigint> => {
+    try {
+      const res = await fetch('/api/contract/call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contract: 'AgentCredits', entryPoint: 'get_free_tier_credits', args: [] }),
+      });
+      const data = await res.json();
+      if (data.success && data.result) return BigInt(String(data.result));
+    } catch {}
     return BigInt(10);
   }, []);
 

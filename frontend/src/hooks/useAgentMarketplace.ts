@@ -40,7 +40,7 @@ export function useAgentMarketplace() {
         entrypoint: 'approve',
         calldata: CallData.compile([
           CONTRACTS.addresses.AgentMarketplace,
-          uint256.bnToUint256(tokenId),
+          tokenId.toString(),
         ]),
       });
 
@@ -81,8 +81,8 @@ export function useAgentMarketplace() {
         entrypoint: 'list_agent',
         calldata: CallData.compile([
           CONTRACTS.addresses.AgentNFT,
-          uint256.bnToUint256(tokenId),
-          uint256.bnToUint256(price),
+          tokenId.toString(),
+          price.toString(),
         ]),
       });
 
@@ -132,7 +132,7 @@ export function useAgentMarketplace() {
           entrypoint: 'buy_agent',
           calldata: CallData.compile([
             CONTRACTS.addresses.AgentNFT,
-            uint256.bnToUint256(tokenId),
+            tokenId.toString(),
           ]),
         },
       ]);
@@ -171,7 +171,7 @@ export function useAgentMarketplace() {
         entrypoint: 'cancel_listing',
         calldata: CallData.compile([
           CONTRACTS.addresses.AgentNFT,
-          uint256.bnToUint256(tokenId),
+          tokenId.toString(),
         ]),
       });
 
@@ -191,6 +191,41 @@ export function useAgentMarketplace() {
       setIsLoading(false);
     }
   }, [activeKey, account, refreshBalance]);
+
+  const updatePrice = useCallback(async (
+    tokenId: bigint,
+    newPrice: bigint
+  ): Promise<TransactionResult> => {
+    if (!activeKey || !account) {
+      return { transactionHash: '', success: false, errorMessage: 'Wallet not connected' };
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await account.execute({
+        contractAddress: CONTRACTS.addresses.AgentMarketplace,
+        entrypoint: 'update_price',
+        calldata: CallData.compile([
+          CONTRACTS.addresses.AgentNFT,
+          tokenId.toString(),
+          newPrice.toString(),
+        ]),
+      });
+      const txResult: TransactionResult = {
+        transactionHash: result.transaction_hash,
+        success: true,
+        explorerUrl: getTxExplorerUrl(result.transaction_hash),
+      };
+      setLastResult(txResult);
+      return txResult;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      return { transactionHash: '', success: false, errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  }, [activeKey, account]);
 
   const getListing = useCallback(async (tokenId: bigint): Promise<MarketplaceListing | null> => {
     try {
@@ -239,6 +274,7 @@ export function useAgentMarketplace() {
     listAgent,
     buyAgent,
     cancelListing,
+    updatePrice,
     getListing,
     getAllListings,
     isLoading,
