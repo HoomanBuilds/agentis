@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 
@@ -11,6 +12,7 @@ const navLinks = [
   { href: '/marketplace', label: 'Marketplace' },
   { href: '/create', label: 'Create' },
   { href: '/agents', label: 'Agents' },
+  { href: '/profile', label: 'Profile' },
 ];
 
 export function Header() {
@@ -33,7 +35,7 @@ export function Header() {
       <nav className="mx-auto max-w-6xl px-2 sm:px-4 lg:px-8 py-4" aria-label="Main navigation">
         <div className="flex h-14 items-center justify-between bg-background/60 backdrop-blur-xl border border-border/50 rounded-full px-4 sm:px-6">
           <Link href="/" className="flex items-center gap-2" aria-label="Agentis home">
-            <Zap className="w-5 sm:w-6 h-5 sm:h-6 text-primary" aria-hidden="true" />
+            <Image src="/agentis-logo.png" alt="Agentis" width={28} height={28} className="w-6 sm:w-7 h-6 sm:h-7" />
             <span
               className="font-[family-name:var(--font-pt-mono)] font-bold text-base sm:text-lg text-foreground"
               style={{ letterSpacing: '-0.05em' }}
@@ -100,7 +102,7 @@ export function Header() {
             >
               <div className="flex items-center justify-between px-6 py-4 bg-background border-b border-border/50">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                  <Zap className="w-5 h-5 text-primary" aria-hidden="true" />
+                  <Image src="/agentis-logo.png" alt="Agentis" width={24} height={24} className="w-6 h-6" />
                   <span
                     className="font-[family-name:var(--font-pt-mono)] font-bold text-base text-foreground"
                     style={{ letterSpacing: '-0.05em' }}

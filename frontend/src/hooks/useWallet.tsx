@@ -6,6 +6,12 @@ import { AccountInterface, RpcProvider, Contract } from 'starknet';
 import { CONTRACTS, TOKEN_DECIMALS } from '@/constants/contracts';
 import { formatSTRK } from '@/lib/starknet-client';
 
+interface AvailableWallet {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 interface WalletContextType {
   isConnected: boolean;
   activeKey: string | null;
@@ -13,8 +19,10 @@ interface WalletContextType {
   balance: bigint;
   formattedBalance: string;
   connect: () => Promise<boolean>;
+  connectWith: (walletId: string) => Promise<boolean>;
   disconnect: () => Promise<void>;
   refreshBalance: () => Promise<void>;
+  availableWallets: AvailableWallet[];
   isLoading: boolean;
   error: string | null;
 }
@@ -27,6 +35,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [balance, setBalance] = useState<bigint>(BigInt(0));
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [availableWallets, setAvailableWallets] = useState<AvailableWallet[]>([]);
 
   const isConnected = !!activeKey && !!account;
 
@@ -64,41 +73,91 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     tryReconnect();
   }, [fetchBalance]);
 
+  const enableWallet = useCallback(async (walletObj: any): Promise<boolean> => {
+    console.log('[enableWallet] raw object:', walletObj);
+    console.log('[enableWallet] keys:', walletObj ? Object.keys(walletObj) : 'null');
+    console.log('[enableWallet] account:', walletObj?.account);
+    console.log('[enableWallet] selectedAddress:', walletObj?.selectedAddress);
+    console.log('[enableWallet] isConnected:', walletObj?.isConnected);
+    console.log('[enableWallet] provider:', walletObj?.provider);
+
+    const account = walletObj?.account || walletObj?.provider?.account;
+    const addr = walletObj?.selectedAddress
+      || walletObj?.account?.address
+      || walletObj?.provider?.selectedAddress
+      || walletObj?.provider?.account?.address;
+    const resolvedAccount = account || (addr ? walletObj?.provider : null);
+
+    console.log('[enableWallet] resolved addr:', addr, 'account:', resolvedAccount);
+
+    if (resolvedAccount && addr) {
+      setActiveKey(addr);
+      setAccount(resolvedAccount as unknown as AccountInterface);
+      await fetchBalance(addr);
+      return true;
+    }
+    return false;
+  }, [fetchBalance]);
+
+  // connect: if multiple wallets, just surface them — caller shows picker
   const connect = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
-
     try {
       const sn = getStarknet();
-      const availableWallets = await sn.getAvailableWallets();
-
-      if (!availableWallets.length) {
-        setError('No Starknet wallet found. Please install ArgentX or Braavos.');
+      const wallets: any[] = await sn.getAvailableWallets();
+      if (!wallets.length) {
+        setError('No Starknet wallet found. Please install ReadyX (ArgentX) or Braavos.');
         return false;
       }
-
-      const wallet: any = await sn.enable(availableWallets[0], { starknetVersion: 'v5' } as any);
-
-      if (wallet && wallet.isConnected && wallet.account) {
-        const addr = wallet.selectedAddress || wallet.account.address;
-        if (addr) {
-          setActiveKey(addr);
-          setAccount(wallet.account as unknown as AccountInterface);
-          await fetchBalance(addr);
-          return true;
-        }
+      setAvailableWallets(wallets.map((w: any) => ({ id: w.id, name: w.name, icon: w.icon })));
+      // If only one wallet, connect immediately
+      if (wallets.length === 1) {
+        await wallets[0].enable?.({ starknetVersion: 'v5' });
+        return await enableWallet(wallets[0]);
       }
-
-      setError('Failed to connect to wallet');
+      // Multiple wallets: return false to signal that picker should open
       return false;
-    } catch (err) {
-      setError('Failed to connect to wallet');
-      console.error('Connection error:', err);
+    } catch (err: any) {
+      setError(`Failed to connect: ${err?.message || String(err)}`);
       return false;
     } finally {
       setIsLoading(false);
     }
-  }, [fetchBalance]);
+  }, [enableWallet]);
+
+  const connectWith = useCallback(async (walletId: string): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const sn = getStarknet();
+      const wallets: any[] = await sn.getAvailableWallets();
+      const target = wallets.find((w: any) => w.id === walletId);
+      if (!target) { setError('Wallet not found'); return false; }
+
+      if (walletId === 'metamask') {
+        // MetaMask Snap: enable, then read from window[windowKey] for actual state
+        await sn.enable(target, {} as any);
+        const windowKey = target.windowKey || 'starknet_metamask';
+        const snapWallet: any = (window as any)[windowKey] || target;
+        console.log('[metamask] window snap wallet:', snapWallet, 'selectedAddress:', snapWallet?.selectedAddress);
+        const ok = await enableWallet(snapWallet);
+        if (!ok) setError('Failed to connect to wallet');
+        return ok;
+      } else {
+        // ArgentX/ReadyX/Braavos: call enable() directly on wallet object
+        await target.enable?.({ starknetVersion: 'v5' });
+        const ok = await enableWallet(target);
+        if (!ok) setError('Failed to connect to wallet');
+        return ok;
+      }
+    } catch (err: any) {
+      setError(`Failed to connect: ${err?.message || String(err)}`);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [enableWallet]);
 
   const disconnect = useCallback(async () => {
     try {
@@ -127,8 +186,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         balance,
         formattedBalance: formatSTRK(balance),
         connect,
+        connectWith,
         disconnect,
         refreshBalance,
+        availableWallets,
         isLoading,
         error,
       }}

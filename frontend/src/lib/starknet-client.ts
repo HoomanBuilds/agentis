@@ -9,9 +9,11 @@ import AgentMarketplaceAbi from '@/constants/abis/AgentMarketplace.json';
 
 // Singleton RPC provider
 let provider: RpcProvider | null = null;
+let providerUrl: string | null = null;
 
 export function getProvider(): RpcProvider {
-  if (!provider) {
+  if (!provider || providerUrl !== CONTRACTS.rpcUrl) {
+    providerUrl = CONTRACTS.rpcUrl;
     provider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl });
   }
   return provider;

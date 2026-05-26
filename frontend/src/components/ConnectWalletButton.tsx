@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useWallet } from '@/hooks/useWallet';
-import { Wallet, ChevronDown, Copy, LogOut, Check, ExternalLink } from 'lucide-react';
+import { Wallet, ChevronDown, Copy, LogOut, Check, ExternalLink, X, User } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export function ConnectWalletButton() {
-  const { isConnected, activeKey, formattedBalance, connect, disconnect, isLoading, error } = useWallet();
+  const { isConnected, activeKey, formattedBalance, connect, connectWith, disconnect, isLoading, error, availableWallets } = useWallet();
   const [isOpen, setIsOpen] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +80,14 @@ export function ConnectWalletButton() {
             </div>
 
             <div className="p-2">
+              <Link
+                href="/profile"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-lg transition-colors"
+              >
+                <User className="w-4 h-4" />
+                Profile
+              </Link>
               <a
                 href={`https://sepolia.voyager.online/contract/${activeKey}`}
                 target="_blank"
@@ -100,19 +111,53 @@ export function ConnectWalletButton() {
     );
   }
 
+  const handleConnect = async () => {
+    const ok = await connect();
+    if (!ok && availableWallets.length > 1) {
+      setShowPicker(true);
+    }
+  };
+
   return (
     <div className="flex flex-col items-end gap-1">
       <Button
         rounded="full"
         size="sm"
         className="gap-1.5 shadow-[0_0_20px_oklch(0.92_0.16_125_/_0.25)]"
-        onClick={connect}
+        onClick={handleConnect}
         disabled={isLoading}
       >
         <Wallet className="w-4 h-4" />
         {isLoading ? 'Connecting...' : 'Connect Wallet'}
       </Button>
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-xs text-destructive max-w-[200px] text-right">{error}</span>}
+
+      {/* Wallet Picker Modal — rendered via portal to escape header stacking context */}
+      {showPicker && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowPicker(false)}>
+          <div className="bg-card border border-border rounded-2xl p-6 w-80 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-foreground">Select Wallet</h3>
+              <button onClick={() => setShowPicker(false)} className="p-1 hover:bg-muted rounded-lg transition-colors">
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+            <div className="flex flex-col gap-2">
+              {availableWallets.map(w => (
+                <button
+                  key={w.id}
+                  onClick={async () => { setShowPicker(false); await connectWith(w.id); }}
+                  className="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors text-left"
+                >
+                  {w.icon && <img src={w.icon} alt={w.name} className="w-8 h-8 rounded-lg" />}
+                  <span className="font-medium text-foreground">{w.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
