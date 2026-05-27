@@ -75,8 +75,11 @@ const fetchAgentsByOwner = async (ownerKey: string): Promise<bigint[]> => {
         body: JSON.stringify({ contract: 'AgentNFT', entryPoint: 'owner_of', args: { token_id: String(id) } }),
       });
       const d = await res.json();
-      if (d.success && d.result && String(d.result).toLowerCase() === ownerKey.toLowerCase()) {
-        return BigInt(id);
+      if (d.success && d.result) {
+        // owner_of returns decimal; ownerKey is hex — normalize both to hex for comparison
+        const ownerHex = '0x' + BigInt(d.result).toString(16);
+        const keyHex = ownerKey.toLowerCase();
+        if (ownerHex === keyHex) return BigInt(id);
       }
       return null;
     })
