@@ -8,9 +8,9 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IMockErc20ForTest<TContractState> {
-    fn mint(ref self: TContractState, to: ContractAddress, amount: u128);
-    fn approve(ref self: TContractState, spender: ContractAddress, amount: u128) -> bool;
-    fn balance_of(self: @TContractState, owner: ContractAddress) -> u128;
+    fn mint(ref self: TContractState, to: ContractAddress, amount: u256);
+    fn approve(ref self: TContractState, spender: ContractAddress, amount: u256) -> bool;
+    fn balance_of(self: @TContractState, owner: ContractAddress) -> u256;
 }
 
 #[starknet::interface]

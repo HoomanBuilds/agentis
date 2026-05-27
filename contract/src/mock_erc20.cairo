@@ -14,8 +14,8 @@ pub mod MockErc20 {
     #[storage]
     struct Storage {
         owner: ContractAddress,
-        balances: Map<ContractAddress, u128>,
-        allowances: Map<(ContractAddress, ContractAddress), u128>,
+        balances: Map<ContractAddress, u256>,
+        allowances: Map<(ContractAddress, ContractAddress), u256>,
     }
 
     #[constructor]
@@ -24,14 +24,14 @@ pub mod MockErc20 {
     }
 
     #[external(v0)]
-    fn mint(ref self: ContractState, to: ContractAddress, amount: u128) {
+    fn mint(ref self: ContractState, to: ContractAddress, amount: u256) {
         let caller = get_caller_address();
         assert(caller == self.owner.read(), 'ONLY_OWNER');
         self.balances.write(to, self.balances.read(to) + amount);
     }
 
     #[external(v0)]
-    fn transfer(ref self: ContractState, to: ContractAddress, amount: u128) -> bool {
+    fn transfer(ref self: ContractState, to: ContractAddress, amount: u256) -> bool {
         let from = get_caller_address();
         let from_bal = self.balances.read(from);
         assert(from_bal >= amount, 'INSUFFICIENT_BALANCE');
@@ -41,7 +41,7 @@ pub mod MockErc20 {
     }
 
     #[external(v0)]
-    fn approve(ref self: ContractState, spender: ContractAddress, amount: u128) -> bool {
+    fn approve(ref self: ContractState, spender: ContractAddress, amount: u256) -> bool {
         let owner = get_caller_address();
         self.allowances.write((owner, spender), amount);
         true
@@ -49,7 +49,7 @@ pub mod MockErc20 {
 
     #[external(v0)]
     fn transfer_from(
-        ref self: ContractState, from: ContractAddress, to: ContractAddress, amount: u128,
+        ref self: ContractState, from: ContractAddress, to: ContractAddress, amount: u256,
     ) -> bool {
         let spender = get_caller_address();
         let allowance = self.allowances.read((from, spender));
@@ -65,7 +65,7 @@ pub mod MockErc20 {
     }
 
     #[external(v0)]
-    fn balance_of(self: @ContractState, owner: ContractAddress) -> u128 {
+    fn balance_of(self: @ContractState, owner: ContractAddress) -> u256 {
         self.balances.read(owner)
     }
 }
