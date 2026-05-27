@@ -4,8 +4,9 @@ import { getContract } from '@/lib/starknet-client';
 let statsCache: { data: any; timestamp: number } | null = null;
 const CACHE_TTL = 60_000;
 
-export async function GET() {
-  if (statsCache && Date.now() - statsCache.timestamp < CACHE_TTL) {
+export async function GET(request: Request) {
+  const bust = new URL(request.url).searchParams.get('bust') === 'true';
+  if (!bust && statsCache && Date.now() - statsCache.timestamp < CACHE_TTL) {
     return NextResponse.json({ success: true, ...statsCache.data, cached: true });
   }
 

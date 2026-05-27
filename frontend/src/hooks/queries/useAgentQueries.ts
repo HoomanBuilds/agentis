@@ -150,6 +150,8 @@ export function useOwnedAgents(ownerKey: string | undefined) {
     queryKey: ['agents', 'owned', ownerKey],
     queryFn: () => fetchAgentsByOwner(ownerKey!),
     enabled: !!ownerKey,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
 

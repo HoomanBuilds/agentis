@@ -109,6 +109,8 @@ export function useAgentNFT() {
       console.log('[mintAgent] tx confirmed ✓');
 
       setTimeout(() => refreshBalance(), 3000);
+      // Bust stats cache so profile page sees the new token immediately
+      fetch('/api/stats?bust=true').catch(() => {});
 
       const txResult: TransactionResult = {
         transactionHash: txHash,
