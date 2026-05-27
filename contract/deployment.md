@@ -1,62 +1,76 @@
 # Starknet Sepolia Deployment
 
-Date: March 20, 2026
+Date: May 27, 2026
 Network: Starknet Sepolia (`SN_SEPOLIA`)
 
 ## Deployment Account
 
 - Name: `agentis_sepolia`
 - Address: `0x0370a7a0169c5018b185e01023f0ab5fb4bac660ff87e7bc0dc52c400c5b28f9`
-- Account deploy tx: `0x4767774a60e38280e5de0f62a4edda45625363c6b2dda2a34be2fdea3e768b5`
-- Voyager: https://sepolia.voyager.online/tx/0x04767774a60e38280e5de0f62a4edda45625363c6b2dda2a34be2fdea3e768b5
 
 ## Constructor Inputs
 
 - `OWNER_ADDRESS`: `0x0370a7a0169c5018b185e01023f0ab5fb4bac660ff87e7bc0dc52c400c5b28f9`
 - `PAYMENT_TOKEN_ADDRESS` (STRK): `0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d`
-- `MINT_FEE`: `0`
+- `MINT_FEE`: `10000000000000000000` (10 STRK)
 
 ## Deployed Contracts
 
 ### AgentNFT
 
-- Class hash: `0x66dfb605bec9e280d0ca8cf77797fa8a5a2369e9f4964fe93187a617f1aa90f`
-- Contract address: `0x04b5333d96dd95f0d8f8d9727cb23420575239e4448c9cc30a89f31b1bd2612f`
-- Declare tx: `0x3fb91b77e2f2d8f7f2fbdda2a021bddfab3e096189c5180718ae003c01ff5ec`
-- Deploy tx: `0x00d12597743b7a7c33549530be6fd5952e3ec1e17c15770ea7a8d010dbc8a7fe`
-- Voyager contract: https://sepolia.voyager.online/contract/0x04b5333d96dd95f0d8f8d9727cb23420575239e4448c9cc30a89f31b1bd2612f
+- Class hash: `0x55cd12b972f6b3ec83e49c818a999dc6f92f9c345a9142dadf1db5ad273ae7a`
+- Contract address: `0x02efcbabe92b04d58b19b75c5d3d7c741327fa9d9bae0451039e1753ad77b5c3`
+- Declare tx: `0x68f56b9da971827f40e9f67209aaa20ad0e16248fd654131a77feaf7f0d15bf`
+- Deploy tx: `0x4cbae75929d91a756713f42adbacef6b17d47d6ce465843522776b0e617972e`
+- Voyager: https://sepolia.voyager.online/contract/0x02efcbabe92b04d58b19b75c5d3d7c741327fa9d9bae0451039e1753ad77b5c3
 
 ### RevenueShare
 
-- Class hash: `0x3bd4da84f2532e6244f8501d60f98632cf12c5c5ae1a78888a9c530dd8e4a4e`
-- Contract address: `0x06307038ef05caa67dd65352d2aa9b1fa3ac5b2f81ea8541ba77c503a331e423`
-- Declare tx: `0x1b76676e3088b417a35e09e21ac0ddfcfce9ee2207d9be437c63df95ba57f67`
-- Deploy tx: `0x05051f8f09e3dbe2059816f2aafb7373e339f06870b4bd01cd30ce1a9e05ca14`
-- Voyager contract: https://sepolia.voyager.online/contract/0x06307038ef05caa67dd65352d2aa9b1fa3ac5b2f81ea8541ba77c503a331e423
+- Class hash: `0x69d190a6e7efd0a299c4e0ce19f02be2b520674843a1d587653bf55501c5ab5`
+- Contract address: `0x07f99fe77b58957b4d20d0a6b0a03a82953967d6a3b6763959169e44f3fc9807`
+- Declare tx: `0x152dbcae9582772ddb0ef6f1f77bc43399b119d7718159e692411a49a9ad9c`
+- Deploy tx: `0x4a60f8a7a91878ee55f6ea9158dad6d7da984cba955e9250fc2de33b45a0be2`
+- Voyager: https://sepolia.voyager.online/contract/0x07f99fe77b58957b4d20d0a6b0a03a82953967d6a3b6763959169e44f3fc9807
 
 ### AgentCredits
 
-- Class hash: `0x53f667289ec5d616c9df7d1930feb87bd02c0deb0ac44327ead64075ebe417d`
-- Contract address: `0x044d35290e39f2353fcfe4645ffb42b3af4e1fd7b190930505c302cbf04eeef9`
-- Declare tx: `0x60f608406aecdb34362a9a6e8b9146c89f56b1303ae86afe219f7457a33b2e7`
-- Deploy tx: `0x0237b37fcdf023c05bb41d4ffef7522d6cddb0e4f8252525bfc48c693037cad4`
-- Voyager contract: https://sepolia.voyager.online/contract/0x044d35290e39f2353fcfe4645ffb42b3af4e1fd7b190930505c302cbf04eeef9
+- Class hash: `0x707769715ededbd331d3a381bacd8717adebd6cd43bbea83689a9d747e87f82`
+- Contract address: `0x006067f530519483394d2e2588c90fddaff5870f8710cc562184ae3cef30f9b4`
+- Declare tx: `0x5d1f60c86a941919a314f40ccb3e47fc1cf332c97c11cf80781700e326ce485`
+- Deploy tx: `0x10b7e08fb663ec6a4bfd4c440e6ad7ee5e14f71652a3e2252dab5359ef19c68`
+- Voyager: https://sepolia.voyager.online/contract/0x006067f530519483394d2e2588c90fddaff5870f8710cc562184ae3cef30f9b4
 
 ### AgentMarketplace
 
-- Class hash: `0x73cead952dc31dba71ffb75d5cf1f97bcd2cef0a71f1ebd0b57599cfd7e53bb`
-- Contract address: `0x057cff38e58af4db96ec4d2afe421da1b75c48ecde419ed26869846f775fa848`
-- Declare tx: `0x56e2955a895718cf22091edf92e0d6b9b09ef800c8c6c1e1aeec1ad9c68dbd0`
-- Deploy tx: `0x06d47e181a12b3cdf971b3f340fe93316ee6bc64eb1ea65b5dac88588247fad5`
-- Voyager contract: https://sepolia.voyager.online/contract/0x057cff38e58af4db96ec4d2afe421da1b75c48ecde419ed26869846f775fa848
+- Class hash: `0x3bf47c39b7f43adf4b76609b6fac2e199f46f4c8e5d02dcda6a7e8dc8ad2b34`
+- Contract address: `0x0397e87f72ca52c0fc61604e58afd731251ae445be278db0d53e723bbe80a758`
+- Declare tx: `0x55df247bccc5228f6df4b0c56dd5d45804b907b98163a377ac3e19f3299a47`
+- Deploy tx: `0x1687a2c607eede1013b48cbfe429866e3fb9688cee9a443c2356ab6b3edc370`
+- Voyager: https://sepolia.voyager.online/contract/0x0397e87f72ca52c0fc61604e58afd731251ae445be278db0d53e723bbe80a758
 
 ## Post-Deploy Wiring
 
-- `RevenueShare.set_authorized_reporter(AgentCredits, true)`
-- Invoke tx: `0x07e7ea0b06abdd9da1d5383fed4c9a4d0352a53cecf393cf8e0b716f79d0e89b`
-- Voyager: https://sepolia.voyager.online/tx/0x07e7ea0b06abdd9da1d5383fed4c9a4d0352a53cecf393cf8e0b716f79d0e89b
+- `RevenueShare.set_authorized_reporter(AgentCredits, true)` — tx: `0x790aa84d75189ec7c40c56ee738a528b93421f506b825537c76fdd5191e61fb`
+- `AgentCredits.set_authorized_spender(Owner, true)` — tx: `0x7126d0b4ad40a9b8d3af0f59b5809d1a163d500efddbbfa210d57a5767b9089`
+
+## Fix Applied
+
+Redeployed to fix `IERC20Like` interface using `u128` for token amounts when STRK ERC20
+requires `u256`. All payment calls now correctly pass `u256` amounts, resolving
+"Failed to deserialize param #3" on every mint/buy/credit-purchase transaction.
 
 ## Generated Artifacts
 
-- `deployments/sepolia.20260320_233320.env`
+- `deployments/sepolia.20260527_095631.env`
 - `deployments/sepolia.latest.env`
+
+---
+
+## Previous Deployment (March 20, 2026) — DEPRECATED
+
+Broken: `IERC20Like` used `u128` for amounts; STRK requires `u256`. All payment txs failed.
+
+- AgentNFT: `0x021da685fadac9146fa0753ea29b023e2c75d7903612656bb1a164a146c02ae6`
+- RevenueShare: `0x06a8ecb9e0a14e9bdbfb514a2c40acbdf99700573b039c5aed0eb856c93e1ab2`
+- AgentCredits: `0x070acc051f8df0a1a33455764985b885128e469ec7a1cab9def9cec7a7832df6`
+- AgentMarketplace: `0x0497f402ea0a1ca75db9e3766f21a07ab43c26cae792bca62d56ecfa961be016`
