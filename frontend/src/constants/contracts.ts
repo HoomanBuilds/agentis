@@ -1,6 +1,6 @@
 export const CONTRACTS = {
   network: 'sepolia' as const,
-  rpcUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL || 'https://api.cartridge.gg/x/starknet/sepolia',
+  rpcUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL!,
   explorerUrl: 'https://sepolia.voyager.online',
 
   addresses: {

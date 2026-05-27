@@ -53,6 +53,17 @@ export function useAgentNFT() {
     }
 
     console.log('[mintAgent] wallet ok, account:', account.address);
+
+    // Pre-flight: check account is deployed (Starknet accounts are smart contracts)
+    try {
+      const provider = getProvider();
+      await provider.getClassHashAt(account.address);
+    } catch {
+      const msg = 'Your wallet account is not deployed on Starknet yet. Open ReadyX/ArgentX and approve the "Deploy account" transaction first, then try minting again.';
+      console.error('[mintAgent] account not deployed:', account.address);
+      return { transactionHash: '', success: false, errorMessage: msg };
+    }
+
     setIsLoading(true);
     setError(null);
 
