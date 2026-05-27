@@ -14,7 +14,10 @@ let providerUrl: string | null = null;
 export function getProvider(): RpcProvider {
   if (!provider || providerUrl !== CONTRACTS.rpcUrl) {
     providerUrl = CONTRACTS.rpcUrl;
-    provider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl, blockIdentifier: 'latest' as any });
+    // specVersion:'0.8.1' forces the RPC081 channel (which includes l1_data_gas in V3 txs).
+    // Pre-setting specVersion skips starknet.js's runtime spec check, avoiding the
+    // "not supported" LibraryError thrown when Alchemy reports spec 0.10.2.
+    provider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl, blockIdentifier: 'latest' as any, specVersion: '0.8.1' as any });
   }
   return provider;
 }

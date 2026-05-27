@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion"
 import { useEffect, useState } from "react"
+import Marquee from "react-fast-marquee"
 import { fetchAgentMetadata, fetchIPFSData } from "@/hooks/queries/useAgentQueries"
 
 interface AgentCard {
@@ -53,16 +54,14 @@ export function AgentMarquee() {
     return () => { cancelled = true }
   }, [])
 
-  // Duplicate for seamless loop — use mock placeholders until real data loads
   const displayAgents: AgentCard[] = agents.length >= 4
-    ? [...agents, ...agents]
+    ? agents
     : Array.from({ length: 16 }, (_, i) => ({
         id: i + 1,
         name: `Agent #${i + 1}`,
         level: (i % 20) + 1,
       }))
 
-  const row1 = displayAgents
   const row2 = [...displayAgents].reverse()
 
   return (
@@ -98,39 +97,24 @@ export function AgentMarquee() {
         </motion.p>
       </div>
 
-      <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-
+      <div className="space-y-3 sm:space-y-4">
         {/* Row 1 — scrolls left */}
-        <div className="mb-3 sm:mb-4">
-          <motion.div
-            initial={shouldReduceMotion ? {} : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex gap-3 sm:gap-4 animate-marquee"
-            style={{ width: "fit-content" }}
-          >
-            {row1.map((agent, i) => (
-              <AgentNFTCard key={`r1-${i}`} agent={agent} />
-            ))}
-          </motion.div>
-        </div>
+        <Marquee speed={40} gradient={false} pauseOnHover>
+          {displayAgents.map((agent, i) => (
+            <div key={`r1-${i}`} className="mx-1.5 sm:mx-2">
+              <AgentNFTCard agent={agent} />
+            </div>
+          ))}
+        </Marquee>
 
         {/* Row 2 — scrolls right */}
-        <div>
-          <motion.div
-            initial={shouldReduceMotion ? {} : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex gap-3 sm:gap-4 animate-marquee"
-            style={{ width: "fit-content", animationDirection: "reverse", animationDuration: "70s" }}
-          >
-            {row2.map((agent, i) => (
-              <AgentNFTCard key={`r2-${i}`} agent={agent} />
-            ))}
-          </motion.div>
-        </div>
+        <Marquee speed={40} gradient={false} direction="right" pauseOnHover>
+          {row2.map((agent, i) => (
+            <div key={`r2-${i}`} className="mx-1.5 sm:mx-2">
+              <AgentNFTCard agent={agent} />
+            </div>
+          ))}
+        </Marquee>
       </div>
     </section>
   )

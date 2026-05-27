@@ -3,21 +3,28 @@
  * Uses BACKEND_PRIVATE_KEY + BACKEND_ACCOUNT_ADDRESS env vars.
  */
 
-import { Account, RpcProvider, Contract, CallData, num } from 'starknet';
+import { Account, Contract, CallData, constants, num, shortString } from 'starknet';
 import { CONTRACTS } from '@/constants/contracts';
+import { getProvider } from './starknet-client';
 import AgentNFTAbi from '@/constants/abis/AgentNFT.json';
 import AgentCreditsAbi from '@/constants/abis/AgentCredits.json';
 import RevenueShareAbi from '@/constants/abis/RevenueShare.json';
 
-let cachedAccount: Account | null = null;
-let cachedProvider: RpcProvider | null = null;
+// Starknet Sepolia only accepts V3 transactions.
+// Providing explicit resourceBounds skips fee estimation (which fails with RPC v0.10
+// due to response format changes). These bounds are generous maximums — actual cost
+// on testnet is near zero and only the actual fee is charged.
+const V3_RESOURCE_BOUNDS = {
+  l1_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
+  l1_data_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
+  l2_gas: { max_amount: '0x500000', max_price_per_unit: '0x174876E800' },
+};
+const V3_DETAILS = {
+  version: constants.TRANSACTION_VERSION.V3 as any,
+  resourceBounds: V3_RESOURCE_BOUNDS,
+};
 
-function getBackendProvider(): RpcProvider {
-  if (!cachedProvider) {
-    cachedProvider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl });
-  }
-  return cachedProvider;
-}
+let cachedAccount: Account | null = null;
 
 /**
  * Get the backend Starknet Account for signing transactions
@@ -32,8 +39,7 @@ export function getBackendAccount(): Account {
     throw new Error('BACKEND_PRIVATE_KEY and BACKEND_ACCOUNT_ADDRESS must be configured');
   }
 
-  const provider = getBackendProvider();
-  cachedAccount = new Account(provider, accountAddress, privateKey);
+  cachedAccount = new Account(getProvider(), accountAddress, privateKey, '1', constants.TRANSACTION_VERSION.V3);
   return cachedAccount;
 }
 
@@ -56,11 +62,10 @@ export async function executeBackendCall(
 ): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
   try {
     const account = getBackendAccount();
-    const result = await account.execute({
-      contractAddress,
-      entrypoint,
-      calldata: CallData.compile(calldata),
-    });
+    const result = await account.execute(
+      { contractAddress, entrypoint, calldata: CallData.compile(calldata) },
+      V3_DETAILS,
+    );
 
     console.log(`Backend tx submitted: ${result.transaction_hash}`);
     console.log(`  Contract: ${contractAddress}`);
@@ -88,7 +93,7 @@ export async function executeBackendMulticall(
       calldata: CallData.compile(c.calldata),
     }));
 
-    const result = await account.execute(compiledCalls);
+    const result = await account.execute(compiledCalls, V3_DETAILS);
     console.log(`Backend multicall submitted: ${result.transaction_hash}`);
     return { success: true, transactionHash: result.transaction_hash };
   } catch (error) {
@@ -128,8 +133,7 @@ export async function checkUserCredits(
   requiredCredits: bigint = BigInt(1)
 ): Promise<{ hasCredits: boolean; balance: bigint }> {
   try {
-    const provider = getBackendProvider();
-    const contract = new Contract(AgentCreditsAbi, CONTRACTS.addresses.AgentCredits, provider);
+    const contract = new Contract(AgentCreditsAbi, CONTRACTS.addresses.AgentCredits, getProvider());
     const result = await contract.call('get_user_credits', [userAddress]);
     const balance = BigInt(result.toString());
     return { hasCredits: balance >= requiredCredits, balance };
@@ -155,8 +159,7 @@ export async function checkSessionCredits(
   agentId: number
 ): Promise<{ hasCredits: boolean; balance: bigint }> {
   try {
-    const provider = getBackendProvider();
-    const contract = new Contract(AgentCreditsAbi, CONTRACTS.addresses.AgentCredits, provider);
+    const contract = new Contract(AgentCreditsAbi, CONTRACTS.addresses.AgentCredits, getProvider());
     const result = await contract.call('get_session_credits', [
       userAddress,
       CONTRACTS.addresses.AgentNFT,
@@ -233,4 +236,62 @@ export async function transferNFTToUser(
     'transfer_from',
     [fromAddress, toAddress, tokenId]
   );
+}
+
+/**
+ * Spend credits + record chat in one multicall (avoids duplicate-nonce from concurrent txs)
+ */
+export async function spendCreditsAndRecordChat(
+  userAddress: string,
+  agentId: number,
+  reason: string
+): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
+  const { hasCredits, balance } = await checkUserCredits(userAddress, BigInt(1));
+  if (!hasCredits) {
+    return { success: false, error: `Insufficient credits. Balance: ${balance}, Required: 1` };
+  }
+
+  const reasonFelt = shortString.encodeShortString(reason.slice(0, 31));
+  console.log(`[Multicall] spend_credits + record_chat: user=${userAddress}, agent=${agentId}`);
+
+  return executeBackendMulticall([
+    {
+      contractAddress: CONTRACTS.addresses.AgentCredits,
+      entrypoint: 'spend_credits',
+      calldata: [userAddress, '1', reasonFelt],
+    },
+    {
+      contractAddress: CONTRACTS.addresses.AgentNFT,
+      entrypoint: 'record_chat',
+      calldata: [agentId.toString()],
+    },
+  ]);
+}
+
+/**
+ * Use session credit + record chat in one multicall (avoids duplicate-nonce from concurrent txs)
+ */
+export async function useSessionAndRecordChat(
+  userAddress: string,
+  agentId: number
+): Promise<{ success: boolean; transactionHash?: string; error?: string }> {
+  const { hasCredits } = await checkSessionCredits(userAddress, agentId);
+  if (!hasCredits) {
+    return { success: false, error: 'No session credits available' };
+  }
+
+  console.log(`[Multicall] use_session_credit + record_chat: user=${userAddress}, agent=${agentId}`);
+
+  return executeBackendMulticall([
+    {
+      contractAddress: CONTRACTS.addresses.AgentCredits,
+      entrypoint: 'use_session_credit',
+      calldata: [userAddress, CONTRACTS.addresses.AgentNFT, agentId.toString()],
+    },
+    {
+      contractAddress: CONTRACTS.addresses.AgentNFT,
+      entrypoint: 'record_chat',
+      calldata: [agentId.toString()],
+    },
+  ]);
 }

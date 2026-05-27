@@ -1,11 +1,3 @@
-import { createOpenAI } from "@ai-sdk/openai";
-import { streamText } from "ai";
-
-const deepseek = createOpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.DEEPSEEK_API_KEY,
-});
-
 /**
  * Generate a simple hash from personality object
  * This creates a deterministic string that can be stored on-chain
@@ -16,11 +8,10 @@ export function generatePersonalityHash(personality: Record<string, unknown>): s
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
+    hash = hash & hash;
   }
-  // Convert to hex and pad to 64 chars (simulating a hash)
   const hexHash = Math.abs(hash).toString(16).padStart(8, '0');
-  return hexHash.repeat(8); // 64 character hex string
+  return hexHash.repeat(8);
 }
 
 /**
@@ -52,7 +43,10 @@ Always respond as ${name || 'the agent'}, maintaining the personality described 
 }
 
 /**
- * Stream AI response with personality injection
+ * Stream AI response with personality injection.
+ * Calls DeepSeek directly via fetch to avoid @ai-sdk/openai's model detection
+ * which incorrectly classifies non-OpenAI models as "reasoning models" and
+ * sends role:"developer" — a role DeepSeek doesn't support.
  */
 export async function streamAgentResponse(
   personality: {
@@ -62,21 +56,71 @@ export async function streamAgentResponse(
   },
   userMessage: string,
   chatHistory: Array<{ role: "user" | "assistant"; content: string }> = []
-) {
+): Promise<Response> {
   const systemPrompt = buildPersonalityPrompt(personality);
 
-  const result = streamText({
-    model: deepseek("deepseek-chat"),
-    system: systemPrompt,
-    messages: [
-      ...chatHistory.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      })),
-      { role: "user" as const, content: userMessage },
-    ],
-    temperature: 0.8,
+  const deepseekResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      stream: true,
+      temperature: 0.8,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...chatHistory.map(msg => ({ role: msg.role, content: msg.content })),
+        { role: 'user', content: userMessage },
+      ],
+    }),
   });
 
-  return result.toTextStreamResponse();
+  if (!deepseekResponse.ok) {
+    const err = await deepseekResponse.text();
+    throw new Error(`DeepSeek API error ${deepseekResponse.status}: ${err}`);
+  }
+
+  // Parse SSE from DeepSeek and stream plain text to the client.
+  // The frontend (useAgentChat) reads raw text chunks and concatenates them.
+  const stream = new ReadableStream({
+    async start(controller) {
+      const reader = deepseekResponse.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') continue;
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) {
+                controller.enqueue(new TextEncoder().encode(content));
+              }
+            } catch {
+              // skip malformed chunks
+            }
+          }
+        }
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
 }

@@ -17,16 +17,6 @@ export function HeroSection() {
     <section className="relative h-screen flex flex-col overflow-hidden">
       <div className="flex-1 flex items-center justify-center">
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={shouldReduceMotion ? {} : { opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.05 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold mb-6 tracking-wide uppercase"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Live on Starknet Sepolia
-          </motion.div>
-
           <motion.h1
             initial={shouldReduceMotion ? {} : fadeUp.initial}
             animate={fadeUp.animate}
@@ -69,16 +59,6 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
-      >
-        <span className="text-xs text-muted-foreground/40 uppercase tracking-widest">Scroll</span>
-        <div className="w-px h-8 bg-gradient-to-b from-muted-foreground/30 to-transparent" />
-      </motion.div>
     </section>
   )
 }

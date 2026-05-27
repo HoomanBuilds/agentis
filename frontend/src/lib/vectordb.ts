@@ -1,4 +1,5 @@
 import { ChromaClient } from "chromadb";
+import { DefaultEmbeddingFunction } from "@chroma-core/default-embed";
 
 type Collection = any;
 
@@ -38,11 +39,14 @@ export function getChromaClient(): ChromaClient {
  * Get or create a collection for agent memories.
  * No embeddingFunction — ChromaDB Cloud handles embedding server-side.
  */
+const embeddingFunction = new DefaultEmbeddingFunction();
+
 export async function getAgentMemoryCollection(): Promise<Collection> {
   const client = getChromaClient();
   return await client.getOrCreateCollection({
     name: "agent_memories_v5",
     metadata: { description: "Chat memories for AI agents" },
+    embeddingFunction,
   });
 }
 
@@ -367,6 +371,7 @@ export async function getKnowledgeBaseCollection(): Promise<Collection> {
   return await client.getOrCreateCollection({
     name: "agent_knowledge_base",
     metadata: { description: "Knowledge base documents for AI agents" },
+    embeddingFunction,
   });
 }
 

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { streamAgentResponse } from "@/lib/openai";
-import { checkUserCredits, spendUserCredits, isBackendWalletConfigured } from "@/lib/credits";
-import { checkSessionCredits, useSessionCredit } from "@/lib/session-credits";
+import { checkUserCredits, isBackendWalletConfigured } from "@/lib/credits";
+import { checkSessionCredits } from "@/lib/session-credits";
 import { getAgentWalletPublicKey, getAgentBalance, agentPurchaseCredits } from "@/lib/agent-wallet";
-import { recordChatOnChain } from "@/lib/backend-wallet";
+import { spendCreditsAndRecordChat, useSessionAndRecordChat } from "@/lib/backend-wallet";
 import { storeMessage } from "@/lib/vectordb";
 import { CONTRACTS } from "@/constants/contracts";
 
@@ -180,42 +180,29 @@ export async function POST(req: NextRequest) {
     const response = await streamAgentResponse(personality, message, chatHistory);
 
     // =====================
-    // SPEND CREDITS (async)
+    // SPEND + RECORD (single multicall to avoid duplicate-nonce)
     // =====================
     if (paymentMethod === 'credits') {
-      spendUserCredits(userPublicKey, 1, `Chat with Agent #${agentId}`)
+      spendCreditsAndRecordChat(userPublicKey, agentId, `Chat with Agent #${agentId}`)
         .then(result => {
           if (result.success) {
-            console.log(`[CREDITS] Spent 1 credit, deploy: ${result.transactionHash}`);
+            console.log(`[CREDITS+RECORD] tx: ${result.transactionHash}`);
           } else {
-            console.error(`[CREDITS] Failed: ${result.error}`);
+            console.error(`[CREDITS+RECORD] Failed: ${result.error}`);
           }
         })
-        .catch(err => console.error("[CREDITS] Error:", err));
+        .catch(err => console.error("[CREDITS+RECORD] Error:", err));
     } else if (paymentMethod === 'session') {
-      useSessionCredit(userPublicKey, agentId)
+      useSessionAndRecordChat(userPublicKey, agentId)
         .then(result => {
           if (result.success) {
-            console.log(`[SESSION] Used 1 session credit, deploy: ${result.transactionHash}`);
+            console.log(`[SESSION+RECORD] tx: ${result.transactionHash}`);
           } else {
-            console.error(`[SESSION] Failed: ${result.error}`);
+            console.error(`[SESSION+RECORD] Failed: ${result.error}`);
           }
         })
-        .catch(err => console.error("[SESSION] Error:", err));
+        .catch(err => console.error("[SESSION+RECORD] Error:", err));
     }
-
-    // =====================
-    // RECORD CHAT ON-CHAIN (async)
-    // =====================
-    recordChatOnChain(agentId)
-      .then(result => {
-        if (result.success) {
-          console.log(`[CHAT_RECORD] Recorded on-chain, deploy: ${result.transactionHash}`);
-        } else {
-          console.error(`[CHAT_RECORD] Failed: ${result.error}`);
-        }
-      })
-      .catch(err => console.error("[CHAT_RECORD] Error:", err));
 
     return response;
 

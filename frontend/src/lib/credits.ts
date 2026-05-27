@@ -5,10 +5,19 @@
  * and backend Account.execute() for writes.
  */
 
-import { CallData } from 'starknet';
+import { CallData, shortString, constants } from 'starknet';
 import { CONTRACTS } from '@/constants/contracts';
 import { getContract } from './starknet-client';
 import { getBackendAccount } from './backend-wallet';
+
+const V3_DETAILS = {
+  version: constants.TRANSACTION_VERSION.V3 as any,
+  resourceBounds: {
+    l1_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
+    l1_data_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
+    l2_gas: { max_amount: '0x500000', max_price_per_unit: '0x174876E800' },
+  },
+};
 
 // Use getContract() from starknet-client — it sets blockIdentifier:'latest'
 // so Alchemy doesn't reject with "Invalid block id" (pending not supported)
@@ -61,13 +70,16 @@ export async function spendUserCredits(
 
     const account = getBackendAccount();
     // ABI: spend_credits(user: ContractAddress, amount: u128, reason: felt252)
-    // reason must fit in a felt252 — truncate to 31 chars
-    const reasonFelt = reason.slice(0, 31);
-    const result = await account.execute({
-      contractAddress: CONTRACTS.addresses.AgentCredits,
-      entrypoint: 'spend_credits',
-      calldata: CallData.compile([userAddress, amount.toString(), reasonFelt]),
-    });
+    // reason must be encoded as a felt252 hex string
+    const reasonFelt = shortString.encodeShortString(reason.slice(0, 31));
+    const result = await account.execute(
+      {
+        contractAddress: CONTRACTS.addresses.AgentCredits,
+        entrypoint: 'spend_credits',
+        calldata: CallData.compile([userAddress, amount.toString(), reasonFelt]),
+      },
+      V3_DETAILS,
+    );
 
     console.log(`Spent ${amount} credits for ${userAddress}: ${reason}`);
     return { success: true, transactionHash: result.transaction_hash };
@@ -129,15 +141,18 @@ export async function useSessionCredit(
     }
 
     const account = getBackendAccount();
-    const result = await account.execute({
-      contractAddress: CONTRACTS.addresses.AgentCredits,
-      entrypoint: 'use_session_credit',
-      calldata: CallData.compile([
-        userAddress,
-        CONTRACTS.addresses.AgentNFT,
-        agentId.toString(),
-      ]),
-    });
+    const result = await account.execute(
+      {
+        contractAddress: CONTRACTS.addresses.AgentCredits,
+        entrypoint: 'use_session_credit',
+        calldata: CallData.compile([
+          userAddress,
+          CONTRACTS.addresses.AgentNFT,
+          agentId.toString(),
+        ]),
+      },
+      V3_DETAILS,
+    );
 
     console.log(`Used session credit for ${userAddress}, agent ${agentId}`);
     return { success: true, transactionHash: result.transaction_hash };
