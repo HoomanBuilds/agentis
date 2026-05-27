@@ -2,10 +2,10 @@
 
 import { useState, useCallback } from 'react';
 import { useWallet } from './useWallet';
-import { Contract, CallData, uint256 } from 'starknet';
+import { CallData, uint256, byteArray } from 'starknet';
 import { CONTRACTS, DEFAULT_MINTING_FEE } from '@/constants/contracts';
 import { getTxExplorerUrl, getProvider } from '@/lib/starknet-client';
-import AgentNFTAbi from '@/constants/abis/AgentNFT.json';
+
 
 export interface TransactionResult {
   transactionHash: string;
@@ -52,11 +52,9 @@ export function useAgentNFT() {
     setError(null);
 
     try {
-      // Use contract.populate() so starknet.js handles ByteArray encoding automatically
-      const nftContract = new Contract(AgentNFTAbi, CONTRACTS.addresses.AgentNFT, getProvider());
-      const mintCall = nftContract.populate('mint_agent', [name, tokenUri, personalityHash]);
-
       // Multicall: approve AgentNFT to spend minting fee, then mint in one tx
+      // Use byteArray.byteArrayFromString explicitly — contract.populate() has a known
+      // pending_word encoding bug in starknet.js v6 for certain ByteArray lengths.
       const result = await account.execute([
         {
           contractAddress: CONTRACTS.addresses.STRK,
@@ -66,7 +64,15 @@ export function useAgentNFT() {
             uint256.bnToUint256(DEFAULT_MINTING_FEE),
           ]),
         },
-        mintCall,
+        {
+          contractAddress: CONTRACTS.addresses.AgentNFT,
+          entrypoint: 'mint_agent',
+          calldata: CallData.compile([
+            byteArray.byteArrayFromString(name),
+            byteArray.byteArrayFromString(tokenUri),
+            byteArray.byteArrayFromString(personalityHash),
+          ]),
+        },
       ]);
 
       const txHash = result.transaction_hash;
