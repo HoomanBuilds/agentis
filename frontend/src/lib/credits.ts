@@ -5,17 +5,15 @@
  * and backend Account.execute() for writes.
  */
 
-import { RpcProvider, Contract, CallData } from 'starknet';
+import { CallData } from 'starknet';
 import { CONTRACTS } from '@/constants/contracts';
-import AgentCreditsAbi from '@/constants/abis/AgentCredits.json';
-import { getBackendAccount, getBackendAddress } from './backend-wallet';
+import { getContract } from './starknet-client';
+import { getBackendAccount } from './backend-wallet';
 
-function getProvider(): RpcProvider {
-  return new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl });
-}
-
-function getCreditsContract(): Contract {
-  return new Contract(AgentCreditsAbi, CONTRACTS.addresses.AgentCredits, getProvider());
+// Use getContract() from starknet-client — it sets blockIdentifier:'latest'
+// so Alchemy doesn't reject with "Invalid block id" (pending not supported)
+function getCreditsContract() {
+  return getContract('AgentCredits');
 }
 
 /**
@@ -62,10 +60,13 @@ export async function spendUserCredits(
     }
 
     const account = getBackendAccount();
+    // ABI: spend_credits(user: ContractAddress, amount: u128, reason: felt252)
+    // reason must fit in a felt252 — truncate to 31 chars
+    const reasonFelt = reason.slice(0, 31);
     const result = await account.execute({
       contractAddress: CONTRACTS.addresses.AgentCredits,
       entrypoint: 'spend_credits',
-      calldata: CallData.compile([userAddress, amount, 0, reason]),
+      calldata: CallData.compile([userAddress, amount.toString(), reasonFelt]),
     });
 
     console.log(`Spent ${amount} credits for ${userAddress}: ${reason}`);
@@ -104,7 +105,8 @@ export async function checkSessionCredits(
     ]);
     const balance = BigInt(result.toString());
     return { hasCredits: balance > BigInt(0), balance };
-  } catch {
+  } catch (error) {
+    console.error('Error checking session credits:', error);
     return { hasCredits: false, balance: BigInt(0) };
   }
 }
@@ -133,7 +135,7 @@ export async function useSessionCredit(
       calldata: CallData.compile([
         userAddress,
         CONTRACTS.addresses.AgentNFT,
-        agentId,
+        agentId.toString(),
       ]),
     });
 
