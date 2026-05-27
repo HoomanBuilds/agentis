@@ -44,42 +44,58 @@ export function useAgentNFT() {
     tokenUri: string,
     personalityHash: string
   ): Promise<TransactionResult> => {
+    console.log('[mintAgent] called', { name, tokenUri: tokenUri.slice(0, 60) + '...', personalityHash });
+
     if (!activeKey || !account) {
-      return { transactionHash: '', success: false, errorMessage: 'Wallet not connected' };
+      const msg = 'Wallet not connected';
+      console.error('[mintAgent] FAIL — wallet not connected', { activeKey, account });
+      return { transactionHash: '', success: false, errorMessage: msg };
     }
 
+    console.log('[mintAgent] wallet ok, account:', account.address);
     setIsLoading(true);
     setError(null);
 
     try {
-      // Multicall: approve AgentNFT to spend minting fee, then mint in one tx
-      // Use byteArray.byteArrayFromString explicitly — contract.populate() has a known
-      // pending_word encoding bug in starknet.js v6 for certain ByteArray lengths.
+      const approveFee = uint256.bnToUint256(DEFAULT_MINTING_FEE);
+      console.log('[mintAgent] approve calldata', {
+        spender: CONTRACTS.addresses.AgentNFT,
+        fee: DEFAULT_MINTING_FEE.toString(),
+        feeU256: approveFee,
+      });
+
+      const nameBA = byteArray.byteArrayFromString(name);
+      const uriBA = byteArray.byteArrayFromString(tokenUri);
+      const hashBA = byteArray.byteArrayFromString(personalityHash);
+      console.log('[mintAgent] ByteArrays encoded', {
+        name: { dataLen: nameBA.data.length, pending_word_len: nameBA.pending_word_len },
+        uri: { dataLen: uriBA.data.length, pending_word_len: uriBA.pending_word_len },
+        hash: { dataLen: hashBA.data.length, pending_word_len: hashBA.pending_word_len },
+      });
+
+      // Multicall: approve STRK spend, then mint
+      console.log('[mintAgent] sending multicall to wallet...');
       const result = await account.execute([
         {
           contractAddress: CONTRACTS.addresses.STRK,
           entrypoint: 'approve',
-          calldata: CallData.compile([
-            CONTRACTS.addresses.AgentNFT,
-            uint256.bnToUint256(DEFAULT_MINTING_FEE),
-          ]),
+          calldata: CallData.compile([CONTRACTS.addresses.AgentNFT, approveFee]),
         },
         {
           contractAddress: CONTRACTS.addresses.AgentNFT,
           entrypoint: 'mint_agent',
-          calldata: CallData.compile([
-            byteArray.byteArrayFromString(name),
-            byteArray.byteArrayFromString(tokenUri),
-            byteArray.byteArrayFromString(personalityHash),
-          ]),
+          calldata: CallData.compile([nameBA, uriBA, hashBA]),
         },
       ]);
 
       const txHash = result.transaction_hash;
+      console.log('[mintAgent] wallet signed, txHash:', txHash);
+
       const confirmed = await waitForTxSuccess(txHash);
       if (!confirmed) {
         throw new Error('Minting transaction failed or timed out');
       }
+      console.log('[mintAgent] tx confirmed ✓');
 
       setTimeout(() => refreshBalance(), 3000);
 
@@ -91,7 +107,8 @@ export function useAgentNFT() {
       setLastResult(txResult);
       return txResult;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error('[mintAgent] FAIL —', errorMessage, err);
       setError(errorMessage);
       return { transactionHash: '', success: false, errorMessage };
     } finally {

@@ -29,48 +29,70 @@ export default function CreatePage() {
     if (!activeKey) return;
     setMintingStep('preparing');
     setErrorMessage('');
+    console.log('[create] handleSubmit started', { name: data.name, traits: data.traits });
 
     try {
+      // btoa only handles Latin-1; use encodeURIComponent to handle any Unicode in description
       const personalityData = { traits: data.traits, description: data.description, hasKnowledgeBase: !!data.knowledgeBase };
-      const personalityHash = btoa(JSON.stringify(personalityData)).slice(0, 64);
+      const personalityHash = btoa(encodeURIComponent(JSON.stringify(personalityData))).slice(0, 64);
+      console.log('[create] personalityHash:', personalityHash);
 
       let imageUrl = '';
       if (data.image) {
+        console.log('[create] uploading image to IPFS...');
         try {
           const imageFormData = new FormData();
           imageFormData.append('file', data.image);
           const imageResponse = await fetch('/api/ipfs/upload-image', { method: 'POST', body: imageFormData });
           const imageData = await imageResponse.json();
-          if (imageData.success && imageData.ipfsUrl) imageUrl = imageData.ipfsUrl;
-        } catch {}
+          if (imageData.success && imageData.ipfsUrl) {
+            imageUrl = imageData.ipfsUrl;
+            console.log('[create] image IPFS:', imageUrl);
+          }
+        } catch (e) {
+          console.warn('[create] image upload failed (non-fatal):', e);
+        }
       }
 
       const metadata = { name: data.name, description: data.description, traits: data.traits, ...(imageUrl && { image: imageUrl }) };
       let tokenUri = '';
 
+      console.log('[create] uploading metadata to IPFS...');
       try {
         const ipfsResponse = await fetch('/api/ipfs/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ metadata }) });
         const ipfsData = await ipfsResponse.json();
-        if (ipfsData.success && ipfsData.ipfsUrl) tokenUri = ipfsData.ipfsUrl;
-        else throw new Error(ipfsData.error || 'IPFS upload failed');
-      } catch {
-        tokenUri = `data:application/json;base64,${btoa(JSON.stringify(metadata))}`;
+        if (ipfsData.success && ipfsData.ipfsUrl) {
+          tokenUri = ipfsData.ipfsUrl;
+          console.log('[create] metadata IPFS:', tokenUri);
+        } else {
+          throw new Error(ipfsData.error || 'IPFS upload returned no URL');
+        }
+      } catch (e) {
+        console.warn('[create] IPFS upload failed, using data URI fallback:', e);
+        // Fallback: use encodeURIComponent so non-ASCII in metadata is safe
+        tokenUri = `data:application/json;base64,${btoa(encodeURIComponent(JSON.stringify(metadata)))}`;
+        console.log('[create] fallback tokenUri length:', tokenUri.length);
       }
 
+      console.log('[create] calling mintAgent...');
       setMintingStep('signing');
       const result = await mintAgent(data.name, tokenUri, personalityHash);
 
       if (result.success) {
+        console.log('[create] mint success, txHash:', result.transactionHash);
         setMintingStep('submitting');
         await new Promise((resolve) => setTimeout(resolve, 1500));
         setMintedTokenId(undefined);
         setMintingStep('success');
       } else {
+        console.error('[create] mintAgent returned failure:', result.errorMessage);
         setErrorMessage(result.errorMessage || 'Minting failed');
         setMintingStep('error');
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Unknown error occurred');
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[create] unhandled error:', msg, error);
+      setErrorMessage(msg);
       setMintingStep('error');
     }
   };
