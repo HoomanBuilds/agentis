@@ -109,7 +109,8 @@ pub mod AgentNFT {
 
         if fee > 0 {
             let token = IERC20LikeDispatcher { contract_address: self.payment_token.read() };
-            let paid = token.transfer_from(caller, self.owner.read(), fee);
+            let fee_u256: u256 = fee.into();
+            let paid = token.transfer_from(caller, self.owner.read(), fee_u256);
             assert(paid, 'MINT_FEE_PAYMENT_FAILED');
         }
 

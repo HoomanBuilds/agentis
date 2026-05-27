@@ -205,7 +205,8 @@ pub mod AgentCredits {
 
         if cost > 0 {
             let token = IERC20LikeDispatcher { contract_address: self.payment_token.read() };
-            let paid = token.transfer_from(caller, self.owner.read(), cost);
+            let cost_u256: u256 = cost.into();
+            let paid = token.transfer_from(caller, self.owner.read(), cost_u256);
             assert(paid, 'PAYMENT_FAILED');
         }
 
@@ -223,7 +224,8 @@ pub mod AgentCredits {
         let credits = self.plan_credits.read(plan_id);
 
         let token = IERC20LikeDispatcher { contract_address: self.payment_token.read() };
-        let paid = token.transfer_from(caller, self.owner.read(), price);
+        let price_u256: u256 = price.into();
+        let paid = token.transfer_from(caller, self.owner.read(), price_u256);
         assert(paid, 'PAYMENT_FAILED');
 
         _mint(ref self, caller, credits);
@@ -264,7 +266,8 @@ pub mod AgentCredits {
         assert(revenue_share != zero_address(), 'REVENUE_SHARE_NOT_SET');
 
         let token = IERC20LikeDispatcher { contract_address: self.payment_token.read() };
-        let paid = token.transfer_from(caller, revenue_share, cost);
+        let cost_u256: u256 = cost.into();
+        let paid = token.transfer_from(caller, revenue_share, cost_u256);
         assert(paid, 'SESSION_PAYMENT_FAILED');
 
         let rev = IRevenueShareDispatcher { contract_address: revenue_share };

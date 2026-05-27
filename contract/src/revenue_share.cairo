@@ -172,7 +172,7 @@ pub mod RevenueShare {
         let withdrawn = self.agent_withdrawn.read(token_id);
         assert(total > withdrawn, 'NO_EARNINGS');
 
-        let pending = total - withdrawn;
+        let pending: u128 = total - withdrawn;
         self.agent_withdrawn.write(token_id, total);
 
         let receiver = if configured_wallet != zero_address() {
@@ -182,7 +182,8 @@ pub mod RevenueShare {
         };
 
         let token = IERC20LikeDispatcher { contract_address: self.payment_token.read() };
-        let sent = token.transfer(receiver, pending);
+        let pending_u256: u256 = pending.into();
+        let sent = token.transfer(receiver, pending_u256);
         assert(sent, 'TOKEN_TRANSFER_FAILED');
 
         self.emit(EarningsClaimed { token_id, receiver, amount: pending });
@@ -199,11 +200,12 @@ pub mod RevenueShare {
         let withdrawn = self.platform_withdrawn.read();
         assert(total > withdrawn, 'NO_EARNINGS');
 
-        let pending = total - withdrawn;
+        let pending: u128 = total - withdrawn;
         self.platform_withdrawn.write(total);
 
         let token = IERC20LikeDispatcher { contract_address: self.payment_token.read() };
-        let sent = token.transfer(receiver, pending);
+        let pending_u256: u256 = pending.into();
+        let sent = token.transfer(receiver, pending_u256);
         assert(sent, 'TOKEN_TRANSFER_FAILED');
 
         self.emit(PlatformEarningsWithdrawn { receiver, amount: pending });

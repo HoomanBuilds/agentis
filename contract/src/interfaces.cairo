@@ -2,9 +2,9 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait IERC20Like<TContractState> {
-    fn transfer(ref self: TContractState, to: ContractAddress, amount: u128) -> bool;
+    fn transfer(ref self: TContractState, to: ContractAddress, amount: u256) -> bool;
     fn transfer_from(
-        ref self: TContractState, from: ContractAddress, to: ContractAddress, amount: u128,
+        ref self: TContractState, from: ContractAddress, to: ContractAddress, amount: u256,
     ) -> bool;
 }
 

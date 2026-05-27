@@ -154,11 +154,13 @@ pub mod AgentMarketplace {
         let seller_amount = price - fee;
 
         let token = IERC20LikeDispatcher { contract_address: self.payment_token.read() };
-        let paid_seller = token.transfer_from(caller, seller, seller_amount);
+        let seller_amount_u256: u256 = seller_amount.into();
+        let paid_seller = token.transfer_from(caller, seller, seller_amount_u256);
         assert(paid_seller, 'PAY_SELLER_FAILED');
 
         if fee > 0 {
-            let paid_fee = token.transfer_from(caller, self.owner.read(), fee);
+            let fee_u256: u256 = fee.into();
+            let paid_fee = token.transfer_from(caller, self.owner.read(), fee_u256);
             assert(paid_fee, 'PAY_FEE_FAILED');
         }
 
