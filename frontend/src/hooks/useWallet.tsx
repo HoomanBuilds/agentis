@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import { getStarknet } from '@starknet-io/get-starknet-core';
-import { AccountInterface, RpcProvider, Contract } from 'starknet';
+import { Account, AccountInterface, RpcProvider, Contract } from 'starknet';
 import { CONTRACTS, TOKEN_DECIMALS } from '@/constants/contracts';
 import { formatSTRK } from '@/lib/starknet-client';
 
@@ -92,7 +92,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
     if (resolvedAccount && addr) {
       setActiveKey(addr);
-      setAccount(resolvedAccount as unknown as AccountInterface);
+      // Wrap the wallet account with our own RpcProvider so starknet.js uses our
+      // node for fee estimation — avoids ArgentX's internal RPC timing out on simulation.
+      // The wallet's signTransaction is still used, so the popup still appears.
+      const provider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl });
+      const wrappedAccount = new Account(provider, addr, resolvedAccount as any);
+      setAccount(wrappedAccount as unknown as AccountInterface);
       await fetchBalance(addr);
       return true;
     }
