@@ -22,18 +22,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Enforce a total content size limit. ChromaDB Cloud free tier is restrictive;
-    // beyond ~200 KB the upload takes many round-trips and burns through quota fast.
-    const MAX_TOTAL_BYTES = 200_000; // 200 KB
-    const encoder = new TextEncoder();
-    const totalBytes = documents.reduce((sum, d) => sum + encoder.encode(d).length, 0);
-    if (totalBytes > MAX_TOTAL_BYTES) {
-      return NextResponse.json(
-        { error: `Knowledge base file is too large (${Math.round(totalBytes / 1024)} KB). Maximum allowed is ${MAX_TOTAL_BYTES / 1024} KB.` },
-        { status: 413 }
-      );
-    }
-
     // Split documents into ~800-character paragraph chunks for better retrieval.
     const CHUNK_SIZE = 800;
     const chunkedDocs: string[] = [];
