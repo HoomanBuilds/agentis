@@ -391,27 +391,43 @@ export async function getKnowledgeBaseCollection(): Promise<Collection> {
  * Add documents to the knowledge base.
  * Pass documents only — ChromaDB generates embeddings server-side.
  */
+// ChromaDB Cloud free tier caps each Add call at 16 KB of document content.
+// Batch by accumulated UTF-8 byte size, not document count.
+const CHROMA_ADD_BYTE_LIMIT = 14_000; // 14 KB — safe margin under the 16 KB quota
+
 export async function addToKnowledgeBase(
   knowledgeBaseId: string,
   documents: string[]
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const collection = await getKnowledgeBaseCollection();
+    const ts = Date.now();
+    const encoder = new TextEncoder();
 
-    const ids = documents.map(
-      (_, idx) => `${knowledgeBaseId}_${Date.now()}_${idx}`
-    );
+    let batch: string[] = [];
+    let batchBytes = 0;
+    let globalIdx = 0;
 
-    const metadatas = documents.map(() => ({
-      knowledgeBaseId,
-      timestamp: Date.now().toString(),
-    }));
+    const flush = async () => {
+      if (batch.length === 0) return;
+      const base = globalIdx - batch.length;
+      const ids = batch.map((_, i) => `${knowledgeBaseId}_${ts}_${base + i}`);
+      const metadatas = batch.map(() => ({ knowledgeBaseId, timestamp: ts.toString() }));
+      await collection.add({ ids, documents: batch, metadatas });
+      batch = [];
+      batchBytes = 0;
+    };
 
-    await collection.add({
-      ids,
-      documents,
-      metadatas,
-    });
+    for (const doc of documents) {
+      const docBytes = encoder.encode(doc).length;
+      if (batchBytes + docBytes > CHROMA_ADD_BYTE_LIMIT && batch.length > 0) {
+        await flush();
+      }
+      batch.push(doc);
+      batchBytes += docBytes;
+      globalIdx++;
+    }
+    await flush();
 
     return { success: true };
   } catch (error: any) {

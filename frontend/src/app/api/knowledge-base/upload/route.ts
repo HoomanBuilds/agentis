@@ -22,33 +22,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Chunk large documents if needed
+    // Enforce a total content size limit. ChromaDB Cloud free tier is restrictive;
+    // beyond ~200 KB the upload takes many round-trips and burns through quota fast.
+    const MAX_TOTAL_BYTES = 200_000; // 200 KB
+    const encoder = new TextEncoder();
+    const totalBytes = documents.reduce((sum, d) => sum + encoder.encode(d).length, 0);
+    if (totalBytes > MAX_TOTAL_BYTES) {
+      return NextResponse.json(
+        { error: `Knowledge base file is too large (${Math.round(totalBytes / 1024)} KB). Maximum allowed is ${MAX_TOTAL_BYTES / 1024} KB.` },
+        { status: 413 }
+      );
+    }
+
+    // Split documents into ~800-character paragraph chunks for better retrieval.
+    const CHUNK_SIZE = 800;
     const chunkedDocs: string[] = [];
-    const MAX_CHUNK_SIZE = 1000; // characters per chunk
 
     for (const doc of documents) {
-      if (doc.length <= MAX_CHUNK_SIZE) {
-        chunkedDocs.push(doc);
-      } else {
-        // Split by paragraphs or sentences
-        const paragraphs = doc.split(/\n\n+/);
-        let currentChunk = '';
-
-        for (const para of paragraphs) {
-          if (currentChunk.length + para.length <= MAX_CHUNK_SIZE) {
-            currentChunk += (currentChunk ? '\n\n' : '') + para;
-          } else {
-            if (currentChunk) {
-              chunkedDocs.push(currentChunk);
-            }
-            currentChunk = para;
-          }
+      const paragraphs = doc.split(/\n\n+/);
+      let current = '';
+      for (const para of paragraphs) {
+        if (current.length + para.length > CHUNK_SIZE && current.length > 0) {
+          chunkedDocs.push(current.trim());
+          current = '';
         }
-
-        if (currentChunk) {
-          chunkedDocs.push(currentChunk);
-        }
+        current += (current ? '\n\n' : '') + para;
       }
+      if (current.trim()) chunkedDocs.push(current.trim());
     }
 
     const result = await addToKnowledgeBase(knowledgeBaseId, chunkedDocs);
