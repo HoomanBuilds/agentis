@@ -54,7 +54,7 @@ export default function CreatePage() {
         }
       }
 
-      const metadata = { name: data.name, description: data.description, traits: data.traits, ...(imageUrl && { image: imageUrl }) };
+      const metadata = { name: data.name, description: data.description, traits: data.traits, ...(imageUrl && { image: imageUrl }), ...(data.knowledgeBase && { hasKnowledgeBase: true }) };
       let tokenUri = '';
 
       console.log('[create] uploading metadata to IPFS...');
@@ -81,8 +81,33 @@ export default function CreatePage() {
       if (result.success) {
         console.log('[create] mint success, txHash:', result.transactionHash);
         setMintingStep('submitting');
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        setMintedTokenId(undefined);
+
+        // Get the newly minted token ID (total supply = last token ID)
+        let mintedId: number | undefined;
+        try {
+          const statsRes = await fetch('/api/stats?bust=true');
+          const stats = await statsRes.json();
+          if (stats.totalAgents) mintedId = Number(stats.totalAgents);
+        } catch (e) {
+          console.warn('[create] could not fetch token ID:', e);
+        }
+        setMintedTokenId(mintedId);
+
+        // Upload knowledge base document if provided
+        if (data.knowledgeBase && mintedId) {
+          try {
+            const text = await data.knowledgeBase.text();
+            await fetch('/api/knowledge-base/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ knowledgeBaseId: String(mintedId), documents: [text] }),
+            });
+            console.log('[create] knowledge base uploaded for agent', mintedId);
+          } catch (e) {
+            console.warn('[create] knowledge base upload failed (non-fatal):', e);
+          }
+        }
+
         setMintingStep('success');
       } else {
         console.error('[create] mintAgent returned failure:', result.errorMessage);
