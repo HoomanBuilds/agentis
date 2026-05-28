@@ -1,5 +1,23 @@
 import { ChromaClient } from "chromadb";
-import { DefaultEmbeddingFunction } from "@chroma-core/default-embed";
+
+// Simple character-bigram embedding (no external ML dependency).
+// Not semantic, but sufficient for recent-message retrieval which is the
+// primary use case. ChromaDB requires an embeddingFunction to accept documents.
+const embeddingFunction = {
+  generate: async (texts: string[]): Promise<number[][]> => {
+    const DIM = 128;
+    return texts.map((text) => {
+      const vec = new Float32Array(DIM).fill(0);
+      const s = text.toLowerCase();
+      for (let i = 0; i < s.length - 1; i++) {
+        vec[s.charCodeAt(i) % DIM] += 1;
+        vec[(s.charCodeAt(i) + s.charCodeAt(i + 1)) % DIM] += 0.5;
+      }
+      const norm = Math.sqrt(Array.from(vec).reduce((a, v) => a + v * v, 0)) || 1;
+      return Array.from(vec).map((v) => v / norm);
+    });
+  },
+};
 
 type Collection = any;
 
@@ -34,12 +52,6 @@ export function getChromaClient(): ChromaClient {
   }
   return chromaClient;
 }
-
-/**
- * Get or create a collection for agent memories.
- * No embeddingFunction — ChromaDB Cloud handles embedding server-side.
- */
-const embeddingFunction = new DefaultEmbeddingFunction();
 
 export async function getAgentMemoryCollection(): Promise<Collection> {
   const client = getChromaClient();
