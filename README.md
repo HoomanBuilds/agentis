@@ -25,7 +25,7 @@ Agentis is a platform where anyone can create an AI agent, define its personalit
 
 The problem it solves: on every centralized AI platform today (Character.ai, OpenAI GPTs, Claude Projects), creators build agents that drive millions of interactions and earn exactly $0. The platform owns the agent, captures all revenue, and can delete it at any time. Agentis gives creators verifiable ownership, on-chain revenue, and a secondary market.
 
-**Live:** [agentis-mocha.vercel.app](https://agentis-mocha.vercel.app) · **Network:** Starknet Sepolia
+**Live:** [agentis-theta.vercel.app](https://agentis-theta.vercel.app) · **Network:** Starknet Sepolia
 
 ---
 
