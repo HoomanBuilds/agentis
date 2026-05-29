@@ -10,9 +10,9 @@
 
 > The first decentralized AI agent creator economy on Starknet. Mint agents as NFTs. Earn 80% of every session. Trade them on-chain.
 
-Agentis is a platform where anyone can create an AI agent, define its personality, and own it permanently as an ERC721 NFT on Starknet. Every time someone pays to chat with your agent, 80% of that payment lands in your wallet — enforced by a Cairo smart contract, not a platform policy. Agents level up based on chat count recorded on-chain. A built-in marketplace lets owners list and sell agents at any price.
+Agentis is a platform where anyone can create an AI agent, define its personality, and own it permanently as an ERC721 NFT on Starknet. Every time someone pays to chat with your agent, 80% of that payment lands in your wallet, enforced by a Cairo smart contract, not a platform policy. Agents level up based on chat count recorded on-chain. A built-in marketplace lets owners list and sell agents at any price.
 
-The problem it solves: on every centralized AI platform today — Character.ai, OpenAI GPTs, Claude Projects — creators build agents that drive millions of interactions and earn exactly $0. The platform owns the agent, captures all revenue, and can delete it at any time. Agentis gives creators verifiable ownership, on-chain revenue, and a secondary market.
+The problem it solves: on every centralized AI platform today (Character.ai, OpenAI GPTs, Claude Projects), creators build agents that drive millions of interactions and earn exactly $0. The platform owns the agent, captures all revenue, and can delete it at any time. Agentis gives creators verifiable ownership, on-chain revenue, and a secondary market.
 
 **Live:** [agentis-mocha.vercel.app](https://agentis-mocha.vercel.app) · **Network:** Starknet Sepolia
 
@@ -40,11 +40,11 @@ The problem it solves: on every centralized AI platform today — Character.ai, 
 
 Agentis is four systems working together:
 
-1. **AgentNFT.** A Cairo ERC721 contract on Starknet Sepolia. Minting costs 10 STRK and produces an NFT whose on-chain metadata stores a hash of the agent's personality definition. Every chat is recorded on-chain — every 100 chats triggers an automatic level-up.
+1. **AgentNFT.** A Cairo ERC721 contract on Starknet Sepolia. Minting costs 10 STRK and produces an NFT whose on-chain metadata stores a hash of the agent's personality definition. Every chat is recorded on-chain, and every 100 chats triggers an automatic level-up.
 
-2. **AgentCredits.** A dual-credit system. General credits work across all your own agents. Session credits (5 STRK for 50 messages) are scoped to a specific agent — 80% of that payment flows to the agent owner via the RevenueShare contract. The backend wallet is registered as an authorized spender, so credit deduction happens server-side after each AI response without requiring a user signature per message.
+2. **AgentCredits.** A dual-credit system. General credits work across all your own agents. Session credits (5 STRK for 50 messages) are scoped to a specific agent; 80% of that payment flows to the agent owner via the RevenueShare contract. The backend wallet is registered as an authorized spender, so credit deduction happens server-side after each AI response without requiring a user signature per message.
 
-3. **RevenueShare.** A Cairo contract that enforces an 80/20 split between agent creators and the platform. It stores a complete audit trail of every revenue event — payer, amount, source, timestamp — and supports creator-configurable withdrawal addresses.
+3. **RevenueShare.** A Cairo contract that enforces an 80/20 split between agent creators and the platform. It stores a complete audit trail of every revenue event (payer, amount, source, timestamp) and supports creator-configurable withdrawal addresses.
 
 4. **AgentMarketplace.** A P2P trading contract where owners list agents at any STRK price. Buyers execute a multicall (approve + buy in one transaction). The marketplace tracks creator sales volume and count on-chain, which powers the leaderboard.
 
@@ -65,18 +65,18 @@ Creator defines personality
   → ERC721 minted, personality hash anchored on-chain
 ```
 
-The personality hash is a deterministic fingerprint of the agent's original definition. It can be verified on-chain at any time — proof the creator wrote this agent, not the platform.
+The personality hash is a deterministic fingerprint of the agent's original definition. It can be verified on-chain at any time, proving the creator authored this agent independently of the platform.
 
 ### The Chat System
 
 When a user opens a chat, the frontend calls the `/api/chat` route, which:
 
 1. Verifies the user's session (nonce-based auth, httpOnly cookie).
-2. Checks credit balance — either general credits or session credits for this agent.
+2. Checks credit balance: either general credits or session credits for this agent.
 3. Fetches the agent's metadata from IPFS to build the system prompt.
 4. Queries ChromaDB for relevant knowledge base chunks (RAG) and recent message history.
 5. Streams the AI response back to the browser via Vercel AI SDK.
-6. After the response completes, fires a single multicall: `spend_credits + record_chat` in one transaction — no duplicate-nonce issues, no separate async transactions that could fail independently.
+6. After the response completes, fires a single multicall: `spend_credits + record_chat` in one transaction, with no duplicate-nonce issues and no separate async transactions that could fail independently.
 
 The multicall is the key architectural detail. Two separate `account.execute()` calls would grab the same nonce and one would fail. Combining them into one transaction via `executeBackendMulticall()` is atomic.
 
@@ -94,18 +94,18 @@ User sends message
 
 | Method | Cost | Who gets revenue |
 |--------|------|-----------------|
-| Claim free tier | — | 10 credits, one-time per wallet |
+| Claim free tier | free | 10 credits, one-time per wallet |
 | Buy credits | 0.1 STRK each | 100% platform |
 | Starter plan | 9 STRK | 100 credits, 10% discount |
 | Pro plan | 40 STRK | 500 credits, 20% discount |
 | Power plan | 70 STRK | 1,000 credits, 30% discount |
-| Session pack | 5 STRK | 50 agent-specific credits — **80% to creator / 20% platform** |
+| Session pack | 5 STRK | 50 agent-specific credits (80% to creator / 20% platform) |
 
 The session pack is the creator monetization path. When a user buys a session pack for agent #42, the AgentCredits contract calls `RevenueShare.record_revenue()`, which splits the 5 STRK immediately: 4 STRK to the agent owner's wallet, 1 STRK to the platform.
 
 ### The Marketplace
 
-Owners call `list_agent(nftContract, tokenId, price)` on AgentMarketplace. Buyers execute a two-call multicall — `STRK.approve(marketplace, price)` followed by `marketplace.buy_agent(nftContract, tokenId)` — so the token transfer and NFT ownership change are atomic. The marketplace takes a 5% fee; the rest goes to the seller. All creator statistics (total sales volume, number of sales) are tracked on-chain and feed the leaderboard.
+Owners call `list_agent(nftContract, tokenId, price)` on AgentMarketplace. Buyers execute a two-call multicall (`STRK.approve(marketplace, price)` followed by `marketplace.buy_agent(nftContract, tokenId)`), so the token transfer and NFT ownership change are atomic. The marketplace takes a 5% fee; the rest goes to the seller. All creator statistics (total sales volume, number of sales) are tracked on-chain and feed the leaderboard.
 
 ---
 
@@ -113,13 +113,13 @@ Owners call `list_agent(nftContract, tokenId, price)` on AgentMarketplace. Buyer
 
 ### AgentNFT
 
-ERC721 with extended on-chain state. Every token stores its name, IPFS token URI, personality hash, creator address, chat count, level, and visibility flag. `record_chat()` is the most-called function — it increments the chat count and emits `AgentLevelUp` when `chat_count % 100 == 0`. Only the authorized backend can call it.
+ERC721 with extended on-chain state. Every token stores its name, IPFS token URI, personality hash, creator address, chat count, level, and visibility flag. `record_chat()` is the most-called function: it increments the chat count and emits `AgentLevelUp` when `chat_count % 100 == 0`. Only the authorized backend can call it.
 
 Key entry points: `mint_agent`, `record_chat`, `set_agent_public`, `transfer_from`, `get_agent_metadata`, `get_agent_creator`
 
 ### AgentCredits
 
-Dual-ledger credit contract. `balances` maps wallet addresses to general credits. `session_credits` maps `(user, nftContract, tokenId)` tuples to session-specific balances. The `authorized_spenders` map lets the backend wallet deduct credits without user signatures — this is the mechanism that makes per-message payments seamless.
+Dual-ledger credit contract. `balances` maps wallet addresses to general credits. `session_credits` maps `(user, nftContract, tokenId)` tuples to session-specific balances. The `authorized_spenders` map lets the backend wallet deduct credits without user signatures; this is the mechanism that makes per-message payments seamless.
 
 Key entry points: `purchase_credits`, `purchase_plan`, `claim_free_tier`, `purchase_session`, `spend_credits`, `use_session_credit`, `set_authorized_spender`
 
@@ -131,7 +131,7 @@ Key entry points: `record_revenue`, `withdraw_agent_earnings`, `withdraw_platfor
 
 ### AgentMarketplace
 
-Listing state is stored as `(nftContract, tokenId) → (seller, price, active, listedAt)`. The `buy_agent` call validates the listing, transfers STRK (5% fee to platform, 95% to seller), transfers the NFT, and updates `creator_volume` and `creator_sales` on the seller for leaderboard ranking.
+Listing state is stored as `(nftContract, tokenId) -> (seller, price, active, listedAt)`. The `buy_agent` call validates the listing, transfers STRK (5% fee to platform, 95% to seller), transfers the NFT, and updates `creator_volume` and `creator_sales` on the seller for leaderboard ranking.
 
 Key entry points: `list_agent`, `buy_agent`, `cancel_listing`, `update_price`, `get_creator_stats`
 
@@ -139,13 +139,13 @@ Key entry points: `list_agent`, `buy_agent`, `cancel_listing`, `update_price`, `
 
 ## Why Starknet
 
-Agentis is built specifically for Starknet — not ported to it.
+Agentis is built specifically for Starknet, not ported to it.
 
-**Sub-cent transactions make per-chat recording viable.** Every message is recorded on-chain. At steady state (500 active agents, 20 sessions/month, 10 messages each) that's 100,000 on-chain transactions per month. On Ethereum L1 that would cost $500K–$5M/month. On Starknet it costs under $1,000.
+**Sub-cent transactions make per-chat recording viable.** Every message is recorded on-chain. At steady state (500 active agents, 20 sessions/month, 10 messages each) that's 100,000 on-chain transactions per month. On Ethereum L1 that would cost $500K-$5M/month. On Starknet it costs under $1,000.
 
 **Native account abstraction enables the authorized spender pattern.** The backend deducts credits after each AI response without asking the user to sign a transaction. On EVM chains this would require ERC-4337 bundlers and paymaster contracts. On Starknet it's a single `set_authorized_spender` call because every account is a contract.
 
-**Multicall is first-class.** The approve+buy marketplace flow and the spend_credits+record_chat chat flow both use multicall — multiple contract calls in a single transaction, sharing one nonce. This is native to Starknet account architecture.
+**Multicall is first-class.** The approve+buy marketplace flow and the spend_credits+record_chat chat flow both use multicall: multiple contract calls in a single transaction, sharing one nonce. This is native to Starknet account architecture.
 
 ---
 
@@ -241,7 +241,7 @@ npm run dev
 ```
 
 ```bash
-# contracts (optional — already deployed on Sepolia)
+# contracts (optional, already deployed on Sepolia)
 cd contract
 scarb build
 scarb test
@@ -255,9 +255,9 @@ bash scripts/authorize_backend_spender.sh
 1. Open `http://localhost:3000`, connect ArgentX on Starknet Sepolia.
 2. Claim your 10 free credits at `/profile`.
 3. Go to `/create`. Fill in a name and personality, optionally add an image or a knowledge base `.txt` file. Pay 10 STRK to mint.
-4. After minting, visit your agent's page. Start a chat — each message costs 1 credit.
-5. Check the transaction on [Voyager Sepolia](https://sepolia.voyager.online) — you will see `record_chat` and `spend_credits` in the same multicall transaction.
-6. Buy a session pack from the agent's page (5 STRK → 50 messages). 80% of that goes directly to the agent owner's wallet.
+4. After minting, visit your agent's page. Start a chat; each message costs 1 credit.
+5. Check the transaction on [Voyager Sepolia](https://sepolia.voyager.online) and you will see `record_chat` and `spend_credits` in the same multicall transaction.
+6. Buy a session pack from the agent's page (5 STRK for 50 messages). 80% of that goes directly to the agent owner's wallet.
 
 ---
 
@@ -267,18 +267,18 @@ bash scripts/authorize_backend_spender.sh
 # Starknet RPC
 NEXT_PUBLIC_STARKNET_RPC_URL=https://starknet-sepolia.public.blastapi.io/rpc/v0_7
 
-# Backend signing account — used for server-side credit deduction and chat recording
+# Backend signing account, used for server-side credit deduction and chat recording.
 # Must be authorized as a spender on AgentCredits via authorize_backend_spender.sh
 BACKEND_ACCOUNT_ADDRESS=0x...
 BACKEND_PRIVATE_KEY=0x...
 
-# IPFS — Pinata JWT for metadata and image uploads
+# Pinata JWT for IPFS metadata and image uploads
 PINATA_JWT=...
 
-# AI chat — any OpenAI-compatible endpoint
+# Any OpenAI-compatible endpoint
 OPENAI_API_KEY=...
 
-# ChromaDB — leave blank to use localhost:8000, or set Cloud credentials
+# ChromaDB (leave blank to use localhost:8000, or set Cloud credentials)
 CHROMA_API_KEY=
 CHROMA_TENANT=
 CHROMA_DATABASE=
@@ -294,11 +294,11 @@ CHROMA_DATABASE=
 | Blockchain | Starknet (Sepolia testnet) |
 | Frontend | Next.js 16 (App Router), React 19, TypeScript |
 | Styling | Tailwind CSS, Framer Motion |
-| Wallet | `get-starknet-core` v4 — ArgentX, Braavos |
-| Starknet SDK | `starknet.js` v6+ — V3 transactions, multicall |
+| Wallet | `get-starknet-core` v4 (ArgentX, Braavos) |
+| Starknet SDK | `starknet.js` v6+ (V3 transactions, multicall) |
 | AI | Vercel AI SDK v5, OpenAI-compatible API (streaming) |
-| Vector DB | ChromaDB v3 — persistent chat memory + knowledge base RAG |
-| Storage | IPFS via Pinata — agent metadata and images |
+| Vector DB | ChromaDB v3 (persistent chat memory + knowledge base RAG) |
+| Storage | IPFS via Pinata (agent metadata and images) |
 | Auth | Nonce-based sessions, httpOnly cookies |
 | State | TanStack React Query v5 |
 
