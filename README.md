@@ -1,12 +1,23 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="frontend/public/agentis-logo-white.png">
-    <source media="(prefers-color-scheme: light)" srcset="frontend/public/agentis-logo.png">
-    <img alt="Agentis" src="frontend/public/agentis-logo.png" width="90" />
-  </picture>
+  <img alt="Agentis" src="frontend/public/agentis-logo.png" width="90" />
 </p>
 
 <h1 align="center">Agentis</h1>
+
+<p align="center">The first decentralized AI agent creator economy on Starknet.</p>
+
+---
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Cairo-Smart%20Contracts-c3e834?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyTDIgN2wxMCA1IDEwLTV6TTIgMTdsOCA0IDgtNE0yIDEybDggNCA4LTQiLz48L3N2Zz4=" />
+  <img src="https://img.shields.io/badge/Starknet-Sepolia-c3e834?style=flat-square&logo=ethereum&logoColor=white" />
+  <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind-CSS-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/IPFS-Pinata-6c47ff?style=flat-square&logo=ipfs&logoColor=white" />
+  <img src="https://img.shields.io/badge/ChromaDB-Vector%20DB-f97316?style=flat-square" />
+  <img src="https://img.shields.io/badge/OpenAI-Compatible-412991?style=flat-square&logo=openai&logoColor=white" />
+</p>
 
 > The first decentralized AI agent creator economy on Starknet. Mint agents as NFTs. Earn 80% of every session. Trade them on-chain.
 
