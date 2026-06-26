@@ -91,14 +91,36 @@ export async function getAgentWalletInfo(tokenId: number): Promise<{
 export const getAgentWalletPublicKey = getAgentWalletAddress;
 
 export async function ensureAgentWallet(tokenId: number): Promise<string> {
+  const accountAddress = deriveAgentAccountAddress(tokenId);
+
+  // Register on RevenueShare if not already set
   const existing = await getAgentWalletAddress(tokenId);
-  if (existing) return existing;
-  return forceRegisterAgentWallet(tokenId);
+  if (!existing) {
+    console.log(`[agent-wallet] Registering wallet for agent ${tokenId}: ${accountAddress}`);
+    const result = await executeBackendCall(
+      CONTRACTS.addresses.RevenueShare,
+      'set_agent_wallet',
+      [tokenId, accountAddress]
+    );
+    if (!result.success) {
+      throw new Error(`Failed to register agent wallet: ${result.error}`);
+    }
+    console.log(`[agent-wallet] Registered, tx: ${result.transactionHash}`);
+  }
+
+  // Deploy account contract if not already deployed
+  const deployed = await isAgentAccountDeployed(tokenId);
+  if (!deployed) {
+    console.log(`[agent-wallet] Deploying account for agent ${tokenId}...`);
+    await deployAgentAccount(tokenId);
+  }
+
+  return accountAddress;
 }
 
 export async function forceRegisterAgentWallet(tokenId: number): Promise<string> {
   const accountAddress = deriveAgentAccountAddress(tokenId);
-  console.log(`[agent-wallet] Registering wallet for agent ${tokenId}: ${accountAddress}`);
+  console.log(`[agent-wallet] Force registering wallet for agent ${tokenId}: ${accountAddress}`);
 
   const result = await executeBackendCall(
     CONTRACTS.addresses.RevenueShare,
@@ -110,7 +132,13 @@ export async function forceRegisterAgentWallet(tokenId: number): Promise<string>
     throw new Error(`Failed to register agent wallet: ${result.error}`);
   }
 
-  console.log(`[agent-wallet] Registered, tx: ${result.transactionHash}`);
+  // Also deploy if needed
+  const deployed = await isAgentAccountDeployed(tokenId);
+  if (!deployed) {
+    await deployAgentAccount(tokenId);
+  }
+
+  console.log(`[agent-wallet] Registered + deployed, tx: ${result.transactionHash}`);
   return accountAddress;
 }
 
