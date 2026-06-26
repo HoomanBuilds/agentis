@@ -2,10 +2,19 @@
 
 import { useState, useCallback } from 'react';
 import { useWallet } from './useWallet';
-import { CallData, uint256 } from 'starknet';
+import { CallData, uint256, constants } from 'starknet';
 import { CONTRACTS } from '@/constants/contracts';
 import { getTxExplorerUrl } from '@/lib/starknet-client';
 import { TransactionResult } from './useAgentNFT';
+
+const V3_DETAILS = {
+  version: constants.TRANSACTION_VERSION.V3 as any,
+  resourceBounds: {
+    l1_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+    l1_data_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+    l2_gas: { max_amount: '0x500000', max_price_per_unit: '0x174876E800' },
+  },
+};
 
 export interface MarketplaceListing {
   tokenId: bigint;
@@ -42,7 +51,7 @@ export function useAgentMarketplace() {
           CONTRACTS.addresses.AgentMarketplace,
           tokenId.toString(),
         ]),
-      });
+      }, V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
@@ -84,7 +93,7 @@ export function useAgentMarketplace() {
           tokenId.toString(),
           price.toString(),
         ]),
-      });
+      }, V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
@@ -135,7 +144,7 @@ export function useAgentMarketplace() {
             tokenId.toString(),
           ]),
         },
-      ]);
+      ], V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
@@ -173,7 +182,7 @@ export function useAgentMarketplace() {
           CONTRACTS.addresses.AgentNFT,
           tokenId.toString(),
         ]),
-      });
+      }, V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
@@ -210,7 +219,7 @@ export function useAgentMarketplace() {
           tokenId.toString(),
           newPrice.toString(),
         ]),
-      });
+      }, V3_DETAILS);
       const txResult: TransactionResult = {
         transactionHash: result.transaction_hash,
         success: true,

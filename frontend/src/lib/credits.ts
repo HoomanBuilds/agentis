@@ -13,8 +13,8 @@ import { getBackendAccount } from './backend-wallet';
 const V3_DETAILS = {
   version: constants.TRANSACTION_VERSION.V3 as any,
   resourceBounds: {
-    l1_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
-    l1_data_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
+    l1_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+    l1_data_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
     l2_gas: { max_amount: '0x500000', max_price_per_unit: '0x174876E800' },
   },
 };

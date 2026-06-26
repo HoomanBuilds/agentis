@@ -2,9 +2,18 @@
 
 import { useState, useCallback } from 'react';
 import { useWallet } from './useWallet';
-import { CallData, uint256, byteArray } from 'starknet';
+import { CallData, uint256, byteArray, constants } from 'starknet';
 import { CONTRACTS, DEFAULT_MINTING_FEE } from '@/constants/contracts';
 import { getTxExplorerUrl, getProvider } from '@/lib/starknet-client';
+
+const V3_DETAILS = {
+  version: constants.TRANSACTION_VERSION.V3 as any,
+  resourceBounds: {
+    l1_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+    l1_data_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+    l2_gas: { max_amount: '0x500000', max_price_per_unit: '0x174876E800' },
+  },
+};
 
 
 export interface TransactionResult {
@@ -97,7 +106,7 @@ export function useAgentNFT() {
           entrypoint: 'mint_agent',
           calldata: CallData.compile([nameBA, uriBA, hashBA]),
         },
-      ]);
+      ], V3_DETAILS);
 
       const txHash = result.transaction_hash;
       console.log('[mintAgent] wallet signed, txHash:', txHash);
@@ -255,7 +264,7 @@ export function useAgentNFT() {
           tokenId.toString(),
           isPublic ? 1 : 0,
         ]),
-      });
+      }, V3_DETAILS);
 
       const txResult: TransactionResult = {
         transactionHash: result.transaction_hash,

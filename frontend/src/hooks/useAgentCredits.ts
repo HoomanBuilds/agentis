@@ -2,10 +2,19 @@
 
 import { useState, useCallback } from 'react';
 import { useWallet } from './useWallet';
-import { CallData, uint256 } from 'starknet';
+import { CallData, uint256, constants } from 'starknet';
 import { CONTRACTS, CREDIT_PRICE, SESSION_COST } from '@/constants/contracts';
 import { getTxExplorerUrl } from '@/lib/starknet-client';
 import { TransactionResult } from './useAgentNFT';
+
+const V3_DETAILS = {
+  version: constants.TRANSACTION_VERSION.V3 as any,
+  resourceBounds: {
+    l1_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+    l1_data_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+    l2_gas: { max_amount: '0x500000', max_price_per_unit: '0x174876E800' },
+  },
+};
 
 export interface CreditPlan {
   id: bigint;
@@ -37,7 +46,7 @@ export function useAgentCredits() {
         contractAddress: CONTRACTS.addresses.AgentCredits,
         entrypoint: 'claim_free_tier',
         calldata: [],
-      });
+      }, V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
@@ -86,7 +95,7 @@ export function useAgentCredits() {
           entrypoint: 'purchase_credits',
           calldata: CallData.compile([amount.toString()]),
         },
-      ]);
+      ], V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
@@ -134,7 +143,7 @@ export function useAgentCredits() {
           entrypoint: 'purchase_plan',
           calldata: CallData.compile([planId.toString()]),
         },
-      ]);
+      ], V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
@@ -187,7 +196,7 @@ export function useAgentCredits() {
             agentId,
           ]),
         },
-      ]);
+      ], V3_DETAILS);
 
       setTimeout(() => refreshBalance(), 5000);
       const txResult: TransactionResult = {
