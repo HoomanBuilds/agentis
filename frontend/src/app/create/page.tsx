@@ -93,6 +93,20 @@ export default function CreatePage() {
         }
         setMintedTokenId(mintedId);
 
+        // Register a deterministic agent wallet for revenue sharing
+        if (mintedId) {
+          try {
+            await fetch('/api/agent/register-wallet', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ agentId: mintedId }),
+            });
+            console.log('[create] agent wallet registered for agent', mintedId);
+          } catch (e) {
+            console.warn('[create] wallet registration failed (non-fatal):', e);
+          }
+        }
+
         // Upload knowledge base document if provided
         if (data.knowledgeBase && mintedId) {
           try {
