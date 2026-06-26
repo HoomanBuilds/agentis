@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import { Message } from '@/hooks/useAgentChat';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -11,6 +12,15 @@ interface ChatMessagesProps {
 }
 
 export function ChatMessages({ messages, agentName, isThinking = false }: ChatMessagesProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }
+  }, [messages, isThinking]);
+
   if (messages.length === 0 && !isThinking) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -27,7 +37,7 @@ export function ChatMessages({ messages, agentName, isThinking = false }: ChatMe
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+    <div ref={containerRef} className="h-full overflow-y-auto p-6 space-y-4">
       {messages.map((message, index) => (
         <div
           key={index}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components';
@@ -216,11 +216,7 @@ export default function ChatPage() {
     fetchWallet();
   }, [selectedAgent?.id]);
 
-  // Scroll to bottom on new messages
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  // Scroll handled inside ChatMessages via scrollRef
 
   // Load chat sessions when slider opens
   const loadSessions = async () => {
@@ -442,13 +438,12 @@ export default function ChatPage() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-hidden">
                 <ChatMessages
                   messages={messages}
                   agentName={selectedAgent.name}
                   isThinking={isSending && messages.length > 0 && messages[messages.length - 1]?.role === 'user'}
                 />
-                <div ref={messagesEndRef} />
               </div>
 
               {/* Input */}

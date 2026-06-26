@@ -34,10 +34,10 @@ function generateSessionId(): string {
  * - Loads chat history on mount
  * - 402 Payment Required handling
  */
-export function useAgentChat({ 
-  agentId, 
-  tokenUri, 
-  userPublicKey, 
+export function useAgentChat({
+  agentId,
+  tokenUri,
+  userPublicKey,
   isOwner = false,
   sessionId: externalSessionId,
 }: UseAgentChatOptions) {
@@ -47,14 +47,15 @@ export function useAgentChat({
   const [error, setError] = useState<string | null>(null);
   const [paymentRequired, setPaymentRequired] = useState<PaymentRequiredInfo | null>(null);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
-  
-  // Session management
-  const [sessionId, setSessionId] = useState<string>(() => 
+
+  // Session management - start with external or generate new
+  const [sessionId, setSessionId] = useState<string>(() =>
     externalSessionId || generateSessionId()
   );
-  
-  // Track if history was loaded
+
+  // Track if history was loaded and if session was resumed
   const historyLoadedRef = useRef(false);
+  const sessionResumedRef = useRef(false);
 
   /**
    * Load chat history from ChromaDB
@@ -93,14 +94,40 @@ export function useAgentChat({
   }, [agentId, userPublicKey]);
 
   /**
-   * Load history on mount if user is connected
+   * On mount, resume the most recent session (if any) or start fresh
    */
   useEffect(() => {
-    if (userPublicKey && agentId && !historyLoadedRef.current) {
+    if (!userPublicKey || !agentId || sessionResumedRef.current) return;
+    sessionResumedRef.current = true;
+
+    if (externalSessionId) {
       historyLoadedRef.current = true;
-      loadHistory(sessionId);
+      loadHistory(externalSessionId);
+      return;
     }
-  }, [userPublicKey, agentId, sessionId, loadHistory]);
+
+    (async () => {
+      try {
+        const params = new URLSearchParams({
+          agentId: String(agentId),
+          userAddress: userPublicKey,
+        });
+        const res = await fetch(`/api/chat/sessions?${params}`);
+        const data = await res.json();
+
+        if (data.success && data.sessions?.length > 0) {
+          const latest = data.sessions[0];
+          setSessionId(latest.sessionId);
+          historyLoadedRef.current = true;
+          loadHistory(latest.sessionId);
+          return;
+        }
+      } catch (err) {
+        console.error('Error fetching sessions:', err);
+      }
+      historyLoadedRef.current = true;
+    })();
+  }, [userPublicKey, agentId, externalSessionId, loadHistory]);
 
   /**
    * Save a message to ChromaDB
@@ -284,7 +311,7 @@ export function useAgentChat({
   const switchSession = useCallback((newSessionId: string) => {
     setMessages([]);
     setSessionId(newSessionId);
-    historyLoadedRef.current = false;
+    historyLoadedRef.current = true;
     loadHistory(newSessionId);
   }, [loadHistory]);
 
