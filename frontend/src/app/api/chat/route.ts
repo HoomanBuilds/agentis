@@ -45,7 +45,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isPaid = !isBackendWalletConfigured();
     let paymentMethod: 'credits' | 'agent-wallet' | 'session' | 'skip' = 'skip';
 
     if (isBackendWalletConfigured()) {
@@ -168,40 +167,39 @@ export async function POST(req: NextRequest) {
     // =====================
     // STORE USER MESSAGE
     // =====================
-    storeMessage(
-      agentId,
-      userPublicKey,
-      'user',
-      message,
-      Date.now(),
-      sessionId || 'default'
-    ).catch(err => console.error('[CHAT] Error storing user message:', err));
+    try {
+      await storeMessage(agentId, userPublicKey, 'user', message, Date.now(), sessionId || 'default');
+    } catch (err) {
+      console.error('[CHAT] Error storing user message:', err);
+    }
 
     const response = await streamAgentResponse(personality, message, chatHistory);
 
     // =====================
-    // SPEND + RECORD (single multicall to avoid duplicate-nonce)
+    // SPEND + RECORD (must complete before returning response)
     // =====================
     if (paymentMethod === 'credits') {
-      spendCreditsAndRecordChat(userPublicKey, agentId, `Chat with Agent #${agentId}`)
-        .then(result => {
-          if (result.success) {
-            console.log(`[CREDITS+RECORD] tx: ${result.transactionHash}`);
-          } else {
-            console.error(`[CREDITS+RECORD] Failed: ${result.error}`);
-          }
-        })
-        .catch(err => console.error("[CREDITS+RECORD] Error:", err));
+      try {
+        const result = await spendCreditsAndRecordChat(userPublicKey, agentId, `Chat with Agent #${agentId}`);
+        if (result.success) {
+          console.log(`[CREDITS+RECORD] tx: ${result.transactionHash}`);
+        } else {
+          console.error(`[CREDITS+RECORD] Failed: ${result.error}`);
+        }
+      } catch (err) {
+        console.error("[CREDITS+RECORD] Error:", err);
+      }
     } else if (paymentMethod === 'session') {
-      useSessionAndRecordChat(userPublicKey, agentId)
-        .then(result => {
-          if (result.success) {
-            console.log(`[SESSION+RECORD] tx: ${result.transactionHash}`);
-          } else {
-            console.error(`[SESSION+RECORD] Failed: ${result.error}`);
-          }
-        })
-        .catch(err => console.error("[SESSION+RECORD] Error:", err));
+      try {
+        const result = await useSessionAndRecordChat(userPublicKey, agentId);
+        if (result.success) {
+          console.log(`[SESSION+RECORD] tx: ${result.transactionHash}`);
+        } else {
+          console.error(`[SESSION+RECORD] Failed: ${result.error}`);
+        }
+      } catch (err) {
+        console.error("[SESSION+RECORD] Error:", err);
+      }
     }
 
     return response;

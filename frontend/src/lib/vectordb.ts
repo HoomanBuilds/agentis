@@ -5,7 +5,7 @@ import { ChromaClient } from "chromadb";
 // primary use case. ChromaDB requires an embeddingFunction to accept documents.
 const embeddingFunction = {
   generate: async (texts: string[]): Promise<number[][]> => {
-    const DIM = 128;
+    const DIM = 384;
     return texts.map((text) => {
       const vec = new Float32Array(DIM).fill(0);
       const s = text.toLowerCase();

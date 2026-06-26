@@ -15,8 +15,8 @@ import RevenueShareAbi from '@/constants/abis/RevenueShare.json';
 // due to response format changes). These bounds are generous maximums — actual cost
 // on testnet is near zero and only the actual fee is charged.
 const V3_RESOURCE_BOUNDS = {
-  l1_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
-  l1_data_gas: { max_amount: '0x5000', max_price_per_unit: '0xB5E620F48000' },
+  l1_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
+  l1_data_gas: { max_amount: '0x200', max_price_per_unit: '0x140AED98C0A144' },
   l2_gas: { max_amount: '0x500000', max_price_per_unit: '0x174876E800' },
 };
 const V3_DETAILS = {
