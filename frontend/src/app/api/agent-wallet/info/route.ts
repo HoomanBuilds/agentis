@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getContract } from '@/lib/starknet-client';
-import { getAgentWalletInfo } from '@/lib/agent-wallet';
+import { getAgentWalletInfo, ensureAgentWallet, getAgentWalletAddress } from '@/lib/agent-wallet';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,23 +10,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Missing tokenId' }, { status: 400 });
     }
 
-    const walletInfo = await getAgentWalletInfo(Number(tokenId));
+    const id = Number(tokenId);
 
-    let onChainWallet: string | null = null;
-    try {
-      const revenueShare = getContract('RevenueShare');
-      const result = await revenueShare.call('get_agent_wallet', [Number(tokenId)]);
-      onChainWallet = result ? String(result) : null;
-    } catch {
-      // Not registered on-chain
+    // If no wallet registered yet, create one (register + deploy)
+    const existing = await getAgentWalletAddress(id);
+    if (!existing) {
+      try {
+        await ensureAgentWallet(id);
+      } catch (e) {
+        console.error(`[agent-wallet/info] Failed to auto-create wallet for agent ${id}:`, e);
+      }
     }
+
+    const walletInfo = await getAgentWalletInfo(id);
 
     return NextResponse.json({
       success: true,
-      tokenId: Number(tokenId),
+      tokenId: id,
       ...walletInfo,
-      onChainWallet,
-      isRegistered: !!onChainWallet && onChainWallet !== '0x0',
+      isRegistered: !!walletInfo.address,
     });
   } catch (error: any) {
     console.error('Agent wallet info error:', error);
