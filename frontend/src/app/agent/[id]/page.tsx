@@ -93,6 +93,29 @@ export default function AgentDetailsPage() {
           if (data.address) {
             setAgentWalletAddress(data.address);
             setAgentWalletBalance(data.balance);
+          } else if (!data.isRegistered) {
+            // Wallet missing; trigger creation via POST endpoint as fallback
+            try {
+              const regRes = await fetch('/api/agent/register-wallet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ agentId: Number(tokenId) }),
+              });
+              if (regRes.ok) {
+                const regData = await regRes.json();
+                if (regData.walletAddress) {
+                  setAgentWalletAddress(regData.walletAddress);
+                  // Re-fetch balance
+                  const balRes = await fetch(`/api/agent-wallet/info?tokenId=${tokenId}`);
+                  if (balRes.ok) {
+                    const balData = await balRes.json();
+                    setAgentWalletBalance(balData.balance);
+                  }
+                }
+              }
+            } catch (regErr) {
+              console.error('Error auto-creating agent wallet:', regErr);
+            }
           }
         }
       } catch (e) {

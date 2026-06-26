@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAgentWalletInfo, ensureAgentWallet, getAgentWalletAddress } from '@/lib/agent-wallet';
+import { getAgentWalletInfo } from '@/lib/agent-wallet';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,17 +11,6 @@ export async function GET(request: NextRequest) {
     }
 
     const id = Number(tokenId);
-
-    // If no wallet registered yet, create one (register + deploy)
-    const existing = await getAgentWalletAddress(id);
-    if (!existing) {
-      try {
-        await ensureAgentWallet(id);
-      } catch (e) {
-        console.error(`[agent-wallet/info] Failed to auto-create wallet for agent ${id}:`, e);
-      }
-    }
-
     const walletInfo = await getAgentWalletInfo(id);
 
     return NextResponse.json({
