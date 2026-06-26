@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ensureAgentWallet } from '@/lib/agent-wallet';
+import { ensureAgentWallet, forceRegisterAgentWallet } from '@/lib/agent-wallet';
 
 export async function POST(request: NextRequest) {
   try {
-    const { agentId } = await request.json();
+    const { agentId, force } = await request.json();
 
     if (!agentId) {
       return NextResponse.json({ error: 'Missing agentId' }, { status: 400 });
     }
 
-    const walletAddress = await ensureAgentWallet(Number(agentId));
+    const walletAddress = force
+      ? await forceRegisterAgentWallet(Number(agentId))
+      : await ensureAgentWallet(Number(agentId));
 
     return NextResponse.json({
       success: true,

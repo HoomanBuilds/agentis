@@ -1,24 +1,16 @@
-/**
- * Agent wallet utilities for Starknet.
- * Each agent gets a deterministic Starknet keypair derived from the
- * backend private key + tokenId. The public key (Stark key) is registered
- * on the RevenueShare contract so revenue can be routed to it.
- */
-
 import { RpcProvider, Contract, ec, hash, num } from 'starknet';
 import { CONTRACTS } from '@/constants/contracts';
 import RevenueShareAbi from '@/constants/abis/RevenueShare.json';
 import { formatSTRK } from './starknet-client';
 import { executeBackendCall } from './backend-wallet';
 
+// Same account class as our backend wallet (deployed on Sepolia)
+const ACCOUNT_CLASS_HASH = '0x5b4b537eaa2399e3aa99c4e2e0208ebd6c71bc1467938cd52c798c601e43564';
+
 function getProvider(): RpcProvider {
   return new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl });
 }
 
-/**
- * Derive a deterministic private key for an agent.
- * seed = pedersen(backendPrivateKey, tokenId), then grindKey for validity.
- */
 export function deriveAgentPrivateKey(tokenId: number): string {
   const backendKey = process.env.BACKEND_PRIVATE_KEY;
   if (!backendKey) throw new Error('BACKEND_PRIVATE_KEY not configured');
@@ -27,12 +19,20 @@ export function deriveAgentPrivateKey(tokenId: number): string {
   return ec.starkCurve.grindKey(seed);
 }
 
-/**
- * Derive the agent's Stark public key (address) from its private key.
- */
 export function deriveAgentStarkKey(tokenId: number): string {
   const privateKey = deriveAgentPrivateKey(tokenId);
   return ec.starkCurve.getStarkKey(privateKey);
+}
+
+// Counterfactual account address: where the account contract WILL live once deployed
+export function deriveAgentAccountAddress(tokenId: number): string {
+  const publicKey = deriveAgentStarkKey(tokenId);
+  return hash.calculateContractAddressFromHash(
+    publicKey,
+    ACCOUNT_CLASS_HASH,
+    [publicKey],
+    0
+  );
 }
 
 /**
@@ -89,21 +89,20 @@ export async function getAgentWalletInfo(tokenId: number): Promise<{
 /** Alias for getAgentWalletAddress */
 export const getAgentWalletPublicKey = getAgentWalletAddress;
 
-/**
- * Ensure an agent has a wallet registered on-chain.
- * Derives the Stark key deterministically and registers it if not already set.
- */
 export async function ensureAgentWallet(tokenId: number): Promise<string> {
   const existing = await getAgentWalletAddress(tokenId);
   if (existing) return existing;
+  return forceRegisterAgentWallet(tokenId);
+}
 
-  const starkKey = deriveAgentStarkKey(tokenId);
-  console.log(`[agent-wallet] Registering wallet for agent ${tokenId}: ${starkKey}`);
+export async function forceRegisterAgentWallet(tokenId: number): Promise<string> {
+  const accountAddress = deriveAgentAccountAddress(tokenId);
+  console.log(`[agent-wallet] Registering wallet for agent ${tokenId}: ${accountAddress}`);
 
   const result = await executeBackendCall(
     CONTRACTS.addresses.RevenueShare,
     'set_agent_wallet',
-    [tokenId, starkKey]
+    [tokenId, accountAddress]
   );
 
   if (!result.success) {
@@ -111,7 +110,7 @@ export async function ensureAgentWallet(tokenId: number): Promise<string> {
   }
 
   console.log(`[agent-wallet] Registered, tx: ${result.transactionHash}`);
-  return starkKey;
+  return accountAddress;
 }
 
 /**
