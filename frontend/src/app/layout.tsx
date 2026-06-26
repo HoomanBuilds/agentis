@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono'
 const ptMono = PT_Mono({ weight: '400', subsets: ['latin'], variable: '--font-pt-mono' })
 
 export const metadata: Metadata = {
-  title: 'Agentis — AI Agent NFTs on Starknet',
+  title: 'Agentis | AI Agent NFTs on Starknet',
   description: 'Create, own, and trade AI agents as NFTs. Each agent has a unique personality and earns revenue for its creator.',
 }
 
