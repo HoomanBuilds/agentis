@@ -63,7 +63,7 @@ export default function ChatHistorySlider({
               onNewChat();
               onClose();
             }}
-            className="w-full px-4 py-3 bg-primary hover:opacity-90 text-foreground rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/25"
+            className="w-full px-4 py-3 bg-primary hover:opacity-90 text-primary-foreground rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/25"
           >
             <Plus className="w-4 h-4" />
             New Chat
