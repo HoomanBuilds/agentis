@@ -7,19 +7,42 @@ import AgentCreditsAbi from '@/constants/abis/AgentCredits.json';
 import RevenueShareAbi from '@/constants/abis/RevenueShare.json';
 import AgentMarketplaceAbi from '@/constants/abis/AgentMarketplace.json';
 
-// Singleton RPC provider
 let provider: RpcProvider | null = null;
 let providerUrl: string | null = null;
+
+function createProvider(nodeUrl: string): RpcProvider {
+  return new RpcProvider({ nodeUrl, blockIdentifier: 'latest' as any, specVersion: '0.8.1' as any });
+}
 
 export function getProvider(): RpcProvider {
   if (!provider || providerUrl !== CONTRACTS.rpcUrl) {
     providerUrl = CONTRACTS.rpcUrl;
-    // specVersion:'0.8.1' forces the RPC081 channel (which includes l1_data_gas in V3 txs).
-    // Pre-setting specVersion skips starknet.js's runtime spec check, avoiding the
-    // "not supported" LibraryError thrown when Alchemy reports spec 0.10.2.
-    provider = new RpcProvider({ nodeUrl: CONTRACTS.rpcUrl, blockIdentifier: 'latest' as any, specVersion: '0.8.1' as any });
+    provider = createProvider(CONTRACTS.rpcUrl);
   }
   return provider;
+}
+
+export async function getProviderWithFallback(): Promise<RpcProvider> {
+  const primary = getProvider();
+  try {
+    await primary.getBlockNumber();
+    return primary;
+  } catch {
+    for (const url of CONTRACTS.fallbackRpcUrls) {
+      if (url === providerUrl) continue;
+      try {
+        const fallback = createProvider(url);
+        await fallback.getBlockNumber();
+        provider = fallback;
+        providerUrl = url;
+        console.log(`[RPC] Primary failed, switched to fallback: ${url}`);
+        return fallback;
+      } catch {
+        continue;
+      }
+    }
+    return primary;
+  }
 }
 
 /**

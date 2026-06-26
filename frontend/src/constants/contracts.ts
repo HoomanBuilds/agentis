@@ -1,6 +1,12 @@
+const FALLBACK_RPCS = [
+  'https://api.cartridge.gg/x/starknet/sepolia',
+  'https://free-rpc.nethermind.io/sepolia-juno/v0_7',
+];
+
 export const CONTRACTS = {
   network: 'sepolia' as const,
-  rpcUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL!,
+  rpcUrl: process.env.NEXT_PUBLIC_STARKNET_RPC_URL || FALLBACK_RPCS[0],
+  fallbackRpcUrls: FALLBACK_RPCS,
   explorerUrl: 'https://sepolia.voyager.online',
 
   addresses: {
