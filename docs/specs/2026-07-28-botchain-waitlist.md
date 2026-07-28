@@ -2,26 +2,29 @@
 
 ## Goal
 
-Keep the existing Starknet application available on the `development` branch while `main` serves a single Agentis waitlist during the Botchain migration.
+Serve a focused early-access website for a Botchain AI services marketplace. The public identity remains name-neutral until the permanent product name is selected.
 
-## User Experience
+## Experience
 
-- Show one responsive page with Agentis branding, the Botchain migration message, and an email waitlist form.
-- Do not expose wallet connection, marketplace, agent creation, chat, pricing, statistics, or other product actions.
-- Redirect unknown browser routes to the waitlist.
-- Provide clear idle, submitting, success, duplicate, validation, and service error states.
-- Support keyboard navigation, visible focus, reduced motion, and readable mobile layouts.
+- Use exactly three sections: brand hero, marketplace explanation, and final signup with footer.
+- Reuse the supplied Nexus frontend's pixel typography, green ASCII canvas animation, terminal styling, grid texture, and compact card treatment.
+- Follow the Dike reference's sparse pacing and near-full-screen section proportions.
+- Keep the hero free of statistics, forms, and actions.
+- Make joining the waitlist the only available product action, shown only in the final section.
+- Use the official Botchain wordmark without modifying the source asset.
+- Describe a marketplace where providers offer AI services, establish reputation, deliver work, and receive payment.
+- Do not mention a migration, a previous network, or any rejected product name.
 
 ## Submission Contract
 
-`POST /api/waitlist` accepts an email address and a hidden bot-trap field. The endpoint normalizes and validates the email, then forwards it to `WAITLIST_WEBHOOK_URL`. An optional `WAITLIST_WEBHOOK_TOKEN` is sent as a bearer token.
+`POST /api/waitlist` accepts an email address and a hidden bot-trap field. The endpoint normalizes and validates the email, then forwards it to `WAITLIST_WEBHOOK_URL`. When set, `WAITLIST_WEBHOOK_TOKEN` is sent as a bearer token.
 
-The configured webhook is responsible for durable storage and duplicate detection. It should return `409` for an existing email and any `2xx` status for a new signup.
+The webhook owns durable storage and duplicate detection. It should return `409` for an existing email and any `2xx` response for a new signup.
 
-## Acceptance Criteria
+## Quality Requirements
 
-- All previous public application pages and API routes are unavailable on `main`.
-- A valid email can reach the configured webhook.
-- Invalid input never reaches the webhook.
-- The page passes ESLint and a production Next.js build.
-- Desktop and mobile screenshots show no overflow or clipped content.
+- Provide idle, submitting, success, duplicate, validation, and service error states.
+- Maintain visible keyboard focus, semantic labels, and an effective reduced-motion mode.
+- Avoid horizontal overflow at 390px, 768px, 1024px, and 1440px widths.
+- Redirect unknown browser routes to the waitlist and reject unknown API routes.
+- Pass ESLint and the production Next.js build.
