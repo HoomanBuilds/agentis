@@ -1,36 +1,73 @@
-import { HeroSection } from '@/components/home/HeroSection'
-import { TrustBar } from '@/components/home/TrustBar'
-import { DemoCards } from '@/components/home/DemoCards'
-import { HowItWorks } from '@/components/home/HowItWorks'
-import { AgentMarquee } from '@/components/home/AgentMarquee'
-import { StatsSection } from '@/components/home/StatsSection'
-import { PricingSection } from '@/components/home/PricingSection'
-import { FAQSection } from '@/components/home/FAQSection'
-import { FinalCTA } from '@/components/home/FinalCTA'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import Image from 'next/image'
+import { WaitlistForm } from '@/components/waitlist/WaitlistForm'
 
 export default function Home() {
   return (
-    <main className="relative z-0 min-h-screen bg-background overflow-x-hidden">
-      {/* Corner glow */}
-      <div
-        className="absolute top-0 right-0 w-[1500px] h-[1500px] -z-10 bg-primary pointer-events-none"
-        style={{ maskImage: 'radial-gradient(ellipse 50% 50% at 100% 0%, rgb(0 0 0 / 0.75), transparent)' }}
-      >
-        <div className="absolute inset-0 bg-cover bg-right-top" style={{ backgroundImage: "url('/grade.png')" }} />
+    <main className="waitlist-page">
+      <div className="ambient-glow" aria-hidden="true" />
+      <div className="grid-plane" aria-hidden="true" />
+
+      <div className="waitlist-shell">
+        <header className="site-header">
+          <div className="wordmark" aria-label="Agentis">
+            <Image
+              src="/agentis-logo.png"
+              alt=""
+              width={32}
+              height={32}
+              priority
+              className="wordmark-image"
+            />
+            <span className="wordmark-text">Agentis</span>
+          </div>
+
+          <div className="migration-status">
+            <span className="status-dot" aria-hidden="true" />
+            Rebuilding on Botchain
+          </div>
+        </header>
+
+        <section className="hero-layout" aria-labelledby="waitlist-heading">
+          <div className="hero-copy">
+            <p className="eyebrow">The next chapter of Agentis</p>
+            <h1 id="waitlist-heading" className="hero-title">
+              The agent economy,
+              <span className="hero-title-accent"> rebuilt for Botchain.</span>
+            </h1>
+            <p className="hero-description">
+              Agentis is moving from Starknet to Botchain. Join the waitlist for
+              early access to the rebuilt platform.
+            </p>
+            <WaitlistForm />
+          </div>
+
+          <div className="network-visual" aria-hidden="true">
+            <div className="network-axis network-axis-horizontal" />
+            <div className="network-axis network-axis-vertical" />
+            <div className="network-ring network-ring-outer" />
+            <div className="network-ring network-ring-inner" />
+            <span className="network-node network-node-top" />
+            <span className="network-node network-node-right" />
+            <span className="network-node network-node-bottom" />
+            <span className="network-node network-node-left" />
+            <div className="network-core">
+              <Image
+                src="/agentis-logo.png"
+                alt=""
+                width={96}
+                height={96}
+                className="network-logo"
+              />
+            </div>
+          </div>
+        </section>
+
+        <footer className="site-footer">
+          <span>Agentis</span>
+          <span aria-hidden="true">/</span>
+          <span>Botchain migration in progress</span>
+        </footer>
       </div>
-      <Header />
-      <HeroSection />
-      <TrustBar />
-      <DemoCards />
-      <HowItWorks />
-      <AgentMarquee />
-      <StatsSection />
-      <PricingSection />
-      <FAQSection />
-      <FinalCTA />
-      <Footer />
     </main>
   )
 }

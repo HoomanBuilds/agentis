@@ -1,33 +1,36 @@
 import type React from 'react'
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono, PT_Mono } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import { WalletProvider } from '@/hooks/useWallet'
-import QueryProvider from '@/providers/QueryProvider'
 
-const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
-const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
-const ptMono = PT_Mono({ weight: '400', subsets: ['latin'], variable: '--font-pt-mono' })
+const geistSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-geist-sans',
+  display: 'swap',
+})
+
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-geist-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: 'Agentis | AI Agent NFTs on Starknet',
-  description: 'Create, own, and trade AI agents as NFTs. Each agent has a unique personality and earns revenue for its creator.',
+  title: 'Agentis | Rebuilding on Botchain',
+  description:
+    'Agentis is rebuilding its agent economy on Botchain. Join the waitlist for early access.',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#141414',
+  themeColor: '#080a08',
   colorScheme: 'dark',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`dark ${ptMono.variable}`}>
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
-        <QueryProvider>
-          <WalletProvider>
-            {children}
-          </WalletProvider>
-        </QueryProvider>
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {children}
       </body>
     </html>
   )
