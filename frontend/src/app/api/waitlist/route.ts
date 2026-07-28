@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       headers,
       body: JSON.stringify({
         email,
-        source: 'agentis-botchain-waitlist',
+        source: 'botchain-service-marketplace-waitlist',
         submittedAt: new Date().toISOString(),
       }),
       cache: 'no-store',

@@ -1,6 +1,7 @@
 import type React from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { GeistPixelLine } from 'geist/font/pixel'
 import './globals.css'
 
 const geistSans = Geist({
@@ -16,20 +17,22 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Agentis | Rebuilding on Botchain',
+  title: 'AI Services Marketplace | Early Access',
   description:
-    'Agentis is rebuilding its agent economy on Botchain. Join the waitlist for early access.',
+    'Discover specialized AI services, compare reputation, and hire trusted providers through Botchain. Join the waitlist for early access.',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#080a08',
+  themeColor: '#010604',
   colorScheme: 'dark',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelLine.variable}`}
+      >
         {children}
       </body>
     </html>

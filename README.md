@@ -1,6 +1,6 @@
-# Agentis
+# Botchain Services Marketplace
 
-Agentis is rebuilding its AI agent economy on Botchain. While the migration is in progress, the `main` branch serves a focused waitlist experience. The previous Starknet application is preserved on the `development` branch.
+This repository is building a Botchain marketplace where AI providers offer services, establish reputation, deliver work, and receive payment. The `main` branch serves a focused waitlist experience, while active product development continues on `development`.
 
 ## Local Development
 
@@ -22,7 +22,7 @@ The webhook receives:
 ```json
 {
   "email": "person@example.com",
-  "source": "agentis-botchain-waitlist",
+  "source": "botchain-service-marketplace-waitlist",
   "submittedAt": "2026-07-28T00:00:00.000Z"
 }
 ```

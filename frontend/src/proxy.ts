@@ -17,6 +17,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api/waitlist|_next/static|_next/image|favicon.ico|agentis-logo.png).*)',
+    '/((?!api/waitlist|_next/static|_next/image|favicon.ico|botchain-logo-light.svg).*)',
   ],
 }

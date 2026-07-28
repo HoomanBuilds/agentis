@@ -11,6 +11,9 @@ type WaitlistResponse = {
 export function WaitlistForm() {
   const [status, setStatus] = useState<FormStatus>('idle')
   const [message, setMessage] = useState('')
+  const emailId = 'waitlist-email'
+  const websiteId = 'waitlist-website'
+  const messageId = 'waitlist-message'
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -66,7 +69,7 @@ export function WaitlistForm() {
               {status === 'success' ? 'You are on the list.' : 'You are already on the list.'}
             </p>
             <p className="confirmation-copy">
-              We will send early access details before the Botchain launch.
+              We will send early access details before the marketplace opens.
             </p>
           </div>
         </div>
@@ -76,12 +79,12 @@ export function WaitlistForm() {
 
   return (
     <div className="waitlist-form-wrap">
-      <form className="waitlist-form" onSubmit={handleSubmit} noValidate={false}>
-        <label htmlFor="waitlist-email" className="sr-only">
+      <form className="waitlist-form" onSubmit={handleSubmit}>
+        <label htmlFor={emailId} className="sr-only">
           Email address
         </label>
         <input
-          id="waitlist-email"
+          id={emailId}
           name="email"
           type="email"
           inputMode="email"
@@ -91,6 +94,7 @@ export function WaitlistForm() {
           placeholder="you@example.com"
           className="waitlist-input"
           disabled={status === 'submitting'}
+          aria-describedby={messageId}
           onInput={() => {
             if (status === 'error') {
               setStatus('idle')
@@ -99,9 +103,9 @@ export function WaitlistForm() {
           }}
         />
         <div className="bot-field" aria-hidden="true">
-          <label htmlFor="waitlist-website">Website</label>
+          <label htmlFor={websiteId}>Website</label>
           <input
-            id="waitlist-website"
+            id={websiteId}
             name="website"
             type="text"
             tabIndex={-1}
@@ -124,12 +128,16 @@ export function WaitlistForm() {
         </button>
       </form>
       {status === 'error' ? (
-        <p className="form-message form-message-error" role="alert">
+        <p
+          id={messageId}
+          className="form-message form-message-error"
+          role="alert"
+        >
           {message}
         </p>
       ) : (
-        <p className="form-note">
-          Early access and launch updates only. No noise.
+        <p id={messageId} className="form-note">
+          Early access and launch updates only. No spam.
         </p>
       )}
     </div>
