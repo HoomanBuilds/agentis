@@ -1,6 +1,6 @@
-# Botchain Waitlist Frontend
+# IRAI Protocol Waitlist
 
-Next.js 16 frontend for the three-section AI services marketplace waitlist.
+Next.js 16 frontend for the IRAI Protocol services marketplace waitlist.
 
 ## Development
 
@@ -14,19 +14,19 @@ Open `http://localhost:3000`.
 
 ## Waitlist Configuration
 
-Set `WAITLIST_WEBHOOK_URL` to the HTTPS endpoint that stores signup emails. Set `WAITLIST_WEBHOOK_TOKEN` when the endpoint expects a bearer token.
+Create a Supabase project and run the migration in
+`supabase/migrations/20260729153000_create_waitlist_entries.sql`.
 
-The webhook receives:
+Set these server-only environment variables:
 
-```json
-{
-  "email": "person@example.com",
-  "source": "botchain-service-marketplace-waitlist",
-  "submittedAt": "2026-07-28T00:00:00.000Z"
-}
+```bash
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SECRET_KEY=sb_secret_your_server_key
 ```
 
-Return any `2xx` response for a new signup or `409` for an existing email.
+The Vercel Supabase integration supplies both values automatically. The API
+normalizes emails, rejects invalid input, and relies on the database constraint
+to prevent duplicate signups. The secret key remains server-only.
 
 ## Validation
 

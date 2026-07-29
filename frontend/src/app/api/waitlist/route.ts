@@ -32,9 +32,12 @@ export async function POST(request: Request) {
     )
   }
 
-  const webhookUrl = process.env.WAITLIST_WEBHOOK_URL
+  const supabaseUrl = process.env.SUPABASE_URL
+  const supabaseKey =
+    process.env.SUPABASE_SECRET_KEY ??
+    process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!webhookUrl) {
+  if (!supabaseUrl || !supabaseKey) {
     return NextResponse.json(
       { message: 'The waitlist is being configured. Please try again shortly.' },
       { status: 503 },
@@ -42,27 +45,31 @@ export async function POST(request: Request) {
   }
 
   const headers: Record<string, string> = {
+    apikey: supabaseKey,
     'Content-Type': 'application/json',
+    Prefer: 'return=minimal',
   }
 
-  if (process.env.WAITLIST_WEBHOOK_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.WAITLIST_WEBHOOK_TOKEN}`
+  if (!supabaseKey.startsWith('sb_secret_')) {
+    headers.Authorization = `Bearer ${supabaseKey}`
   }
 
-  let webhookResponse: Response
+  let supabaseResponse: Response
 
   try {
-    webhookResponse = await fetch(webhookUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        email,
-        source: 'irai-protocol-waitlist',
-        submittedAt: new Date().toISOString(),
-      }),
-      cache: 'no-store',
-      signal: AbortSignal.timeout(8000),
-    })
+    supabaseResponse = await fetch(
+      `${supabaseUrl.replace(/\/$/, '')}/rest/v1/waitlist_entries`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          email,
+          source: 'irai-protocol-waitlist',
+        }),
+        cache: 'no-store',
+        signal: AbortSignal.timeout(8000),
+      },
+    )
   } catch {
     return NextResponse.json(
       { message: 'The waitlist service is unavailable. Please try again shortly.' },
@@ -70,14 +77,14 @@ export async function POST(request: Request) {
     )
   }
 
-  if (webhookResponse.status === 409) {
+  if (supabaseResponse.status === 409) {
     return NextResponse.json(
       { message: 'You are already on the list.' },
       { status: 409 },
     )
   }
 
-  if (!webhookResponse.ok) {
+  if (!supabaseResponse.ok) {
     return NextResponse.json(
       { message: 'We could not add you right now. Please try again.' },
       { status: 502 },
