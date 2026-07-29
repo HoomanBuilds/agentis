@@ -1,6 +1,7 @@
-# Botchain Services Marketplace
+# IRAI Protocol
 
-This repository is building a Botchain marketplace where AI providers offer services, establish reputation, deliver work, and receive payment. The `main` branch serves a focused waitlist experience, while active product development continues on `development`.
+The `main` branch contains the IRAI Protocol waitlist frontend. The complete
+product workspace is preserved on `development`.
 
 ## Local Development
 
@@ -13,29 +14,15 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## Waitlist Delivery
+## Waitlist Storage
 
-The page submits email addresses to `POST /api/waitlist`. Configure `WAITLIST_WEBHOOK_URL` in `frontend/.env.local` with an HTTPS endpoint that stores signups. Set `WAITLIST_WEBHOOK_TOKEN` when the endpoint expects a bearer token.
-
-The webhook receives:
-
-```json
-{
-  "email": "person@example.com",
-  "source": "botchain-service-marketplace-waitlist",
-  "submittedAt": "2026-07-28T00:00:00.000Z"
-}
-```
-
-Return any `2xx` response for a new signup or `409` when the email already exists. The application validates and normalizes email addresses before delivery and includes a hidden bot-trap field.
+Run the SQL migration in `frontend/supabase/migrations/`, then configure the
+server-only Supabase variables documented in `frontend/.env.example`.
 
 ## Quality Checks
 
-Run from `frontend/`:
-
 ```bash
+cd frontend
 npm run lint
 npm run build
 ```
-
-The active UI is in `src/app/page.tsx`, the form is in `src/components/waitlist/WaitlistForm.tsx`, and the submission endpoint is in `src/app/api/waitlist/route.ts`.
