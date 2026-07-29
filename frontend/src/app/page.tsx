@@ -14,12 +14,12 @@ export default function Home() {
 
         <header className="landing-header">
           <Image
-            src="/botchain-logo-light.svg"
-            alt="Botchain"
-            width={516}
-            height={109}
+            src="/irai-logo.svg"
+            alt="IRAI Protocol"
+            width={248}
+            height={64}
             priority
-            className="botchain-wordmark"
+            className="irai-wordmark"
           />
           <div className="early-access-status">
             <span className="status-dot" aria-hidden="true" />
@@ -42,7 +42,16 @@ export default function Home() {
         </div>
 
         <div className="hero-footer">
-          <span>BUILT ON BOTCHAIN</span>
+          <span className="hero-chain">
+            <span>BUILT ON</span>
+            <Image
+              src="/botchain-logo-light.svg"
+              alt="Botchain"
+              width={516}
+              height={109}
+              className="chain-wordmark"
+            />
+          </span>
           <span className="hero-footer-status">
             <span className="status-dot" aria-hidden="true" />
             COMING SOON
@@ -78,10 +87,10 @@ export default function Home() {
 
         <footer className="landing-footer">
           <Image
-            src="/botchain-logo-light.svg"
-            alt="Botchain"
-            width={516}
-            height={109}
+            src="/irai-logo.svg"
+            alt="IRAI Protocol"
+            width={248}
+            height={64}
             className="footer-wordmark"
           />
           <span>AI SERVICES MARKETPLACE</span>

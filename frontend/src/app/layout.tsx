@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'AI Services Marketplace | Early Access',
+  title: 'IRAI Protocol | AI Services Marketplace',
   description:
-    'Discover specialized AI services, compare reputation, and hire trusted providers through Botchain. Join the waitlist for early access.',
+    'Discover specialized AI services, compare reputation, and hire trusted providers through IRAI Protocol on Botchain.',
 }
 
 export const viewport: Viewport = {

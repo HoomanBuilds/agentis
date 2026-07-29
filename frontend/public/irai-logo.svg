@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="248" height="64" viewBox="0 0 248 64" fill="none">
+  <title>IRAI Protocol</title>
+  <path d="M6 8H22V18H19V46H22V56H6V46H9V18H6V8Z" fill="#00D99F"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M25 8H43L57 22V31L49 39L57 47V56H45V51L34 40V56H25V26H40L45 22L41 18H25V8ZM34 26V34H41L45 30V26H34Z" fill="#00D99F"/>
+  <path d="M79 10H88V48H79V10Z" fill="#EDF7F2"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M101 10H127L138 21V30L130 38L141 48H129L119 39H110V48H101V10ZM110 19V31H124L129 26V24L124 19H110Z" fill="#EDF7F2"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M146 48L161 10H174L189 48H179L176 40H159L156 48H146ZM162 32H173L168 18L162 32Z" fill="#EDF7F2"/>
+  <path d="M199 10H208V48H199V10Z" fill="#EDF7F2"/>
+  <text x="79" y="61" fill="#7F9289" font-family="Arial, Helvetica, sans-serif" font-size="8" font-weight="600" letter-spacing="3.4">PROTOCOL</text>
+</svg>

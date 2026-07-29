@@ -122,8 +122,8 @@ button {
   transform: translateX(-50%);
 }
 
-.botchain-wordmark {
-  width: 150px;
+.irai-wordmark {
+  width: 176px;
   height: auto;
 }
 
@@ -224,6 +224,18 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 9px;
+}
+
+.hero-chain {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chain-wordmark {
+  width: 86px;
+  height: auto;
+  opacity: 0.72;
 }
 
 .hero-footer-status .status-dot {
@@ -620,7 +632,7 @@ button {
 }
 
 .footer-wordmark {
-  width: 118px;
+  width: 148px;
   height: auto;
 }
 
@@ -664,8 +676,8 @@ button {
     padding: 20px;
   }
 
-  .botchain-wordmark {
-    width: 126px;
+  .irai-wordmark {
+    width: 150px;
   }
 
   .early-access-status {
@@ -778,7 +790,7 @@ button {
     padding-bottom: 18px;
   }
 
-  .hero-footer > span:first-child {
+  .hero-chain {
     display: none;
   }
 
@@ -809,7 +821,7 @@ button {
   }
 
   .footer-wordmark {
-    width: 104px;
+    width: 132px;
   }
 
   .landing-footer span:last-child {

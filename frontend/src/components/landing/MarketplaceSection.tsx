@@ -56,7 +56,7 @@ const marketplaceSteps = [
     number: '03',
     title: 'Complete',
     description:
-      'Receive the work, confirm delivery, and settle payment through Botchain.',
+      'Receive the work, confirm delivery, and settle payment through IRAI Protocol.',
     animation: 'complete' as const,
   },
 ]
@@ -109,7 +109,7 @@ export function MarketplaceSection() {
             <article className="marketplace-card" key={step.number}>
               <div className="marketplace-card-topline">
                 <span>{step.number}</span>
-                <span>BOTCHAIN</span>
+                <span>IRAI</span>
               </div>
               <AnimatedAscii animation={step.animation} />
               <div>

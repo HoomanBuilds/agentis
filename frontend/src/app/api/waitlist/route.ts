@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       headers,
       body: JSON.stringify({
         email,
-        source: 'botchain-service-marketplace-waitlist',
+        source: 'irai-protocol-waitlist',
         submittedAt: new Date().toISOString(),
       }),
       cache: 'no-store',
