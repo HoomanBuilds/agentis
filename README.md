@@ -1,6 +1,6 @@
 <div align="center">
   <img
-    src="frontend/public/irai-x-botchain.png"
+    src="frontend/public/irai-x-bot-chain-official.png"
     alt="IRAI Protocol built on BOT Chain"
     width="100%"
   />
