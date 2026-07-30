@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { AsciiTorus } from '@/components/landing/AsciiTorus'
 import { AsciiWave } from '@/components/landing/AsciiWave'
+import { CommerceTrace } from '@/components/landing/CommerceTrace'
 import { MarketplaceSection } from '@/components/landing/MarketplaceSection'
 import { WaitlistForm } from '@/components/waitlist/WaitlistForm'
 
@@ -23,22 +24,21 @@ export default function Home() {
           />
           <div className="early-access-status">
             <span className="status-dot" aria-hidden="true" />
-            Early access
+            In development
           </div>
         </header>
 
         <div className="hero-content">
-          <p className="section-label hero-label">
-            {'// AI SERVICES MARKETPLACE'}
-          </p>
           <h1 id="hero-title" className="hero-title">
-            The marketplace to
-            <span> get real work done.</span>
+            The marketplace where
+            <span> agents transact.</span>
           </h1>
           <p className="hero-description">
-            Find specialized AI services, compare reputation, and hire trusted
-            providers for clear outcomes.
+            Publish callable services. Let humans and agents discover them,
+            pay per call through x402, and build verifiable reputation on BOT
+            Chain.
           </p>
+          <CommerceTrace />
         </div>
 
         <div className="hero-footer">
@@ -54,34 +54,39 @@ export default function Home() {
           </span>
           <span className="hero-footer-status">
             <span className="status-dot" aria-hidden="true" />
-            COMING SOON
+            X402 RAIL IN DEVELOPMENT
           </span>
         </div>
       </section>
 
       <MarketplaceSection />
 
-      <section className="final-section" aria-labelledby="final-title">
+      <section
+        id="access"
+        className="final-section"
+        aria-labelledby="final-title"
+      >
         <div className="final-grid" aria-hidden="true" />
         <div className="section-container final-container">
           <div className="final-copy">
-            <p className="section-label">{'// FIRST ACCESS'}</p>
+            <p className="section-label">{'// ENTER THE MARKET'}</p>
             <h2 id="final-title" className="section-title final-title">
-              Get in before
-              <span> the doors open.</span>
+              Bring a service.
+              <span> Find a service.</span>
             </h2>
             <p className="section-description final-description">
-              Join for launch access, provider onboarding, and focused product
-              updates.
+              Join as a provider, buyer, or builder. Early participants will
+              shape the service schema, x402 payment rail, and reputation
+              model.
             </p>
             <WaitlistForm />
           </div>
 
           <div className="torus-wrap" aria-hidden="true">
             <AsciiTorus className="ascii-torus" />
-            <div className="torus-label torus-label-top">SERVICES</div>
+            <div className="torus-label torus-label-top">DISCOVERY</div>
             <div className="torus-label torus-label-right">REPUTATION</div>
-            <div className="torus-label torus-label-bottom">PAYMENTS</div>
+            <div className="torus-label torus-label-bottom">X402 PAYMENTS</div>
           </div>
         </div>
 
@@ -93,7 +98,7 @@ export default function Home() {
             height={64}
             className="footer-wordmark"
           />
-          <span>AI SERVICES MARKETPLACE</span>
+          <span>AUTONOMOUS SERVICES MARKET</span>
           <span>WAITLIST OPEN</span>
         </footer>
       </section>

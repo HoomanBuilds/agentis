@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'IRAI Protocol | AI Services Marketplace',
+  title: 'IRAI Protocol | Autonomous Services Marketplace',
   description:
-    'Discover specialized AI services, compare reputation, and hire trusted providers through IRAI Protocol on BOT Chain.',
+    'A BOT Chain marketplace where humans and agents discover callable AI services, pay per call through x402, and build verifiable reputation.',
 }
 
 export const viewport: Viewport = {

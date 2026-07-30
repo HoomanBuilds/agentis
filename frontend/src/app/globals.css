@@ -156,7 +156,7 @@ button {
 .hero-content {
   z-index: 1;
   width: min(100% - 32px, 1060px);
-  padding: 112px 0 132px;
+  padding: 116px 0 122px;
   text-align: center;
 }
 
@@ -167,10 +167,6 @@ button {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
-}
-
-.hero-label {
-  margin-bottom: 24px;
 }
 
 .hero-title,
@@ -194,12 +190,84 @@ button {
 }
 
 .hero-description {
-  max-width: 650px;
+  max-width: 720px;
   margin: 28px auto 0;
   color: #95a79e;
   font-size: clamp(1rem, 1.5vw, 1.14rem);
   line-height: 1.65;
   text-wrap: balance;
+}
+
+.commerce-trace {
+  display: flex;
+  width: min(100%, 980px);
+  align-items: stretch;
+  margin: 44px auto 0;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: rgba(0, 5, 3, 0.82);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(16px);
+}
+
+.commerce-trace-item {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+}
+
+.commerce-trace-step {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 11px;
+  padding: 17px 18px;
+  text-align: left;
+}
+
+.commerce-trace-number {
+  grid-row: 1 / 3;
+  align-self: center;
+  color: var(--primary);
+  font-family: var(--font-geist-mono), "Geist Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+.commerce-trace-label {
+  color: #c8d7d0;
+  font-family: var(--font-geist-mono), "Geist Mono", monospace;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.commerce-trace code {
+  min-width: 0;
+  overflow: hidden;
+  color: #63776c;
+  font-family: var(--font-geist-mono), "Geist Mono", monospace;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commerce-trace-connector {
+  display: grid;
+  width: 18px;
+  flex: 0 0 18px;
+  place-items: center;
+  color: var(--primary);
+  font-family: var(--font-geist-mono), "Geist Mono", monospace;
+  font-size: 11px;
+  opacity: 0.66;
 }
 
 .hero-footer {
@@ -403,13 +471,13 @@ button {
 
 .marketplace-section {
   display: flex;
-  min-height: 90svh;
+  min-height: 100svh;
   align-items: center;
   border-top: 1px solid rgba(171, 221, 199, 0.08);
   background:
     radial-gradient(circle at 50% 0%, rgba(0, 217, 159, 0.075), transparent 34%),
     #010604;
-  padding: 112px 0;
+  padding: 104px 0;
 }
 
 .marketplace-grid {
@@ -449,32 +517,31 @@ button {
 .marketplace-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
+  gap: 12px;
   margin-top: 64px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--border);
-  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.28);
 }
 
 .marketplace-card {
   display: flex;
-  min-height: 318px;
+  min-height: 334px;
   flex-direction: column;
   justify-content: space-between;
-  gap: 28px;
+  gap: 32px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 28px;
   background: rgba(0, 5, 3, 0.94);
   transition:
+    border-color 160ms ease,
     background-color 160ms ease,
-    box-shadow 160ms ease;
+    transform 160ms ease;
 }
 
 .marketplace-card:hover {
-  z-index: 1;
+  border-color: rgba(0, 217, 159, 0.28);
   background: rgba(1, 15, 10, 0.98);
-  box-shadow: inset 0 0 0 1px rgba(0, 217, 159, 0.24);
+  transform: translateY(-2px);
 }
 
 .marketplace-card-topline {
@@ -487,30 +554,130 @@ button {
   letter-spacing: 0.09em;
 }
 
-.marketplace-ascii {
-  min-height: 86px;
-  margin: 0;
+.service-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.service-category {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid rgba(0, 217, 159, 0.2);
+  border-radius: 5px;
+  background: rgba(0, 217, 159, 0.05);
   color: var(--primary);
   font-family: var(--font-geist-mono), "Geist Mono", monospace;
-  font-size: 13px;
-  line-height: 1.1;
-  white-space: pre;
+  font-size: 8px;
+  letter-spacing: 0.09em;
 }
 
 .marketplace-card h3 {
-  margin: 0;
+  margin: 24px 0 0;
   font-family: var(--font-geist-pixel-line), var(--font-geist-mono), monospace;
-  font-size: 29px;
+  font-size: 31px;
   font-weight: 400;
   letter-spacing: -0.04em;
+  line-height: 1;
 }
 
 .marketplace-card p {
   max-width: 310px;
-  margin: 11px 0 0;
+  margin: 14px 0 0;
   color: #788b81;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.service-interfaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.service-interfaces span {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: #70837a;
+  font-family: var(--font-geist-mono), "Geist Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.service-card-price {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  color: #53665c;
+  font-family: var(--font-geist-mono), "Geist Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.service-card-price div {
+  display: grid;
+  gap: 6px;
+}
+
+.service-card-price strong {
+  color: #c7d7cf;
+  font-size: 14px;
+  font-weight: 550;
+  letter-spacing: 0;
+}
+
+.marketplace-loop {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--border);
+}
+
+.marketplace-loop > div {
+  min-width: 0;
+  padding: 18px 20px;
+  background: rgba(0, 5, 3, 0.96);
+}
+
+.marketplace-loop span,
+.marketplace-loop strong {
+  font-family: var(--font-geist-mono), "Geist Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.marketplace-loop span {
+  margin-right: 8px;
+  color: var(--primary);
+}
+
+.marketplace-loop strong {
+  color: #8da097;
+}
+
+.marketplace-loop p {
+  overflow: hidden;
+  margin: 8px 0 0;
+  color: #53665c;
+  font-size: 11px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .final-section {
@@ -658,11 +825,19 @@ button {
   }
 
   .marketplace-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .marketplace-card {
-    min-height: 250px;
+    min-height: 314px;
+  }
+
+  .marketplace-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .marketplace-loop {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .final-container {
@@ -688,7 +863,7 @@ button {
 
   .hero-content {
     width: min(100% - 40px, 650px);
-    padding: 112px 0 126px;
+    padding: 106px 0 112px;
   }
 
   .hero-title {
@@ -699,6 +874,35 @@ button {
     max-width: 540px;
     margin-top: 24px;
     font-size: 15px;
+  }
+
+  .commerce-trace {
+    display: grid;
+    max-width: 540px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 34px;
+    background: var(--border);
+  }
+
+  .commerce-trace-item,
+  .commerce-trace-step {
+    display: block;
+  }
+
+  .commerce-trace-step {
+    min-height: 72px;
+    padding: 15px 16px;
+    background: rgba(0, 5, 3, 0.94);
+  }
+
+  .commerce-trace-label {
+    display: block;
+    margin: 6px 0 2px;
+  }
+
+  .commerce-trace-connector {
+    display: none;
   }
 
   .hero-footer,
@@ -713,11 +917,24 @@ button {
   }
 
   .marketplace-cards {
+    grid-template-columns: 1fr;
     margin-top: 48px;
   }
 
+  .marketplace-card:last-child {
+    grid-column: auto;
+  }
+
   .marketplace-card {
-    min-height: 264px;
+    min-height: 300px;
+  }
+
+  .marketplace-loop {
+    grid-template-columns: 1fr;
+  }
+
+  .marketplace-loop p {
+    white-space: normal;
   }
 
   .section-title {
@@ -753,6 +970,16 @@ button {
 }
 
 @media (max-width: 560px) {
+  .irai-wordmark {
+    width: 132px;
+  }
+
+  .early-access-status {
+    gap: 7px;
+    padding: 0 9px;
+    font-size: 8px;
+  }
+
   .hero-section {
     min-height: 100svh;
   }
@@ -772,6 +999,11 @@ button {
 
   .hero-description {
     line-height: 1.55;
+  }
+
+  .commerce-trace-step {
+    min-height: 68px;
+    padding: 13px 14px;
   }
 
   .waitlist-form-wrap {
@@ -803,7 +1035,7 @@ button {
   }
 
   .marketplace-card {
-    min-height: 250px;
+    min-height: 292px;
     padding: 24px;
   }
 

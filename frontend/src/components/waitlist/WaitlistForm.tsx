@@ -69,7 +69,7 @@ export function WaitlistForm() {
               {status === 'success' ? 'You are on the list.' : 'You are already on the list.'}
             </p>
             <p className="confirmation-copy">
-              We will send early access details before the marketplace opens.
+              We will send marketplace access and provider onboarding details.
             </p>
           </div>
         </div>
