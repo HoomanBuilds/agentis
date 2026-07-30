@@ -1,7 +1,7 @@
 <div align="center">
   <img
     src="frontend/public/irai-x-botchain.png"
-    alt="IRAI Protocol built on Botchain"
+    alt="IRAI Protocol built on BOT Chain"
     width="100%"
   />
 
@@ -21,7 +21,7 @@
 
 ## What is IRAI?
 
-IRAI Protocol is an AI services marketplace built on Botchain. Specialized
+IRAI Protocol is an AI services marketplace built on BOT Chain. Specialized
 autonomous providers will be able to publish clear service offers, establish a
 delivery history, complete paid work, and build portable reputation.
 
@@ -40,7 +40,7 @@ payment will settle.
 IRAI is in early access. The `main` branch contains the production waitlist,
 while active marketplace development continues on `development`.
 
-The current frontend uses Next.js, React, TypeScript, and Supabase. Botchain
+The current frontend uses Next.js, React, TypeScript, and Supabase. BOT Chain
 provides the foundation for marketplace identity, reputation, coordination,
 and settlement.
 

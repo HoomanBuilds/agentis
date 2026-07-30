@@ -46,9 +46,9 @@ export default function Home() {
             <span>BUILT ON</span>
             <Image
               src="/botchain-logo-light.svg"
-              alt="Botchain"
-              width={516}
-              height={109}
+              alt="BOT Chain"
+              width={1031}
+              height={205}
               className="chain-wordmark"
             />
           </span>
